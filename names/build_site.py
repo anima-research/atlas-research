@@ -44,6 +44,8 @@ mark{background:#ffe08a;padding:0 1px} mark.s{background:#9fe3a8} mark.st{backgr
 .text{white-space:pre-wrap;max-width:900px;font:15px/1.55 Georgia,serif;border:1px solid #ddd;padding:14px}
 .strict{color:#0a6b1f;font-weight:600} .wide{color:#8a6100}
 .small{font-size:12px;color:#555}
+details.cols{font-size:12px;color:#444;margin:4px 0} details.cols summary{cursor:pointer;color:#555}
+details.cols ul{margin:4px 0 6px;padding-left:18px} details.cols li{max-width:900px}
 button{font-size:12px}
 """
 
@@ -149,6 +151,14 @@ def jdump(o):
     return json.dumps(o, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
 
+def columns_note(columns):
+    """A visible list of the columns that carry an explanation."""
+    items = ["<li><b>%s</b>: %s</li>" % (E(c["title"]), E(c["tip"])) for c in columns if c.get("tip")]
+    if not items:
+        return ""
+    return "<details class=cols><summary>Columns</summary><ul>%s</ul></details>" % "".join(items)
+
+
 def table(columns, rows, sort=None, page=200):
     """An inline table: data embedded in the page."""
     _tid[0] += 1
@@ -156,7 +166,7 @@ def table(columns, rows, sort=None, page=200):
     d = dict(columns=columns, rows=rows, pageSize=page)
     if sort:
         d["sort"] = sort
-    return ('<div id="t%d"></div><script type="application/json" id="d%d">%s</script>'
+    return (columns_note(columns) + '<div id="t%d"></div><script type="application/json" id="d%d">%s</script>'
             '<script>tableFromScript("t%d","d%d")</script>' % (i, i, jdump(d), i, i))
 
 
@@ -587,36 +597,43 @@ description.</p>%s
     os.makedirs(os.path.join(SITE, "n"), exist_ok=True)
     allnames = q("SELECT norm, display, n_texts, expected, expected_new, best, n_models, n_mentions, patterns, "
                  "top_models, df, expected_title_only FROM names")
+    n80 = dict(q("SELECT norm, count(*) FROM text_names n JOIN text_cov c ON c.text_id=n.text_id "
+                 "WHERE n.score>=0.8 AND c.flag='' GROUP BY norm"))
     def nrow(r):
         return ['<a href="name.html?n=%s">%s</a>' % (E(r[0], quote=True).replace(" ", "%20"), E(r[1])),
-                r[3], r[2], fnum(r[5]), r[4], r[11], r[6], r[7], len(r[0].split()),
+                r[3], n80.get(r[0], 0), r[2], r[4], r[11], r[6], r[7], len(r[0].split()),
                 "" if r[10] is None else round(100 * r[10], 1), r[8], r[9]]
-    ncols = [col("name", "html"),
-             col("expected texts", "num", "sum of the name's scores over the texts it was caught in"),
-             col("texts", "num", "texts where any pattern caught it"), col("best score", "num"),
+    ncols = [col("name", "html", "the captured string, as most often written; click for the texts"),
+             col("expected texts", "num", "sum of the name's scores over the texts it was caught in: about how many of those texts use it as a name, if the patterns' precision is right"),
+             col("texts at 0.8", "num", "texts where a pattern of precision 0.8 or more caught it"),
+             col("texts", "num", "texts where any pattern caught it"),
              col("expected, not in place text", "num", "the same sum over the texts where the string does not occur in the place description"),
              col("expected, title only", "num", "the same sum over the texts where it is caught in a title line and occurs nowhere else"),
-             col("models", "num"), col("hits", "num"), col("words", "num"),
+             col("models", "num", "models in whose texts it was caught"), col("hits", "num", "pattern matches, all texts"),
+             col("words", "num", "words in the name"),
              col("% of all texts", "num", "for a one-word name: the share of all texts in which the word occurs in any sense. A high share marks ordinary vocabulary."),
-             col("patterns"), col("most expected in")]
+             col("patterns", "text", "every pattern that caught it somewhere"),
+             col("most expected in", "text", "the models with the largest sums of scores for it")]
     hi = [nrow(r) for r in allnames if r[5] >= 0.8]
     lo = [nrow(r) for r in allnames if r[5] < 0.8]
     with open(os.path.join(SITE, "n", "names_hi.json"), "w", encoding="utf-8") as f:
         f.write(jdump(dict(columns=ncols, rows=hi, pageSize=200, sort=[1, -1])))
     with open(os.path.join(SITE, "n", "names_lo.json"), "w", encoding="utf-8") as f:
         f.write(jdump(dict(columns=ncols, rows=lo, pageSize=200, sort=[1, -1])))
+    page_cols = columns_note(ncols)
     page("names.html", "Names",
-         """<p>Every distinct string whose score reaches 0.8 in at least one text (%d). Click a name to see
-the texts it occurs in. The %d strings that never reach 0.8 are on a <a href="names_low.html">second
-page</a>; the split is only to keep the page loadable.</p>
+         """<p>The set of names: every distinct string that at least one text uses as a name with a
+score of 0.8 or more (%d strings). Click a name to see the texts it occurs in. The %d strings that
+never reach 0.8 anywhere are kept on a <a href="names_low.html">second page</a> as a pool of
+candidates; they are not counted as names.</p>
 <p class=small>Singular and plural are separate rows. Frequent rows near the top include ordinary
 capitalised words ("Water", "Body"): the capitalisation patterns take any capitalised word after
 "the". The column "%% of all texts" helps to set those aside.</p>
-<div id=nt></div><script>tableFromUrl("nt","n/names_hi.json")</script>""" % (len(hi), len(lo)))
+%s<div id=nt></div><script>tableFromUrl("nt","n/names_hi.json")</script>""" % (len(hi), len(lo), page_cols))
     page("names_low.html", "Strings with a best score under 0.8",
          """<p>Strings caught only by patterns of lower precision. Most are not names. They are kept so
 that names written in forms that the better patterns miss can be found here.</p>
-<div id=nt></div><script>tableFromUrl("nt","n/names_lo.json")</script>""")
+%s<div id=nt></div><script>tableFromUrl("nt","n/names_lo.json")</script>""" % page_cols)
 
     buckets = defaultdict(dict)
     for tid, names in tn.items():
@@ -655,19 +672,21 @@ that names written in forms that the better patterns miss can be found here.</p>
     os.makedirs(os.path.join(SITE, "x"), exist_ok=True)
     xrows = [[tlink(tid), r[1], r[2], fnum(r[11]), fnum(r[12]), sum(1 for x in tn.get(tid, ()) if x[5] >= 0.8), r[6], r[8], r[7],
               r[10] or "none", read_round.get(tid, "")] for tid, r in sorted(cov.items()) if not r[9]]
-    with open(os.path.join(SITE, "x", "texts.json"), "w", encoding="utf-8") as f:
-        f.write(jdump(dict(columns=[
-            col("text", "html"), col("model"), col("length", "num"),
+    xcols = [
+            col("text", "html"), col("model"), col("length", "num", "characters"),
             col("best score in body", "num", "highest score among names the text uses outside a title line"),
             col("best score, title only", "num", "highest score among title-only designations; empty when there is none"),
-            col("names ≥ 0.8", "num"), col("expected names", "num", "sum of the scores of all strings caught in the text"),
-            col("no-name statements", "num"), col("sentences with 'name'", "num"),
+            col("names ≥ 0.8", "num", "distinct strings in the text with a score of 0.8 or more"),
+            col("expected names", "num", "sum of the scores of all strings caught in the text"),
+            col("no-name statements", "num", "sentences saying there is no name"), col("sentences with 'name'", "num", "sentences that use the word name"),
             col("corpus status", "text", "the status the corpus taggers recorded; many newer texts have none"),
-            col("read in round", "num")], rows=xrows, pageSize=200, sort=[3, 1])))
+            col("read in round", "num", "the round in which the text was read by eye, if it was")]
+    with open(os.path.join(SITE, "x", "texts.json"), "w", encoding="utf-8") as f:
+        f.write(jdump(dict(columns=xcols, rows=xrows, pageSize=200, sort=[3, 1])))
     page("texts.html", "Texts",
          """<p>Every counted text (%d) with its best scores: in the body, and among title-only
 designations. Sorted from the lowest body score: the texts at the top are where no name was found
-in use. Filter a score column (for example <code>&lt;0.5</code>) to make any cut.</p><div id=xt></div><script>tableFromUrl("xt","x/texts.json")</script>""" % len(xrows))
+in use. Filter a score column (for example <code>&lt;0.5</code>) to make any cut.</p>%s<div id=xt></div><script>tableFromUrl("xt","x/texts.json")</script>""" % (len(xrows), columns_note(xcols)))
 
     # --------------------------------------------------------------- no names
     rc = q("SELECT chk, date, pool, text_id, read_chars, name, then_caught, score_now, patterns_now, forms_missed, note FROM recall")
