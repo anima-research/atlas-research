@@ -35,6 +35,8 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 tr.filters th{cursor:default;padding:2px}
 tr.filters input{width:100%;box-sizing:border-box;font-size:12px;min-width:40px}
 .tbl-info{font-size:12px;color:#555;margin:4px 0}
+.tbl-tools{font-size:12px;margin:6px 0 2px} .tbl-panel{border:1px solid #ddd;background:#fafafa;padding:6px 8px;margin:4px 0;max-width:900px}
+.tbl-panel label{display:inline-block;margin:2px 12px 2px 0;white-space:nowrap}
 .tbl-wrap{overflow-x:auto}
 code,pre,.rx{font:12px/1.4 ui-monospace,Menlo,monospace}
 pre,.rx{background:#f6f6f6;padding:8px;white-space:pre-wrap;word-break:break-all;border:1px solid #e3e3e3}
@@ -65,24 +67,48 @@ function makeTable(el, opt) {
     });
   });
   var filters = cols.map(function () { return ''; });
+  var key = 'cols:' + location.pathname + ':' + (opt.key || cols.map(function (c) { return c.title; }).join('|'));
+  var hidden = {};
+  try { (JSON.parse(localStorage.getItem(key) || '[]')).forEach(function (i) { hidden[i] = true; }); } catch (e) {}
   var info = document.createElement('div'); info.className = 'tbl-info';
+  var tools = document.createElement('div'); tools.className = 'tbl-tools';
+  var colBtn = document.createElement('button'); colBtn.textContent = 'columns';
+  var panel = document.createElement('div'); panel.className = 'tbl-panel'; panel.style.display = 'none';
+  cols.forEach(function (c, i) {
+    var lab = document.createElement('label'), cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = !hidden[i];
+    cb.onchange = function () {
+      if (cb.checked) delete hidden[i]; else hidden[i] = true;
+      try { localStorage.setItem(key, JSON.stringify(Object.keys(hidden).map(Number))); } catch (e) {}
+      build(); draw();
+    };
+    lab.appendChild(cb); lab.appendChild(document.createTextNode(' ' + c.title)); panel.appendChild(lab);
+  });
+  colBtn.onclick = function () { panel.style.display = panel.style.display === 'none' ? '' : 'none'; };
+  tools.appendChild(colBtn); tools.appendChild(panel);
   var wrap = document.createElement('div'); wrap.className = 'tbl-wrap';
   var table = document.createElement('table'), thead = document.createElement('thead'),
       tbody = document.createElement('tbody');
   var hr = document.createElement('tr'), fr = document.createElement('tr'); fr.className = 'filters';
-  cols.forEach(function (c, i) {
-    var th = document.createElement('th'); th.textContent = c.title; if (c.tip) th.title = c.tip;
-    th.onclick = function () { if (sortCol === i) sortDir = -sortDir; else { sortCol = i; sortDir = c.type === 'num' ? -1 : 1; } shown = page; draw(); };
-    hr.appendChild(th);
-    var f = document.createElement('th'), inp = document.createElement('input');
-    inp.placeholder = c.type === 'num' ? '>0' : 'filter';
-    inp.oninput = function () { filters[i] = inp.value.trim(); shown = page; draw(); };
-    f.appendChild(inp); fr.appendChild(f);
-  });
+  var ths = [];
+  function build() {
+    hr.innerHTML = ''; fr.innerHTML = ''; ths = [];
+    cols.forEach(function (c, i) {
+      if (hidden[i]) return;
+      var th = document.createElement('th'); th.textContent = c.title; if (c.tip) th.title = c.tip;
+      th.onclick = function () { if (sortCol === i) sortDir = -sortDir; else { sortCol = i; sortDir = c.type === 'num' ? -1 : 1; } shown = page; draw(); };
+      th.dataset.idx = i; hr.appendChild(th); ths.push(th);
+      var f = document.createElement('th'), inp = document.createElement('input');
+      inp.placeholder = c.type === 'num' ? '>0' : 'filter'; inp.value = filters[i];
+      inp.oninput = function () { filters[i] = inp.value.trim(); shown = page; draw(); };
+      f.appendChild(inp); fr.appendChild(f);
+    });
+  }
+  build();
   thead.appendChild(hr); thead.appendChild(fr); table.appendChild(thead); table.appendChild(tbody);
   var more = document.createElement('button');
   more.onclick = function () { shown += page * 5; draw(); };
-  el.appendChild(info); wrap.appendChild(table); el.appendChild(wrap); el.appendChild(more);
+  el.appendChild(tools); el.appendChild(info); wrap.appendChild(table); el.appendChild(wrap); el.appendChild(more);
   function numTest(f) {
     var m;
     if ((m = /^(-?[\d.]+)\.\.(-?[\d.]+)$/.exec(f))) return function (v) { return v != null && v >= +m[1] && v <= +m[2]; };
@@ -115,6 +141,7 @@ function makeTable(el, opt) {
     for (var k = 0; k < n; k++) {
       var row = rows[idx[k]], cells = '';
       for (var c2 = 0; c2 < cols.length; c2++) {
+        if (hidden[c2]) continue;
         var v = row[c2] == null ? '' : row[c2], t = cols[c2].type;
         cells += t === 'num' ? '<td class="num">' + v + '</td>' : t === 'html' ? '<td>' + v + '</td>'
           : '<td>' + String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</td>';
@@ -124,8 +151,8 @@ function makeTable(el, opt) {
     tbody.innerHTML = out.join('');
     info.textContent = idx.length + ' of ' + rows.length + ' rows' + (n < idx.length ? ' (showing ' + n + ')' : '');
     more.style.display = n < idx.length ? '' : 'none'; more.textContent = 'show more';
-    Array.prototype.forEach.call(hr.children, function (th, i) {
-      th.className = i === sortCol ? (sortDir > 0 ? 'sorted-asc' : 'sorted-desc') : '';
+    ths.forEach(function (th) {
+      th.className = +th.dataset.idx === sortCol ? (sortDir > 0 ? 'sorted-asc' : 'sorted-desc') : '';
     });
   }
   draw();
@@ -150,6 +177,9 @@ def slug(model):
 
 def jdump(o):
     return json.dumps(o, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+
+
+FORM = '\n<form class=sets onsubmit="var a=this.a.value.trim(),b=this.b.value.trim();location.href=\'name.html?n=\'+encodeURIComponent(a)+(b?\'&vs=\'+encodeURIComponent(b):\'\');return false">\n<p><b>Look up a name, or compare sets of names.</b> Write one string, or several joined by <code>|</code>\n(the lower-cased string as it appears in the tables: <code>keeper|keepers</code>). Counts are of\ntexts: a text that has several of the strings is counted once. A second set gives a comparison,\nmodel by model.</p>\n<p><label>set: <input name=a size=30 placeholder="keeper|keepers"></label> &nbsp;\n<label>compare with: <input name=b size=30 placeholder="tender|tenders"></label> &nbsp;\n<button>show</button> &nbsp; <span class=small>example: <a href="name.html?n=keeper%7Ckeepers&vs=tender%7Ctenders">keeper|keepers vs tender|tenders</a></span></p>\n</form>'
 
 
 def columns_note(columns):
@@ -623,7 +653,7 @@ description.</p>%s
         f.write(jdump(dict(columns=ncols, rows=lo, pageSize=200, sort=[1, -1])))
     page_cols = columns_note(ncols)
     page("names.html", "Names",
-         """<p>The set of names: every distinct string that at least one text uses as a name with a
+         FORM + """<p>The set of names: every distinct string that at least one text uses as a name with a
 score of 0.8 or more (%d strings). Click a name to see the texts it occurs in. The %d strings that
 never reach 0.8 anywhere are kept on a <a href="names_low.html">second page</a> as a pool of
 candidates; they are not counted as names.</p>
@@ -650,15 +680,14 @@ that names written in forms that the better patterns miss can be found here.</p>
         f.write(jdump(models))
     with open(os.path.join(SITE, "n", "model_counts.json"), "w", encoding="utf-8") as f:
         f.write(jdump([sum(1 for r in cov.values() if r[1] == m and not r[9]) for m in models]))
-    page("name.html", "Name", """<div id=head></div><div id=sets></div><div id=nt></div>
+    page("name.html", "Name", FORM + """<div id=head></div><div id=sets></div><div id=nt></div>
 <script src="sha1.js"></script><script>
 (function () {
   var qs = new URLSearchParams(location.search);
   var parse = function (s) { return (s || '').split('|').map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean); };
   var setA = parse(qs.get('n')), setB = parse(qs.get('vs'));
   var h1 = document.querySelector('h1');
-  if (!setA.length) { h1.textContent = 'Name'; document.getElementById('head').innerHTML =
-    '<p>Give one string, or several joined by |, as <code>name.html?n=keeper|keepers</code>; add a second set with <code>&amp;vs=tender|tenders</code> to compare. Counts are of texts, so a text that has both forms is counted once.</p>'; return; }
+  if (!setA.length) { h1.textContent = 'Name'; return; }
   h1.textContent = (setB.length ? 'Names: ' : 'Name: ') + setA.join(' | ') + (setB.length ? '  vs  ' + setB.join(' | ') : '');
   var get = function (u) { return fetch(u).then(function (r) { return r.json(); }); };
   var buckets = {};
