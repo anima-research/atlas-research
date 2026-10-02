@@ -232,7 +232,7 @@ def main():
 
     # text_id -> (id, model, length, n_hits, n_names, best, expected, n_statements, n_anti, flag, tagged)
     cov = {r[0]: r for r in q("SELECT text_id, model, length, n_hits, n_names, best, expected, n_statements, "
-                              "n_anti, flag, tagged FROM text_cov")}
+                              "n_anti, flag, tagged, best_body, best_title_only FROM text_cov")}
     models = sorted(set(r[1] for r in cov.values()))
     midx = {m: i for i, m in enumerate(models)}
     pats = q("SELECT id, version, round, added, yields, family, regex, flags, stop, max_words, origin_text, "
@@ -296,6 +296,11 @@ is a name.</li>
 <li><b>Best score of a text</b>: the highest score among its names; 0 when no pattern caught
 anything. Texts with a low best score are where new forms of naming are looked for, and are the
 candidates for having no name at all.</li>
+<li><b>Title only</b>: a name that was caught in a title line (a heading, a bold line, the head
+of a list item) and occurs nowhere else in the text. The text put it over a section and never
+used it again: it may be a title given to one inhabitant in place of a name, or the title of a
+section. It is kept apart from names the text goes on using; a text's best score is given for
+both ("in the body" and "title only") so that neither is lost in the other.</li>
 <li><b>Expected</b>: a sum of scores. "Expected texts" of a name is the sum of its scores over the
 texts it was caught in: about how many of those texts really use it as a name.</li>
 <li><b>Also in the place text</b>: the same string occurs in the description of the place that
@@ -317,6 +322,7 @@ broken, a refusal or off-topic, or it is empty, or it failed a word check made h
 <tr><td>Best score 0.5 to 0.8</td><td>%(b50)d (%(p50)s%%)</td></tr>
 <tr><td>Best score under 0.5</td><td>%(blo)d (%(plo)s%%)</td></tr>
 <tr><td>Nothing caught</td><td>%(bno)d (%(pno)s%%)</td></tr>
+<tr><td>Best score in the body under 0.5</td><td>%(bu)d, of which %(tn)d have a title-only designation</td></tr>
 <tr><td>Texts that say there is no name</td><td>%(anti)d (see <a href="no_names.html">Texts without names</a>)</td></tr>
 <tr><td>Texts that use the word "name"</td><td>%(talk)d</td></tr>
 </table>
@@ -359,6 +365,7 @@ are public through the Atlas API and are exported to the atlas-texts repository.
            b80=stats["best_80"], p80=pct(stats["best_80"], okn), b50=stats["best_50_80"],
            p50=pct(stats["best_50_80"], okn), blo=stats["best_under_50"], plo=pct(stats["best_under_50"], okn),
            bno=stats["best_none"], pno=pct(stats["best_none"], okn), anti=stats["anti_texts"],
+           bu=stats["body_under_50"], tn=stats["titled_any_not_named"],
            talk=stats["name_talk_texts"],
            rounds=table([col("round", "num"), col("date"), col("patterns", "num"), col("hits", "num"),
                          col("verdicts", "num"), col("texts with a name at 0.8 or more", "num"),
@@ -475,12 +482,17 @@ here with the reason it was replaced and the sample that showed the problem.</p>
         page("pattern/%s.html" % pid, "Pattern: " + pid, body, 1)
 
     # ----------------------------------------------------------------- models
-    per = defaultdict(lambda: dict(hi=0, mid=0, lo=0, none=0, flag=0, anti=0, talk=0, exp=0.0, anti_lo=0))
+    per = defaultdict(lambda: dict(hi=0, mid=0, lo=0, none=0, flag=0, anti=0, talk=0, exp=0.0, anti_lo=0,
+                                   body_lo=0, titled=0))
     for r in cov.values():
         d = per[r[1]]
         if r[9]:
             d["flag"] += 1; continue
         d[band(r[5])] += 1
+        if r[11] < 0.5:
+            d["body_lo"] += 1
+            if r[12] > 0:
+                d["titled"] += 1
         d["exp"] += r[6]
         if r[8]:
             d["anti"] += 1
@@ -495,7 +507,7 @@ here with the reason it was replaced and the sample that showed the problem.</p>
         link = '<a href="model/%s.html">%s</a>' % (slug(m), E(m))
         mrows.append([link, n, d["flag"], d["hi"], pct(d["hi"], n), d["mid"], d["lo"], d["none"],
                       d["anti"], d["talk"], round(d["exp"] / n, 2) if n else ""])
-        nnrows.append([link, n, d["lo"] + d["none"], pct(d["lo"] + d["none"], n), d["none"], pct(d["none"], n),
+        nnrows.append([link, n, d["body_lo"], pct(d["body_lo"], n), d["titled"], d["none"], pct(d["none"], n),
                        d["anti"], pct(d["anti"], n), d["anti_lo"]])
     page("models.html", "Models", """
 <p>One row per model. Texts are split by their best score (see the overview for the words).</p>%s""" % table(
@@ -507,9 +519,11 @@ here with the reason it was replaced and the sample that showed the problem.</p>
         mrows, sort=[4, 1], page=130))
 
     tn = defaultdict(list)
-    for r in q("SELECT text_id, norm, display, n_mentions, patterns, score, first_pos, occurrences, in_place_text "
-               "FROM text_names"):
+    for r in q("SELECT text_id, norm, display, n_mentions, patterns, score, first_pos, occurrences, in_place_text, "
+               "in_title, body_occ, body_cased FROM text_names"):
         tn[r[0]].append(r)
+    def where(x):
+        return "title only" if x[9] and not x[10] else "title and body" if x[9] else "body"
     by_model = defaultdict(list)
     for tid, r in cov.items():
         by_model[r[1]].append(tid)
@@ -522,20 +536,24 @@ here with the reason it was replaced and the sample that showed the problem.</p>
             r = cov[tid]
             names = sorted(tn.get(tid, ()), key=lambda x: (-x[5], x[6]))
             top = [x[2] for x in names if x[5] >= 0.8]
-            trows.append([tlink(tid, 1), r[2], ("flagged: " + r[9]) if r[9] else fnum(r[5]),
+            titled = [x[2] for x in names if where(x) == "title only"]
+            trows.append([tlink(tid, 1), r[2], ("flagged: " + r[9]) if r[9] else fnum(r[11]), fnum(r[12]),
                           len(top), ", ".join(top[:8]) + (" …" if len(top) > 8 else ""),
+                          ", ".join(titled[:6]) + (" …" if len(titled) > 6 else ""),
                           len(names) - len(top), r[8], r[7], read_round.get(tid, "")])
             if r[9]:
                 continue
             for x in names:
-                g = agg.setdefault(x[1], [x[2], 0.0, 0, 0, 0, set(), 0.0])
+                g = agg.setdefault(x[1], [x[2], 0.0, 0, 0, 0, set(), 0.0, 0])
                 g[1] += x[5]; g[2] += 1; g[4] += x[3]; g[5].update(x[4].split(","))
+                if where(x) == "title only":
+                    g[7] += 1
                 if x[8]:
                     g[3] += 1
                 if x[5] >= g[6]:
                     g[6] = x[5]; g[0] = x[2]
         nrows = [['<a href="../name.html?n=%s">%s</a>' % (E(k, quote=True).replace(" ", "%20"), E(g[0])),
-                  round(g[1], 2), g[2], fnum(g[6]), g[3], g[4], ", ".join(sorted(g[5]))] for k, g in agg.items()]
+                  round(g[1], 2), g[2], fnum(g[6]), g[7], g[3], g[4], ", ".join(sorted(g[5]))] for k, g in agg.items()]
         d = per[m]
         n = d["hi"] + d["mid"] + d["lo"] + d["none"]
         prs = [['<a href="../pattern/%s.html">%s</a>' % (pid, pid), fnum(prec.get(pid)), k, nt, pct(nt, n)]
@@ -556,9 +574,11 @@ description.</p>%s
             table([col("pattern", "html"), col("precision", "num"), col("hits", "num"), col("texts", "num"),
                    col("% of texts", "num")], prs, sort=[4, -1], page=60),
             table([col("name", "html"), col("expected texts", "num"), col("texts", "num"), col("best score", "num"),
+                   col("title only", "num", "texts where it is caught in a title line and occurs nowhere else"),
                    col("in place", "num"), col("hits", "num"), col("patterns")], nrows, sort=[1, -1], page=100),
-            table([col("text", "html"), col("length", "num"), col("best score"),
+            table([col("text", "html"), col("length", "num"), col("best score in body"), col("title only", "num", "best score among title-only designations"),
                    col("names ≥ 0.8", "num", "names with a score of 0.8 or more"), col("those names"),
+                   col("title-only designations"),
                    col("other strings", "num", "strings caught with a lower score"),
                    col("no-name statements", "num"), col("sentences with 'name'", "num"),
                    col("read in round", "num")], trows, page=100)), 1)
@@ -566,15 +586,16 @@ description.</p>%s
     # ------------------------------------------------------------------ names
     os.makedirs(os.path.join(SITE, "n"), exist_ok=True)
     allnames = q("SELECT norm, display, n_texts, expected, expected_new, best, n_models, n_mentions, patterns, "
-                 "top_models, df FROM names")
+                 "top_models, df, expected_title_only FROM names")
     def nrow(r):
         return ['<a href="name.html?n=%s">%s</a>' % (E(r[0], quote=True).replace(" ", "%20"), E(r[1])),
-                r[3], r[2], fnum(r[5]), r[4], r[6], r[7], len(r[0].split()),
+                r[3], r[2], fnum(r[5]), r[4], r[11], r[6], r[7], len(r[0].split()),
                 "" if r[10] is None else round(100 * r[10], 1), r[8], r[9]]
     ncols = [col("name", "html"),
              col("expected texts", "num", "sum of the name's scores over the texts it was caught in"),
              col("texts", "num", "texts where any pattern caught it"), col("best score", "num"),
              col("expected, not in place text", "num", "the same sum over the texts where the string does not occur in the place description"),
+             col("expected, title only", "num", "the same sum over the texts where it is caught in a title line and occurs nowhere else"),
              col("models", "num"), col("hits", "num"), col("words", "num"),
              col("% of all texts", "num", "for a one-word name: the share of all texts in which the word occurs in any sense. A high share marks ordinary vocabulary."),
              col("patterns"), col("most expected in")]
@@ -603,7 +624,7 @@ that names written in forms that the better patterns miss can be found here.</p>
             continue
         for x in names:
             b = hashlib.sha1(x[1].encode("utf-8")).hexdigest()[:2]
-            buckets[b].setdefault(x[1], []).append([tid, midx[cov[tid][1]], x[5], x[3], x[7], x[8], x[4]])
+            buckets[b].setdefault(x[1], []).append([tid, midx[cov[tid][1]], x[5], x[3], x[7], x[8], x[4], where(x)])
     for b, d in buckets.items():
         with open(os.path.join(SITE, "n", b + ".json"), "w", encoding="utf-8") as f:
             f.write(jdump(d))
@@ -619,11 +640,12 @@ that names written in forms that the better patterns miss can be found here.</p>
                fetch('n/models.json').then(function (r) { return r.json(); })]).then(function (res) {
     var rows = (res[0][n] || []).map(function (r) {
       return ['<a href="text.html?id=' + r[0] + '">#' + r[0] + '</a>', res[1][r[1]], r[2],
-              r[3], r[4], r[5] ? 'yes' : '', r[6]];
+              r[7], r[3], r[4], r[5] ? 'yes' : '', r[6]];
     });
     document.getElementById('head').innerHTML = '<p>' + rows.length + ' texts.</p>';
     makeTable(document.getElementById('nt'), {columns: [
       {title: 'text', type: 'html'}, {title: 'model', type: 'text'}, {title: 'score', type: 'num'},
+      {title: 'where', type: 'text', tip: 'title only: caught in a title line and occurring nowhere else'},
       {title: 'hits', type: 'num'}, {title: 'occurrences in text', type: 'num', tip: 'times the string occurs in the text, any case'},
       {title: 'also in place text', type: 'text'}, {title: 'patterns', type: 'text'}], rows: rows, pageSize: 300, sort: [2, -1]});
   });
@@ -631,19 +653,21 @@ that names written in forms that the better patterns miss can be found here.</p>
 
     # ------------------------------------------------------------------ texts
     os.makedirs(os.path.join(SITE, "x"), exist_ok=True)
-    xrows = [[tlink(tid), r[1], r[2], fnum(r[5]), sum(1 for x in tn.get(tid, ()) if x[5] >= 0.8), r[6], r[8], r[7],
+    xrows = [[tlink(tid), r[1], r[2], fnum(r[11]), fnum(r[12]), sum(1 for x in tn.get(tid, ()) if x[5] >= 0.8), r[6], r[8], r[7],
               r[10] or "none", read_round.get(tid, "")] for tid, r in sorted(cov.items()) if not r[9]]
     with open(os.path.join(SITE, "x", "texts.json"), "w", encoding="utf-8") as f:
         f.write(jdump(dict(columns=[
-            col("text", "html"), col("model"), col("length", "num"), col("best score", "num"),
+            col("text", "html"), col("model"), col("length", "num"),
+            col("best score in body", "num", "highest score among names the text uses outside a title line"),
+            col("best score, title only", "num", "highest score among title-only designations; empty when there is none"),
             col("names ≥ 0.8", "num"), col("expected names", "num", "sum of the scores of all strings caught in the text"),
             col("no-name statements", "num"), col("sentences with 'name'", "num"),
             col("corpus status", "text", "the status the corpus taggers recorded; many newer texts have none"),
             col("read in round", "num")], rows=xrows, pageSize=200, sort=[3, 1])))
     page("texts.html", "Texts",
-         """<p>Every counted text (%d) with its best score. Sorted from the lowest: the texts at the top
-are where no name was found. Filter the best score column (for example <code>&lt;0.5</code>) to make
-any cut.</p><div id=xt></div><script>tableFromUrl("xt","x/texts.json")</script>""" % len(xrows))
+         """<p>Every counted text (%d) with its best scores: in the body, and among title-only
+designations. Sorted from the lowest body score: the texts at the top are where no name was found
+in use. Filter a score column (for example <code>&lt;0.5</code>) to make any cut.</p><div id=xt></div><script>tableFromUrl("xt","x/texts.json")</script>""" % len(xrows))
 
     # --------------------------------------------------------------- no names
     rc = q("SELECT chk, date, pool, text_id, read_chars, name, then_caught, score_now, patterns_now, forms_missed, note FROM recall")
@@ -673,10 +697,14 @@ here as much as a name does. Two things are tracked.</p>
 nothing convincing was caught. These are candidates:</p>
 <table class=kv>
 <tr><td>Nothing caught by any pattern</td><td>%d texts</td></tr>
-<tr><td>Best score under 0.5</td><td>%d texts (the row above included: %d)</td></tr>
-<tr><td>Share of all counted texts</td><td>%s%%</td></tr>
+<tr><td>Best score in the body under 0.5</td><td>%d texts (the row above included)</td></tr>
+<tr><td>&nbsp; of those, with a title-only designation</td><td>%d texts: the text put a title over a section about an inhabitant and never used it again</td></tr>
+<tr><td>Share of all counted texts under 0.5</td><td>%s%%</td></tr>
 </table>
-<p>The cut at 0.5 is a choice; the <a href="texts.html">Texts</a> table can be filtered at any other.</p>
+<p>The cut at 0.5 is a choice; the <a href="texts.html">Texts</a> table can be filtered at any other.
+Title-only designations are kept apart because a title can be a name the model gave the being
+("The Floor That Eats") or the title of a section ("What it wants"); measured on read samples, a
+heading that never recurs designates an inhabitant about 4 times in 10, a list head about 7 in 10.</p>
 <p><b>How the candidates will be checked.</b> At the end of the study a large random sample of the
 candidates will be given to language models with one question: are there names or titles of
 beings in this text? A yes-or-no question is easier to answer reliably than a request to list the
@@ -695,10 +723,11 @@ the others were about something else ("colours that have no names"). A text can 
 still give a name ("They are called the Hollow Choir, though they have no name for themselves"):
 the third column shows whether a name was caught in the same text.</p>
 <div id=at></div><script>tableFromUrl("at","x/anti.json")</script>
-""" % (stats["best_none"], lo_n, stats["best_none"], pct(lo_n, okn),
+""" % (stats["best_none"], stats["body_under_50"], stats["titled_any_not_named"], pct(stats["body_under_50"], okn),
        table([col("check", "num"), col("texts drawn from"), col("texts read", "num"),
               col("no name seen", "num"), col("%", "num")], eyerows, sort=[0, 1]),
-       table([col("model", "html"), col("texts", "num"), col("best < 0.5 or nothing", "num"), col("%", "num"),
+       table([col("model", "html"), col("texts", "num"), col("no name in the body", "num", "best score in the body under 0.5"), col("%", "num"),
+              col("of those, titled", "num", "texts with a title-only designation"),
               col("nothing caught", "num"), col("% nothing", "num"),
               col("texts that say there is no name", "num"), col("% saying so", "num"),
               col("saying so, and no name caught", "num", "texts with a no-name statement and a best score under 0.5")],

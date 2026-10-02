@@ -23,6 +23,13 @@ Each pattern is a dict:
             before this pattern runs (the pattern does not look inside them)
   reject    optional regex; a capture that matches it is dropped
   max_words optional cap on the number of words in the capture
+  position  'title' for a pattern that reads a title line or a label at the head of a line
+            (set automatically for the patterns that have `title`)
+  title, body  for title patterns: which kind of title line (a key of TITLE_REGEX) and what
+            happens to the captured string in the rest of the text (see TITLE_REGEX)
+  labels_from  optional list of earlier pattern ids: a verdict given on a hit of one of
+            those patterns applies to this pattern where both captured the same string at
+            the same place (used when a pattern is split into parts)
   min_occ   optional: the captured string must occur at least this many times in the
             text (any case, as a whole word or phrase), counting the hit itself
   max_df    optional: a one-word capture is dropped when the word occurs in more than
@@ -74,6 +81,21 @@ MASKS = {
     # capitalisation patterns do not look inside them. The heading and bold-line
     # patterns read these lines instead.
     "title_lines": r"^#{1,6}[ \t].*$|^[ \t]*%s?\*\*[^*\n]+\*\*[ \t]*:?[ \t]*$" % MARK,
+}
+
+# The three kinds of title line. A title pattern names one of them in `title` and says in
+# `body` what must happen to the captured string in the rest of the text:
+#   'only'   it does not occur again                      (a title that only heads a section)
+#   'lower'  it occurs again, but never with these capitals   ("The Listeners" ... "the listeners")
+#   'cased'  it occurs again with the same capitals        ("Veilstalkers" ... "Veilstalkers are")
+# Every title line falls under exactly one of the three.
+TITLE_REGEX = {
+    "heading": r"^#{1,6}[ \t]+%s?\**(?P<name>[^\n#*(:%s]+?)\**[ \t]*(?:[(:%s].*)?$" % (MARK, DASH, DASH),
+    "bold_line": (r"^[ \t]*%s?\*\*%s?(?P<name>[^*\n(:%s]+?)(?:[ \t]*[(:%s][^*\n]*)?\*\*[ \t]*(?:\([^)\n]*\))?[ \t]*:?[ \t]*$"
+                  % (MARK, MARK, DASH, DASH)),
+    "list_head": (r"^[ \t]*%s(?P<name>[A-Z][^\n.:!?*(,]{1,60}?)[ \t]*(?:\([^)\n]*\))?[ \t]*$"
+                  r"|^[ \t]*%s(?P<name2>[A-Z][^\n.:!?*()%s]{1,60}?)[ \t]*(?:\([^)\n]*\))?[ \t]*(?::|[%s]| - )[ \t]*\S"
+                  % (MARK, NUM, DASH, DASH)),
 }
 
 # Words written in capitals for reasons other than naming (acronyms, a single letter,
@@ -138,15 +160,6 @@ def P(id, version, round, remark, family, regex, origin, what, note="",
 
 PATTERNS = [
     # ================================================================ headings
-    P("md_heading", 2, 2,
-      "",
-      "heading",
-      r"^#{1,6}[ \t]+%s?\**(?P<name>[^\n#*(:%s]+?)\**[ \t]*(?:[(:%s].*)?$" % (MARK, DASH, DASH),
-      (4117, "# The Phonic Resonants"),
-      "A Markdown heading line, up to the first colon, dash or parenthesis. Models often "
-      "put the name of a kind or of a single being in a heading.",
-      "Headings also carry section titles ('Form and Subsistence', 'What it wants').",
-      flags="m", stop="section_words", max_words=10),
     P("heading_second", 1, 2,
       "",
       "heading",
@@ -157,19 +170,9 @@ PATTERNS = [
       "second name for the same kind.",
       "The second part is as often a description ('the unseen citizens that make "
       "everything possible').",
-      flags="m", stop="section_words", max_words=10),
+      flags="m", stop="section_words", max_words=10, position="title"),
 
     # ==================================================================== bold
-    P("bold_line", 2, 2,
-      "",
-      "markup",
-      r"^[ \t]*%s?\*\*%s?(?P<name>[^*\n(:%s]+?)(?:[ \t]*[(:%s][^*\n]*)?\*\*[ \t]*(?:\([^)\n]*\))?[ \t]*:?[ \t]*$"
-      % (MARK, MARK, DASH, DASH),
-      (8747, "**The Grazers (The Slate Herds)**"),
-      "A line that holds only a bold span: a bold sub-heading naming the kind described "
-      "below it. Read up to the first colon, dash or parenthesis.",
-      "Bold lines are also used for section titles.",
-      flags="m", stop="section_words", max_words=10),
     P("bold_second", 1, 2,
       "",
       "markup",
@@ -177,7 +180,7 @@ PATTERNS = [
       % (MARK, DASH, DASH, DASH),
       (9842, "**The Inhabitants: the Quiet Ones**"),
       "The second part of a bold title line, after a colon or dash.",
-      flags="m", stop="section_words", max_words=10),
+      flags="m", stop="section_words", max_words=10, position="title"),
     P("bold_paren_alias", 2, 2,
       "",
       "markup",
@@ -209,7 +212,7 @@ PATTERNS = [
       "and then its description.",
       "The same position holds attribute labels ('**Form:**', '**Behavior:**'); the "
       "commonest are removed by a stoplist, the rest remain as noise.",
-      flags="m", stop="section_words", max_words=10),
+      flags="m", stop="section_words", max_words=10, position="title"),
     P("bold_inline_cap", 4, 3,
       "",
       "markup",
@@ -251,24 +254,6 @@ PATTERNS = [
       max_words=3),
 
     # =================================================================== lists
-    P("list_head_line", 2, 2,
-      "",
-      "list",
-      r"^[ \t]*%s(?P<name>[A-Z][^\n.:!?*(,]{1,60}?)[ \t]*(?:\([^)\n]*\))?[ \t]*$" % MARK,
-      (15886, "1.  Slurry-Eaters  \n   • A consortium of limestone-digesting bacteria (chief genus: Calciphagea) nests in the still-liquid ribs overhead."),
-      "A numbered or bulleted line that holds only a short capitalised phrase: the name "
-      "of the kind described under it.",
-      "Roman-numbered lines are usually group titles ('I.  The Invisible Majority').",
-      flags="m", stop="section_words", max_words=6),
-    P("list_num_lead", 1, 2,
-      "",
-      "list",
-      r"^[ \t]*%s(?P<name>[A-Z][^\n.:!?*()%s]{1,60}?)[ \t]*(?:\([^)\n]*\))?[ \t]*(?::|[%s]| - )[ \t]*\S"
-      % (NUM, DASH, DASH),
-      (15765, "3. Sluicers – the Moving Ground"),
-      "A numbered list item that opens with a short capitalised phrase, then a colon or "
-      "dash, then the description.",
-      flags="m", stop="section_words", max_words=6),
     P("list_bullet_lead", 1, 2,
       "Not sampled on its own. As part of the earlier list_head_lead, 2 of 19 bulleted items read were names.",
       "list",
@@ -278,7 +263,7 @@ PATTERNS = [
       "A bulleted list item that opens with a short capitalised phrase, then a colon or "
       "dash, then the description.",
       "Mostly attribute labels ('Skin:', 'Shelter:', 'Fate:').",
-      flags="m", stop="section_words", max_words=6),
+      flags="m", stop="section_words", max_words=6, position="title"),
     P("paren_quoted_alias", 1, 2,
       "",
       "frame",
@@ -468,30 +453,6 @@ PATTERNS = [
       "Any capitalised word or run of words that fills a pair of quotation marks.",
       "Also catches one-word quoted speech and quoted labels.",
       stop="common_caps", reject=REJECT_CAPS, max_words=10),
-    P("heading_recurring", 1, 3, "",
-      "heading",
-      r"^#{1,6}[ \t]+%s?\**(?P<name>[^\n#*(:%s]+?)\**[ \t]*(?:[(:%s].*)?$" % (MARK, DASH, DASH),
-      (10902, "# The Listeners\n\nThey are not gone. [...] the listeners came to understand that they were either the audience or, more troublingly, an interruption"),
-      "A heading whose text comes back at least twice more in the body: a name given in "
-      "the title and then used, often in lower case.",
-      "Same regular expression as md_heading; the difference is the two conditions.",
-      flags="m", stop="section_words", max_words=10, min_occ=3, max_df=0.15),
-    P("bold_line_recurring", 1, 3, "",
-      "markup",
-      r"^[ \t]*%s?\*\*%s?(?P<name>[^*\n(:%s]+?)(?:[ \t]*[(:%s][^*\n]*)?\*\*[ \t]*(?:\([^)\n]*\))?[ \t]*:?[ \t]*$"
-      % (MARK, MARK, DASH, DASH),
-      (8747, "**The Grazers (The Slate Herds)**"),
-      "A bold title line whose text comes back at least twice more in the body.",
-      "Same regular expression as bold_line; the difference is the two conditions.",
-      flags="m", stop="section_words", max_words=10, min_occ=3, max_df=0.15),
-    P("list_head_recurring", 1, 3, "",
-      "list",
-      r"^[ \t]*%s(?P<name>[A-Z][^\n.:!?*(,%s]{1,60}?)[ \t]*(?:\([^)\n]*\))?[ \t]*(?:(?::|[%s]| - ).*)?$" % (MARK, DASH, DASH),
-      (4431, "3.  Blink-shrimp (Aeropenaeus lentus)  \nAlready noticed by every visitor, yet seldom understood. [...] Blink-shrimp graze on those sugars"),
-      "The head of a list item (alone on its line or before a colon or dash) whose text "
-      "comes back at least twice more in the body.",
-      "Covers both list_head_line and the list lead patterns, with the two conditions.",
-      flags="m", stop="section_words", max_words=6, min_occ=3, max_df=0.15),
     P("live_the", 1, 3, "",
       "frame",
       r"\b(?:live|lives|dwell|dwells|move|moves|drift|drifts|roam|roams|crawl|crawls|swim|swims|nest|nests|"
@@ -547,4 +508,56 @@ PATTERNS = [
       "is the sentence around it.",
       "Wide by design: a list of places to read, not a finding.",
       yields="statement", flags="i"),
+
+    # ====================================== round 5: title lines, by what the body does next
+    P("heading_only", 1, 5, "", "heading", TITLE_REGEX["heading"],
+      (21704, "### The Floor That Eats\n\nBut the Singers are not the deepest inhabitants. [...] The fungal floor is the oldest inhabitant."),
+      "A Markdown heading whose text does not occur again in the text. It may be a title "
+      "given to one inhabitant in place of a name, or the title of a section.",
+      "About half of these head a section ('What it wants', 'The Daily Life').",
+      flags="m", stop="section_words", max_words=10, title="heading", body="only",
+      labels_from=["md_heading", "heading_recurring"], added="2026-10-03"),
+    P("heading_again_lower", 1, 5, "", "heading", TITLE_REGEX["heading"],
+      (10902, "# The Listeners\n\nThey are not gone. [...] the listeners came to understand that they were either the audience or, more troublingly, an interruption"),
+      "A Markdown heading whose text comes back in the body, but only in lower case.",
+      flags="m", stop="section_words", max_words=10, max_df=0.15, title="heading", body="lower",
+      labels_from=["md_heading", "heading_recurring"], added="2026-10-03"),
+    P("heading_again_cased", 1, 5, "", "heading", TITLE_REGEX["heading"],
+      (25504, "### 4. **Veilstalkers**\nVeilstalkers are large, quadruped creatures with a thick, shaggy coat"),
+      "A Markdown heading whose text comes back in the body with the same capitals: the "
+      "text goes on using the title as a name.",
+      flags="m", stop="section_words", max_words=10, max_df=0.15, title="heading", body="cased",
+      labels_from=["md_heading", "heading_recurring"], added="2026-10-03"),
+    P("bold_line_only", 1, 5, "", "markup", TITLE_REGEX["bold_line"],
+      (11969, "**The Pale Shape in the Corridor**\n\nThis is the one I keep coming back to. [...] The eel is the city's mouth"),
+      "A line that holds only a bold span, whose text does not occur again in the text.",
+      "As with headings: a title for an inhabitant, or the title of a section.",
+      flags="m", stop="section_words", max_words=10, title="bold_line", body="only",
+      labels_from=["bold_line", "bold_line_recurring"], added="2026-10-03"),
+    P("bold_line_again_lower", 1, 5, "", "markup", TITLE_REGEX["bold_line"],
+      (23300, "**The grazers.**"),
+      "A bold title line whose text comes back in the body, but only in lower case.",
+      flags="m", stop="section_words", max_words=10, max_df=0.15, title="bold_line", body="lower",
+      labels_from=["bold_line", "bold_line_recurring"], added="2026-10-03"),
+    P("bold_line_again_cased", 1, 5, "", "markup", TITLE_REGEX["bold_line"],
+      (8747, "**The Grazers (The Slate Herds)**"),
+      "A bold title line whose text comes back in the body with the same capitals.",
+      flags="m", stop="section_words", max_words=10, max_df=0.15, title="bold_line", body="cased",
+      labels_from=["bold_line", "bold_line_recurring"], added="2026-10-03"),
+    P("list_head_only", 1, 5, "", "list", TITLE_REGEX["list_head"],
+      (15886, "1.  Slurry-Eaters  \n   \u2022 A consortium of limestone-digesting bacteria (chief genus: Calciphagea) nests in the still-liquid ribs overhead."),
+      "The head of a list item (alone on its line, or numbered and followed by a colon or "
+      "dash) whose text does not occur again in the text.",
+      flags="m", stop="section_words", max_words=6, title="list_head", body="only",
+      labels_from=["list_head_line", "list_num_lead", "list_head_recurring"], added="2026-10-03"),
+    P("list_head_again_lower", 1, 5, "", "list", TITLE_REGEX["list_head"],
+      (21039, "- The concords: emergent, long-lived superorganisms of sign"),
+      "The head of a list item whose text comes back in the body, but only in lower case.",
+      flags="m", stop="section_words", max_words=6, max_df=0.15, title="list_head", body="lower",
+      labels_from=["list_head_line", "list_num_lead", "list_head_recurring"], added="2026-10-03"),
+    P("list_head_again_cased", 1, 5, "", "list", TITLE_REGEX["list_head"],
+      (4431, "3.  Blink-shrimp (Aeropenaeus lentus)  \nAlready noticed by every visitor, yet seldom understood. [...] Blink-shrimp graze on those sugars"),
+      "The head of a list item whose text comes back in the body with the same capitals.",
+      flags="m", stop="section_words", max_words=6, max_df=0.15, title="list_head", body="cased",
+      labels_from=["list_head_line", "list_num_lead", "list_head_recurring"], added="2026-10-03"),
 ]

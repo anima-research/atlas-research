@@ -61,6 +61,21 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
   were beings than places.
 - Sample counts shown on the site are computed from `labels.jsonl`, never typed by hand.
 
+## Title only: the third state
+
+A string caught in a title line (heading, bold line, head of a list item) that occurs nowhere
+else in the text is kept apart as "title only". It may be a title the model gave one inhabitant
+in place of a name ("The Floor That Eats") or the title of a section ("What it wants"); the two
+are not told apart, and the text is not forced into "named" or "not named". Each name in a text
+records it (`in_title`, `body_occ`, `body_cased` in `text_names`); each text has a best score in
+the body and a best score among title-only designations (`text_cov`).
+
+Title lines are read by nine patterns: three kinds of line, each split by what the body does
+with the title (never again / again in lower case / again with the same capitals). The split was
+made because the precision differs: a heading that never recurs designates an inhabitant 0.38 of
+the time, one that recurs with the same capitals 0.94. A pattern split out of earlier ones
+inherits their verdicts where it captures the same place (`labels_from`).
+
 ## Texts without names
 
 A text with no name, and a text that says its beings have no name, are part of what is studied.
@@ -90,8 +105,7 @@ A text with no name, and a text that says its beings have no name, are part of w
   them"), to be read off the hits of the naming-verb patterns.
 - `live_the` is mostly wrong on verbs that take an object (roam the, work the); "live the" alone
   was right 6 times in 10.
-- Forms seen in recall check 3 and not yet written as patterns: a title that designates one
-  inhabitant and does not recur ("The Floor That Eats"); a numbered heading followed by the same
-  capitalised name opening the next sentence without an article ("Glimmerbark Serpents are");
-  the second compound of a pair sharing one "the"; bold lower-case compound after a dash.
+- Forms seen in recall check 3 and not yet written as patterns: the second compound of a pair
+  sharing one "the" ("the wire-weavers and spore-harvesters"); a bold lower-case compound after
+  a dash. (The title forms seen there are now covered by the title states.)
 - A fresh recall check is due at the start of each round (`recall_add.py`).

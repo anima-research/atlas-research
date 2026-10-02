@@ -108,6 +108,36 @@ def occurrences(low, n):
     return len(re.findall(r"(?<![a-z])" + re.escape(n) + r"(?![a-z])", low))
 
 
+def occurrences_cased(text, disp):
+    """The same count with capitals as written (text with straight apostrophes)."""
+    return len(re.findall(r"(?<![A-Za-z])" + re.escape(disp) + r"(?![A-Za-z])", text))
+
+
+TITLE_RX = {k: re.compile(v, re.M) for k, v in P.TITLE_REGEX.items()}
+
+
+def title_lines(text):
+    """Every title-line capture of the text: norm -> {start: cleaned capture}."""
+    out = defaultdict(dict)
+    for fam, rx in TITLE_RX.items():
+        for m in rx.finditer(text):
+            g = "name" if m.group("name") is not None else "name2"
+            surf = m.group(g)
+            n = norm(surf)
+            if n:
+                out[n][m.start(g)] = clean(surf)
+    return out
+
+
+def title_cell(low, straight, titles, n, disp):
+    """What the body of the text does with a title: (cell, body count, body count with the
+    same capitals). Occurrences inside title lines are not counted as body."""
+    spans = titles.get(n, {})
+    body = max(0, occurrences(low, n) - len(spans))
+    cased = max(0, occurrences_cased(straight, disp) - sum(1 for d in spans.values() if d == disp))
+    return ("cased" if cased >= 1 else "lower" if body >= 1 else "only"), body, cased
+
+
 def scan(row):
     global COMPILED
     if COMPILED is None:
@@ -118,6 +148,7 @@ def scan(row):
     low = None
     occ = {}
     seen_st = set()
+    titles = straight = None
     for p, rx in COMPILED:
         stop = STOPS.get(p.get("stop") or "", ())
         mw = p.get("max_words")
@@ -161,6 +192,13 @@ def scan(row):
                 continue
             if not re.search(r"[a-z]", n):
                 continue
+            if p.get("title"):
+                if titles is None:
+                    titles = title_lines(text)
+                    straight = text.replace("\u2019", "'")
+                    low = straight.lower()
+                if title_cell(low, straight, titles, n, clean(surf))[0] != p["body"]:
+                    continue
             if p.get("max_df") and " " not in n and DF.get(n, 0) > p["max_df"]:
                 continue
             if p.get("min_occ"):
@@ -237,14 +275,16 @@ def main():
     CREATE TABLE text_names (
       text_id INTEGER, norm TEXT, display TEXT, n_mentions INTEGER, patterns TEXT,
       score REAL, first_pos INTEGER, occurrences INTEGER, in_place_text INTEGER,
+      in_title INTEGER, body_occ INTEGER, body_cased INTEGER,
       PRIMARY KEY (text_id, norm));
     CREATE TABLE text_cov (
       text_id INTEGER PRIMARY KEY, model TEXT, length INTEGER, n_hits INTEGER,
       n_names INTEGER, best REAL, expected REAL, n_statements INTEGER, n_anti INTEGER,
-      flag TEXT, tagged TEXT);
+      flag TEXT, tagged TEXT, best_body REAL, best_title_only REAL);
     CREATE TABLE names (
       norm TEXT PRIMARY KEY, display TEXT, n_texts INTEGER, expected REAL, expected_new REAL,
-      best REAL, n_models INTEGER, n_mentions INTEGER, patterns TEXT, top_models TEXT, df REAL);
+      best REAL, n_models INTEGER, n_mentions INTEGER, patterns TEXT, top_models TEXT, df REAL,
+      expected_title_only REAL);
     CREATE TABLE pattern_model (pattern_id TEXT, model TEXT, n_mentions INTEGER, n_texts INTEGER);
     CREATE TABLE readings (round INTEGER, text_id INTEGER, basis TEXT, saw TEXT, note TEXT);
     CREATE TABLE labels (text_id INTEGER, pattern_id TEXT, start INTEGER, end INTEGER,
@@ -272,17 +312,25 @@ def main():
     live = defaultdict(list)
     for tid, pid, s, e, surf, n in mentions:
         live[(pid, tid)].append((s, e))
+    # A pattern split out of earlier ones (`labels_from`) inherits their verdicts where it
+    # captures at the same place.
+    heirs = defaultdict(list)
+    for p in P.PATTERNS:
+        for src in p.get("labels_from", ()):
+            heirs[src].append(p["id"])
+    active_ids = {p["id"] for p in P.PATTERNS}
     ev = defaultdict(Counter)
     for l in labels:
         pid = l["pattern"]
         db.execute("INSERT INTO labels VALUES (?,?,?,?,?,?,?)", (
             l["text"], pid, l["start"], l["end"], l["surface"], l["verdict"], l.get("round")))
-        if any(s < l["end"] and e > l["start"] for s, e in live.get((pid, l["text"]), ())):
-            ev[pid][l["verdict"]] += 1
-        else:
-            ev[pid]["gone"] += 1
-            if l["verdict"] in "xg":
-                ev[pid]["gone_not"] += 1
+        for target in ([pid] if pid in active_ids else []) + heirs.get(pid, []):
+            if any(s < l["end"] and e > l["start"] for s, e in live.get((target, l["text"]), ())):
+                ev[target][l["verdict"]] += 1
+            elif target == pid:
+                ev[pid]["gone"] += 1
+                if l["verdict"] in "xg":
+                    ev[pid]["gone_not"] += 1
     prec, nread = {}, {}
     for pid, c in ev.items():
         read = sum(c[k] for k in "bptsx")
@@ -327,49 +375,67 @@ def main():
         per_text[tid][n].append((pid, s, surf))
         tc[tid]["hits"] += 1
 
+    # A name is "title only" in a text when it was caught in a title line (or a label at
+    # the head of a line) and the string does not occur anywhere else in the text.
+    title_like = {p["id"] for p in P.PATTERNS if p.get("title") or p.get("position") == "title"}
     name_rows = []
     agg = defaultdict(lambda: dict(texts=0, models=Counter(), n=0, disp=None, pats=set(),
-                                   exp=0.0, exp_new=0.0, best=0.0))
+                                   exp=0.0, exp_new=0.0, exp_title=0.0, best=0.0))
     best, expected, n_names = Counter(), Counter(), Counter()
+    best_body, best_title = Counter(), Counter()
     score_of = {}
     for tid, byname in per_text.items():
-        low = texts[tid].casefold()
+        straight = texts[tid].replace("\u2019", "'")
+        low = straight.lower()
         place = places.get(meta[tid][2], "")
         for n, hits in byname.items():
             disp = Counter(clean(h[2]) for h in hits).most_common(1)[0][0]
             pats = sorted(set(h[0] for h in hits))
             score = max((prec.get(p) or 0.0) for p in pats)
             in_place = 1 if n in place else 0
+            tspans = {h[1]: clean(h[2]) for h in hits if h[0] in title_like}
+            tot = occurrences(low, n)
+            body = max(0, tot - len(tspans))
+            cased = max(0, occurrences_cased(straight, disp) - sum(1 for d in tspans.values() if d == disp))
+            title_only = bool(tspans) and body == 0
             name_rows.append((tid, n, disp, len(hits), ",".join(pats), score,
-                              min(h[1] for h in hits), low.count(n), in_place))
+                              min(h[1] for h in hits), tot, in_place, len(tspans), body, cased))
             score_of[(tid, n)] = (score, pats)
             n_names[tid] += 1
             expected[tid] += score
             if score > best[tid]:
                 best[tid] = score
+            if title_only:
+                if score > best_title[tid]:
+                    best_title[tid] = score
+            elif score > best_body[tid]:
+                best_body[tid] = score
             if flags[tid]:
                 continue
             g = agg[n]
             g["texts"] += 1; g["models"][meta[tid][0]] += score; g["n"] += len(hits)
             g["pats"].update(pats); g["exp"] += score
+            if title_only:
+                g["exp_title"] += score
             if not in_place:
                 g["exp_new"] += score
             if g["disp"] is None or score > g["best"]:
                 g["disp"] = disp
             if score > g["best"]:
                 g["best"] = score
-    db.executemany("INSERT INTO text_names VALUES (?,?,?,?,?,?,?,?,?)", name_rows)
+    db.executemany("INSERT INTO text_names VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", name_rows)
     for tid, (model, length, _place) in meta.items():
         c = tc[tid]
-        db.execute("INSERT INTO text_cov VALUES (?,?,?,?,?,?,?,?,?,?,?)", (
+        db.execute("INSERT INTO text_cov VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (
             tid, model, length, c["hits"], n_names[tid], best[tid], round(expected[tid], 3),
-            c["st"], c["anti"], flags[tid], tagged.get(tid, "")))
+            c["st"], c["anti"], flags[tid], tagged.get(tid, ""), best_body[tid], best_title[tid]))
     for n, g in agg.items():
         top = ", ".join("%s %.0f" % (m.split("/")[-1], k) for m, k in g["models"].most_common(4) if k >= 0.5)
-        db.execute("INSERT INTO names VALUES (?,?,?,?,?,?,?,?,?,?,?)", (
+        db.execute("INSERT INTO names VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (
             n, g["disp"], g["texts"], round(g["exp"], 2), round(g["exp_new"], 2), g["best"],
             sum(1 for k in g["models"].values() if k > 0) or len(g["models"]), g["n"],
-            ",".join(sorted(g["pats"])), top, df.get(n) if " " not in n else None))
+            ",".join(sorted(g["pats"])), top, df.get(n) if " " not in n else None,
+            round(g["exp_title"], 2)))
     db.executemany("INSERT INTO pattern_model VALUES (?,?,?,?)",
                    [(pid, model, k, len(pm_t[(pid, model)])) for (pid, model), k in pm_m.items()])
 
@@ -398,6 +464,10 @@ def main():
         best_50_80=sum(1 for t in ok if 0.5 <= best[t] < 0.8),
         best_under_50=sum(1 for t in ok if n_names[t] and best[t] < 0.5),
         best_none=sum(1 for t in ok if not n_names[t]),
+        body_80=sum(1 for t in ok if best_body[t] >= 0.8),
+        body_under_50=sum(1 for t in ok if best_body[t] < 0.5),
+        titled_not_named=sum(1 for t in ok if best_body[t] < 0.5 and best_title[t] >= 0.5),
+        titled_any_not_named=sum(1 for t in ok if best_body[t] < 0.5 and best_title[t] > 0),
         anti_texts=sum(1 for t in ok if tc[t]["anti"]),
         name_talk_texts=sum(1 for t in ok if tc[t]["st"]),
         distinct_strings=len(agg),

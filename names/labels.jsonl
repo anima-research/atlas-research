@@ -1415,3 +1415,100 @@
 {"pattern": "italic_lower", "text": 6103, "start": 1436, "end": 1448, "surface": "after-effect", "verdict": "x", "round": 4, "seed": "2"}
 {"pattern": "italic_lower", "text": 23503, "start": 1557, "end": 1567, "surface": "impression", "verdict": "x", "round": 4, "seed": "2"}
 {"pattern": "italic_lower", "text": 6132, "start": 2913, "end": 2921, "surface": "variable", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "heading_only", "text": 6762, "start": 8565, "end": 8584, "surface": "The Animals of Damp", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 31899, "start": 2, "end": 26, "surface": "The People of Vellum Row", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 5509, "start": 4413, "end": 4441, "surface": "The Landscape and Its Energy", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 21066, "start": 10742, "end": 10760, "surface": "The Basin of Glass", "verdict": "p", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 23239, "start": 9807, "end": 9827, "surface": "The Fifth Inhabitant", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 6632, "start": 12756, "end": 12798, "surface": "Why You Might Notice It Without Knowing It", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 21789, "start": 7392, "end": 7411, "surface": "The End of the Cord", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 11437, "start": 2, "end": 32, "surface": "The Watcher in the Stillgarden", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 29642, "start": 4135, "end": 4151, "surface": "The Zinc-Grazers", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 10232, "start": 5611, "end": 5631, "surface": "The Unseen Catalysts", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 30399, "start": 39930, "end": 39946, "surface": "If You Meet Them", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 23655, "start": 5988, "end": 6008, "surface": "Language and Silence", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 13917, "start": 60, "end": 79, "surface": "The Sound-Shepherds", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 26267, "start": 5256, "end": 5269, "surface": "Who they know", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 14373, "start": 2381, "end": 2396, "surface": "The air between", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 3378, "start": 2, "end": 44, "surface": "What Lives in the Grotto of Warm Pressures", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 19769, "start": 247, "end": 265, "surface": "The Grinding Choir", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_only", "text": 3325, "start": 8274, "end": 8301, "surface": "Their Use of the Structures", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 6571, "start": 3441, "end": 3461, "surface": "The Glintveil Swarms", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 10222, "start": 3532, "end": 3546, "surface": "Scrap-Crawlers", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 18823, "start": 2369, "end": 2390, "surface": "The Pulsing Consumers", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 11649, "start": 11595, "end": 11606, "surface": "The Walkers", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 31133, "start": 4663, "end": 4672, "surface": "The Climb", "verdict": "t", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 22294, "start": 4830, "end": 4842, "surface": "The Whippets", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 31766, "start": 2, "end": 13, "surface": "The Tenants", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 3159, "start": 541, "end": 551, "surface": "The Lichen", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 31010, "start": 12341, "end": 12355, "surface": "The Quickening", "verdict": "t", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 21010, "start": 7461, "end": 7477, "surface": "The column worms", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 26702, "start": 6919, "end": 6924, "surface": "Havel", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 11187, "start": 2, "end": 15, "surface": "The Listeners", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 19727, "start": 294, "end": 310, "surface": "The Weaver-Lungs", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 26376, "start": 12594, "end": 12597, "surface": "Her", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "heading_again_cased", "text": 10055, "start": 2104, "end": 2123, "surface": "The Cogmind Mycelia", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 21022, "start": 11866, "end": 11873, "surface": "Freeze.", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 3518, "start": 5385, "end": 5403, "surface": "Life in the Depths", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 17589, "start": 275, "end": 298, "surface": "Who or what lives here?", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 8744, "start": 3566, "end": 3581, "surface": "The Decomposers", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 23150, "start": 2244, "end": 2277, "surface": "The Structures That Dream in Rust", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 22899, "start": 3842, "end": 3862, "surface": "The Fractal Bloomers", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 8720, "start": 2844, "end": 2861, "surface": "The Voice Itself.", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 28993, "start": 7514, "end": 7543, "surface": "They have a social structure.", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 735, "start": 180, "end": 210, "surface": "First, what doesn't live here.", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 27931, "start": 4794, "end": 4814, "surface": "The Apex of Slowness", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 6548, "start": 4748, "end": 4772, "surface": "Breath as a tool of work", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 8590, "start": 5495, "end": 5514, "surface": "The Drift Particles", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 9919, "start": 5359, "end": 5380, "surface": "No people abide here.", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 22791, "start": 1364, "end": 1412, "surface": "The Weeping Stones and Their Symbiotic Guardians", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 17296, "start": 2178, "end": 2207, "surface": "The Lifecycle of the Membrane", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_only", "text": 10957, "start": 3939, "end": 3963, "surface": "The scavengers know her.", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 11738, "start": 11429, "end": 11445, "surface": "The Consolidants", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 25527, "start": 343, "end": 364, "surface": "Thermophilic Bacteria", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 3133, "start": 9795, "end": 9813, "surface": "The Pool-Flickers.", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 25475, "start": 1953, "end": 1967, "surface": "Aerial Gliders", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 28255, "start": 9868, "end": 9886, "surface": "The Chamber Itself", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 12498, "start": 2687, "end": 2700, "surface": "The Megafauna", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 25369, "start": 3748, "end": 3754, "surface": "Mosses", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 11888, "start": 9899, "end": 9908, "surface": "The Frogs", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 26038, "start": 1132, "end": 1139, "surface": "The Dog", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 20858, "start": 1369, "end": 1385, "surface": "Iridescent Algae", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 8744, "start": 1919, "end": 1930, "surface": "The Gliders", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 14686, "start": 45, "end": 53, "surface": "The Mat.", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 27601, "start": 358, "end": 375, "surface": "The Mist-Skippers", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 605, "start": 10217, "end": 10232, "surface": "The Almost-Fish", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 28402, "start": 2, "end": 35, "surface": "What Lives in the Manifold Hollow", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 10248, "start": 2138, "end": 2149, "surface": "Rock-Lichen", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 28417, "start": 2, "end": 29, "surface": "What Lives in the Salt Nave", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 6803, "start": 3081, "end": 3099, "surface": "The Water-Children", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 14643, "start": 2133, "end": 2145, "surface": "The Rosettes", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 10277, "start": 1857, "end": 1870, "surface": "Mire-Mantises", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 13686, "start": 4698, "end": 4722, "surface": "The Microbial Alchemists", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 17674, "start": 10871, "end": 10881, "surface": "The Shrimp", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 25539, "start": 1327, "end": 1342, "surface": "Mineral Wraiths", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "bold_line_again_lower", "text": 12341, "start": 3730, "end": 3740, "surface": "The Drones", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15815, "start": 4359, "end": 4378, "surface": "The Thought-blooded", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15871, "start": 4292, "end": 4301, "surface": "Sky-Goats", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 4396, "start": 1182, "end": 1196, "surface": "Kelp Shepherds", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15778, "start": 46, "end": 60, "surface": "The Under-Skin", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15829, "start": 560, "end": 578, "surface": "The Filament Cloud", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15805, "start": 1688, "end": 1704, "surface": "The Plateau Folk", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15896, "start": 8945, "end": 8951, "surface": "Humans", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15886, "start": 1121, "end": 1134, "surface": "Hush-Plankton", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15867, "start": 1903, "end": 1913, "surface": "Moor-glass", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 13999, "start": 53, "end": 76, "surface": "The Plant-Consciousness", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15779, "start": 1691, "end": 1710, "surface": "The Cycloidal Birds", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15785, "start": 4282, "end": 4299, "surface": "Nomad Technicians", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 4466, "start": 2308, "end": 2318, "surface": "Glass-eels", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15901, "start": 2468, "end": 2479, "surface": "Thermistors", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 4466, "start": 2917, "end": 2927, "surface": "Mist-moths", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15816, "start": 4003, "end": 4018, "surface": "The Rust-nurses", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15880, "start": 3315, "end": 3334, "surface": "The Fulgur Mycelium", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 22513, "start": 1804, "end": 1811, "surface": "Mammals", "verdict": "x", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 4438, "start": 5459, "end": 5470, "surface": "Copper Eels", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15895, "start": 29, "end": 51, "surface": "THE UNSPOKEN ARCHITECT", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15896, "start": 1582, "end": 1597, "surface": "Glassleaf Vines", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 4462, "start": 2554, "end": 2564, "surface": "Coil Gulls", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15871, "start": 7145, "end": 7159, "surface": "Moss Batteries", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "list_head_again_lower", "text": 15777, "start": 2021, "end": 2032, "surface": "Plate Cacti", "verdict": "b", "round": 5, "seed": "1"}
