@@ -22,13 +22,25 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
 
 ## A round
 
-1. Read texts from the uncovered pool (site: Uncovered texts). Log each in `readings.jsonl`.
+1. Read texts: a sample from the uncovered pool, and a fresh random sample of covered texts read
+   whole (`python3 show.py <ids>` marks the current hits). Log each in `readings.jsonl`; write every
+   name seen in the covered sample to `recall.jsonl`.
 2. Write or correct patterns in `patterns.py`. A changed pattern gets a new `version`; the old
    dict goes to `patterns_retired.py` with `retired_reason`.
 3. `python3 extract.py --rev 15`
 4. `python3 sample.py <pattern> --n 30`, read, then `python3 label.py <pattern> <verdicts> --round N`
+   (before changing a pattern: `python3 retire.py --reason "..." <pattern>`)
 5. Set `tier` from the verdicts (strict = at least 80% names in 30 or more read hits).
 6. `python3 extract.py --rev 15 --record "what was done"` and `python3 build_site.py --rev 15`
+
+## What counts as a name (for the verdicts)
+
+- The name of a kind, of a single being, of a place, or of a thing or practice of the inhabitants.
+- A word for a role or function that designates a kind counts: "the grazers", "the tenders",
+  "the rooters". Models often name by role, and a role word and a name are not kept apart here.
+- An ordinary species word does not count: "the crickets", "moss", "the humans".
+- A description that stands where a name would stand counts when it is used as a fixed label
+  ("the low ones", "Those Who Wait"), not when it is a passing description ("the small birds").
 
 ## Rules of the study
 
@@ -47,11 +59,15 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
 
 ## Not done yet
 
-- Places and beings are not told apart, except by "the same string is in the place text".
+- Places and beings are not told apart.
 - Singular and plural are separate names.
 - No model-specific exceptions.
 - The read-hits table on a pattern page also lists verdicts on hits the pattern no longer matches.
-- `binomial` (13 read) and `list_bullet_lead` (none read) need samples.
-- Leads seen but not yet written as patterns: a section titled "Names"; "the X — as they are
-  known"; frames that say who gives the name ("they call themselves", "the keepers call them");
-  genus names after a colon in parentheses.
+- Not yet sampled to 30: `binomial` (13 read), `list_bullet_lead` (none), `as_known` (4 hits in all).
+- Forms seen and not yet written as patterns: a bare capitalised plural opening a sentence
+  ("Wanderers, conversely, roam"); a compound with an adjective between "the" and it ("the oldest
+  shell-builders"); frames that say who gives the name ("they call themselves", "the keepers call
+  them"), to be read off the hits of the naming-verb patterns.
+- `live_the` is mostly wrong on verbs that take an object (roam the, work the); "live the" alone
+  was right 6 times in 10.
+- Recall check 3 (fresh sample of covered texts) is due at the start of round 4.

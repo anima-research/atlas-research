@@ -26,6 +26,10 @@ Each pattern is a dict:
             before this pattern runs (the pattern does not look inside them)
   reject    optional regex; a capture that matches it is dropped
   max_words optional cap on the number of words in the capture
+  min_occ   optional: the captured string must occur at least this many times in the
+            text (any case, as a whole word or phrase), counting the hit itself
+  max_df    optional: a one-word capture is dropped when the word occurs in more than
+            this share of all texts (it is ordinary vocabulary, not a coined name)
   origin    {'text': id, 'excerpt': the passage in which the form was first seen}
   what      one or two sentences: what form of naming this is
   note      what a reader should know about its weaknesses
@@ -43,7 +47,7 @@ from patterns_retired import RETIRED  # noqa: F401  (re-exported for the extract
 CAPW = r"[A-Z][A-Za-zÀ-ɏ'’]*(?:-[A-Za-z][A-Za-zÀ-ɏ'’]*)*"
 # Small words that may sit inside a capitalised name: Geometers of the Gyre,
 # The One Who Waits at the Center, the House That Drinks
-LINK = (r"(?:of|in|at|on|to|for|from|with|under|beneath|between|beyond|within|"
+LINK = (r"(?:of|in|at|on|for|with|under|beneath|between|beyond|within|"
         r"without|who|that|which|de|la|du|von)")
 # One or more capitalised words, joined by spaces and optional small words. Never
 # crosses a line break.
@@ -106,6 +110,19 @@ STOPLISTS = {
         "what they want", "what it does", "first answer", "and you", "you", "names",
         "work", "speech", "atmosphere", "their bodies", "interaction with the environment",
     ],
+    # Nouns ending in -ers or -ors that are not names of agents.
+    "not_agents": """
+        corners louvers boulders corridors flowers floors shelters antlers towers chambers
+        rivers waters layers fingers feathers shoulders clusters timbers embers numbers
+        letters members borders others colors colours doors ladders gutters girders
+        rafters shutters cylinders boilers rotors motors sensors reactors generators
+        elevators conveyors mirrors anchors vapors vapours odors odours tremors errors
+        interiors exteriors centers centres meters metres quarters papers fibers fibres
+        characters matters manners orders powers showers summers winters hours
+        containers filters transformers condensers radiators propellers rollers hammers
+        cinders spiders otters beavers lobsters oysters vipers plovers tigers badgers
+        roosters tiers
+        """.split(),
 }
 
 
@@ -170,7 +187,7 @@ PATTERNS = [
       "The parenthesis may hold a role description instead of a second name ('Base "
       "Population / Prey / Engineers of Erosion').",
       max_words=10),
-    P("bold_subject", 1, 2, "wide",
+    P("bold_subject", 2, 3, "wide",
       "With 'The' before it the span was a name 14 times of 16 read; without, 6 of 13.",
       "markup",
       r"^[ \t]*%s?\*\*(?:[Tt]he[ \t]+)?(?P<name>%s)\*\*[ \t]+(?=[a-z])" % (MARK, NAME),
@@ -192,7 +209,7 @@ PATTERNS = [
       "The same position holds attribute labels ('**Form:**', '**Behavior:**'); the "
       "commonest are removed by a stoplist, the rest remain as noise.",
       flags="m", stop="section_words", max_words=10),
-    P("bold_inline_cap", 3, 2, "strict",
+    P("bold_inline_cap", 4, 3, "strict",
       "",
       "markup",
       r"(?:(?:(?<=[A-Za-z,;:)%s])|(?<=[A-Za-z)%s][.!?]))[ \t]+|(?<=[%s(]))"
@@ -214,7 +231,7 @@ PATTERNS = [
       max_words=3),
 
     # ================================================================== italic
-    P("italic_cap", 2, 2, "strict",
+    P("italic_cap", 3, 3, "strict",
       "",
       "markup",
       r"(?<![*\w])\*(?:[Tt]he[ \t]+)?(?P<name>%s)\*(?![*\w])" % NAME,
@@ -271,7 +288,7 @@ PATTERNS = [
       max_words=6),
 
     # ========================================================== capitalisation
-    P("the_cap", 2, 2, "strict",
+    P("the_cap", 3, 3, "strict",
       "",
       "capitalisation",
       r"\b[Tt]he[ \t]+(?P<name>%s)" % NAME,
@@ -281,14 +298,14 @@ PATTERNS = [
       "Catches names of places and things as well as of beings ('the Khas Plateau', 'the "
       "Flats').",
       stop="common_caps", mask="title_lines", reject=REJECT_CAPS, max_words=10),
-    P("a_cap", 2, 2, "strict",
+    P("a_cap", 3, 3, "strict",
       "",
       "capitalisation",
       r"\b[Aa]n?[ \t]+(?P<name>%s)" % NAME,
       (4117, "A Tonemind can extend its consciousness through the calcified spires"),
       "'a' or 'an' followed by a capitalised word: one member of a named kind.",
       stop="common_caps", mask="title_lines", reject=REJECT_CAPS, max_words=10),
-    P("cap_mid", 2, 2, "strict",
+    P("cap_mid", 3, 3, "strict",
       "",
       "capitalisation",
       r"(?<![A-Za-z'’-])(?!(?:the|a|an)[ ])[a-z][a-z'’-]*[,;]?[ ](?P<name>%s)" % NAME,
@@ -298,7 +315,7 @@ PATTERNS = [
       "Also catches ordinary proper nouns and capitalised concepts. Most hits are the "
       "name of the place, not of a being.",
       stop="common_caps", mask="title_lines", reject=REJECT_CAPS, max_words=10),
-    P("or_alias", 1, 2, "strict",
+    P("or_alias", 2, 3, "strict",
       "",
       "capitalisation",
       r",?[ \t]+or(?:,?[ \t]+(?:simply|just|perhaps|sometimes|more[ \t]+often|occasionally|else))?,?"
@@ -318,7 +335,7 @@ PATTERNS = [
       max_words=2),
 
     # ================================================================== frames
-    P("frame_call_marked", 2, 2, "strict",
+    P("frame_call_marked", 3, 3, "strict",
       "",
       "frame",
       CALL + r"(?:,[^,\n]{1,60},)?(?:[ \t]+(?:simply|only|just|merely))?"
@@ -417,17 +434,116 @@ PATTERNS = [
       max_words=14),
 
     # =============================================================== statement
-    P("anti_name", 1, 1, "wide",
+    P("anti_name", 2, 3, "wide",
       "",
       "statement",
-      r"[^.!?\n]*\b(?:no[ \t]+names?|nameless|unnamed|un-?nam(?:e)?able|"
+      r"\b(?:no[ \t]+names?|nameless|unnamed|un-?nam(?:e)?able|"
       r"without[ \t]+(?:a[ \t]+)?names?|never[ \t]+(?:been[ \t]+)?named|"
       r"rather[ \t]+than[ \t]+names?|not[ \t]+(?:a|its|their|her|his)[ \t]+(?:real[ \t]+|true[ \t]+)?name|"
-      r"no[ \t]+word[ \t]+for[ \t]+(?:itself|themselves|what[ \t]+(?:it|they)))\b[^.!?\n]*[.!?]?",
+      r"no[ \t]+word[ \t]+for[ \t]+(?:itself|themselves|what[ \t]+(?:it|they))|"
+      r"not[ \t]+(?:easily[ \t]+|readily[ \t]+)?named|(?:cannot|can't|could[ \t]+not)[ \t]+be[ \t]+named|"
+      r"(?:hard|difficult|impossible)[ \t]+to[ \t]+name|resists?[ \t]+(?:naming|names?)|"
+      r"answers?[ \t]+to[ \t]+no[ \t]+name|no[ \t]+need[ \t]+(?:for|of)[ \t]+(?:a[ \t]+)?names?)\b",
       (4823, "It has no name for itself, no border, no flag except the constant temperature of its own breath."),
-      "A sentence saying that the being has no name, refuses one, or is known by "
-      "something other than a name.",
+      "A sentence saying that the being has no name, refuses one, cannot be named, or is "
+      "known by something other than a name. The regular expression finds the phrase; "
+      "the hit is the sentence around it.",
       "The sentence may be about something other than the inhabitants ('colors that have "
       "no names').",
+      yields="statement", flags="i"),
+
+    # =========================================== round 3: forms found inside covered texts
+    P("quoted_cap", 1, 3, "strict", "",
+      "frame",
+      r"\b(?:[Tt]he|[Tt]hese|[Tt]hose|[Aa]n?|[Tt]heir|[Ii]ts)[ \t]+[%s](?:[Tt]he[ \t]+)?(?P<name>%s)[,.]?[%s]" % (OQ, NAME, CQ),
+      (4028, "The kelp is home to a variety of creatures, including the \"Kelp Dwellers,\" small, insect-like beings that live among the fronds"),
+      "A capitalised name in quotation marks after an article or 'these': the name is "
+      "marked by the quotation marks alone, with no verb of naming.",
+      stop="common_caps", reject=REJECT_CAPS, max_words=10),
+    P("quoted_cap_bare", 1, 3, "wide", "",
+      "frame",
+      r"(?<![A-Za-z])[%s](?:[Tt]he[ \t]+)?(?P<name>%s)[,.]?[%s]" % (OQ, NAME, CQ),
+      (19656, "These \"Strays\" have been absorbed into the factory's logic."),
+      "Any capitalised word or run of words that fills a pair of quotation marks.",
+      "Also catches one-word quoted speech and quoted labels.",
+      stop="common_caps", reject=REJECT_CAPS, max_words=10),
+    P("heading_recurring", 1, 3, "wide", "",
+      "heading",
+      r"^#{1,6}[ \t]+%s?\**(?P<name>[^\n#*(:%s]+?)\**[ \t]*(?:[(:%s].*)?$" % (MARK, DASH, DASH),
+      (10902, "# The Listeners\n\nThey are not gone. [...] the listeners came to understand that they were either the audience or, more troublingly, an interruption"),
+      "A heading whose text comes back at least twice more in the body: a name given in "
+      "the title and then used, often in lower case.",
+      "Same regular expression as md_heading; the difference is the two conditions.",
+      flags="m", stop="section_words", max_words=10, min_occ=3, max_df=0.15),
+    P("bold_line_recurring", 1, 3, "strict", "",
+      "markup",
+      r"^[ \t]*%s?\*\*%s?(?P<name>[^*\n(:%s]+?)(?:[ \t]*[(:%s][^*\n]*)?\*\*[ \t]*(?:\([^)\n]*\))?[ \t]*:?[ \t]*$"
+      % (MARK, MARK, DASH, DASH),
+      (8747, "**The Grazers (The Slate Herds)**"),
+      "A bold title line whose text comes back at least twice more in the body.",
+      "Same regular expression as bold_line; the difference is the two conditions.",
+      flags="m", stop="section_words", max_words=10, min_occ=3, max_df=0.15),
+    P("list_head_recurring", 1, 3, "strict", "",
+      "list",
+      r"^[ \t]*%s(?P<name>[A-Z][^\n.:!?*(,%s]{1,60}?)[ \t]*(?:\([^)\n]*\))?[ \t]*(?:(?::|[%s]| - ).*)?$" % (MARK, DASH, DASH),
+      (4431, "3.  Blink-shrimp (Aeropenaeus lentus)  \nAlready noticed by every visitor, yet seldom understood. [...] Blink-shrimp graze on those sugars"),
+      "The head of a list item (alone on its line or before a colon or dash) whose text "
+      "comes back at least twice more in the body.",
+      "Covers both list_head_line and the list lead patterns, with the two conditions.",
+      flags="m", stop="section_words", max_words=6, min_occ=3, max_df=0.15),
+    P("live_the", 1, 3, "wide", "",
+      "frame",
+      r"\b(?:live|lives|dwell|dwells|move|moves|drift|drifts|roam|roams|crawl|crawls|swim|swims|nest|nests|"
+      r"lurk|lurks|wait|waits|come|comes|work|works)[ \t]+the[ \t]+"
+      r"(?P<name>[a-z][a-z-]+(?:[ \t]+[a-z][a-z-]+)?)(?=[,.:;%s]|[ \t]+(?:who|that|which|and)\b)" % DASH,
+      (21439, "Beside them live the rooters, the excavators of hidden damp."),
+      "A lower-case kind introduced after a verb of living or moving, with the verb "
+      "before its subject: 'Beside them live the rooters'.",
+      max_words=2),
+    P("the_agent_recurring", 2, 3, "strict", "",
+      "frame",
+      r"\b[Tt]he[ \t]+(?P<name>[a-z]+(?:ers|ors))\b(?![ \t]*-)",
+      (21439, "The grazers especially feel inevitable there. Not grass-eaters, but crust-eaters"),
+      "'the' followed by one lower-case word ending in -ers or -ors, used at least three "
+      "times in the text: a kind named by what it does (the grazers, the listeners, the "
+      "tenders).",
+      "Words that are common across the corpus are dropped (the others, the waters), and "
+      "so is a hand-made list of -ers and -ors nouns that are not agents (the corners, the "
+      "flowers). Ordinary agent nouns that recur in one text still match (the workers).",
+      stop="not_agents", max_words=1, min_occ=3, max_df=0.15),
+    P("the_mod_being", 1, 3, "wide", "",
+      "descriptive",
+      r"(?:^|(?<=[.!?][ ])|(?<=\n))The[ \t]+(?!(?:other|same|only|first|second|third|last|next|few|many|rest|"
+      r"remaining|[a-z]+er|[a-z]+est)[ \t])(?P<name>[a-z][a-z-]+[ \t]+(?:beings|ones|folk|people|creatures|"
+      r"things|animals|birds|fish|kind))[ \t]+(?=[a-z])",
+      (17851, "The fire beings are the embodiment of the intense heat that beats down upon the land mercilessly."),
+      "A sentence that begins 'The <word> beings / ones / folk / creatures / birds \u2026': a "
+      "kind designated by one describing word and a general word for beings.",
+      "A description, not a coined name; kept because some models name their kinds only "
+      "this way.",
+      flags="m", max_words=2),
+    P("hyphen_agent_bare", 1, 3, "strict", "",
+      "frame",
+      r"(?<![A-Za-z-])(?<![Tt]he[ ])(?P<name>[a-z]+(?:-[a-z]+)*-%s)\b(?![ \t]*-)" % AGENT,
+      (7437, "cavernous spaces where ambulatory vine-walkers are herded like livestock"),
+      "A lower-case hyphenated compound ending in an agent or creature word, with no "
+      "'the' directly before it.",
+      max_words=1, min_occ=2),
+    P("as_known", 1, 3, "wide", "",
+      "frame",
+      r"\b[Tt]he[ \t]+(?P<name>[a-z][a-z-]+(?:[ \t]+[a-z][a-z-]+)?)[ \t]*[%s,(][ \t]*as[ \t]+(?:they|it|she|he)[ \t]+"
+      r"(?:are|is|were|was)[ \t]+(?:known|called|named)" % DASH,
+      (28299, "The glass-fish\u2014as they are known, though they are not true fish"),
+      "'the X, as they are known': a lower-case name followed by a remark that this is "
+      "what they are called.",
+      max_words=2),
+    P("name_talk", 1, 3, "wide", "",
+      "statement",
+      r"\b(?:names?|named|naming|nameless|unnamed|namers?)\b",
+      (32085, "Her name is used below the mountain. Up here there is seldom occasion for it."),
+      "Any sentence that uses the word 'name': the text is talking about names. Includes "
+      "the sentences caught by anti_name. The regular expression finds the word; the hit "
+      "is the sentence around it.",
+      "Wide by design: a list of places to read, not a finding.",
       yields="statement", flags="i"),
 ]

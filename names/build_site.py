@@ -20,7 +20,7 @@ STATUS = {0: "covered", 2: "candidates only", 3: "nothing found",
           4: "flagged"}
 
 NAV = [("index.html", "Overview"), ("patterns.html", "Patterns"), ("models.html", "Models"),
-       ("names.html", "Names"), ("uncovered.html", "Uncovered texts"),
+       ("names.html", "Names"), ("uncovered.html", "Uncovered texts"), ("recall.html", "Recall checks"),
        ("readings.html", "Reading log"), ("flagged.html", "Flagged texts")]
 
 CSS = """
@@ -234,8 +234,8 @@ def main():
     models = sorted(set(r[1] for r in cov.values()))
     midx = {m: i for i, m in enumerate(models)}
     pats = q("SELECT id, version, round, added, tier, yields, family, regex, flags, stop, max_words, "
-             "origin_text, origin_excerpt, what, note, status, retired_reason, mask, reject, tier_basis "
-             "FROM patterns ORDER BY rowid")
+             "origin_text, origin_excerpt, what, note, status, retired_reason, mask, reject, tier_basis, "
+             "min_occ, max_df FROM patterns ORDER BY rowid")
     active = [p for p in pats if p[15] == "active"]
     retired = [p for p in pats if p[15] == "retired"]
     ev = {r[0]: r for r in q("SELECT * FROM pattern_eval")}
@@ -280,8 +280,10 @@ expressions, and this site shows every pattern, what it catches, and what is sti
 pattern page shows the passage it was first seen in.</li>
 <li><b>Hit</b>: one place in one text where a pattern matched.</li>
 <li><b>Name</b>: the captured string with its article, markup and edge punctuation removed,
-compared without regard to case. Names here include names of kinds, of single beings, of places
-and of things, and descriptions that stand where a name would ("those who …").</li>
+compared without regard to case. A name may be one word or several. Names here include names
+of kinds, of single beings, of places and of things, and descriptions that stand where a name
+would ("those who …"). A word for a role or function that designates a kind ("the grazers", "the
+tenders") counts as a name; an ordinary species word ("the crickets", "moss") does not.</li>
 <li><b>Strict pattern</b>: at least 80%% of a read sample of its hits were names. A
 <b>wide pattern</b> collects candidates and has not met that bar.</li>
 <li><b>Covered text</b>: a text with at least one name from a strict pattern. New forms of
@@ -316,7 +318,8 @@ each pattern's hits.</p>
 
 <h2>Known gaps</h2>
 <ul>
-<li>"Covered" does not mean every name in the text was found, only that one was.</li>
+<li>"Covered" does not mean every name in the text was found, only that one was. The
+<a href="recall.html">recall checks</a> measure how many are found.</li>
 <li>Names of places and of beings are not told apart.</li>
 <li>A name longer than the pattern expects is cut short: a capitalised run ends at the first
 lower-case word that is not one of a short list of joining words ("of", "in", "who", "that" …).</li>
@@ -439,7 +442,9 @@ here with the reason it was replaced and the sample that showed the problem.</p>
                 "flags: " + p[8] if p[8] else "", "stoplist: " + p[9] if p[9] else "",
                 "does not look inside: " + p[17] if p[17] else "",
                 "drops captures matching: " + p[18] if p[18] else "",
-                "at most %d words" % p[10] if p[10] else ""] if x) or "none"),
+                "at most %d words" % p[10] if p[10] else "",
+                "the captured string must occur at least %d times in the text" % p[20] if p[20] else "",
+                "a single word is dropped if it occurs in more than %d%% of all texts" % round(100 * p[21]) if p[21] else ""] if x) or "none"),
             E(p[12]), tlink(p[11], 1), ATLAS % p[11], E(p[7]),
             table([col("text", "html"), col("model"), col("verdict"), col("round", "num"), col("in context", "html")], lrows) if lrows else "<p>None yet.</p>",
             table([col("text", "html"), col("model"), col("captured"), col("in context", "html")], srows, page=100),
@@ -602,6 +607,44 @@ written in forms that the strict patterns miss can be found here.</p>
   });
 })();</script>""")
     open(os.path.join(SITE, "sha1.js"), "w").write(SHA1_JS)
+
+
+    # ----------------------------------------------------------------- recall
+    rc = q("SELECT chk, date, pool, text_id, read_chars, name, caught, caught_now, forms_missed, note FROM recall")
+    summ = defaultdict(lambda: dict(texts=set(), noname=set(), n=0, then=Counter(), now=Counter(), date=""))
+    rrows = []
+    for chk, date, pool, tid, chars, name, caught, now, forms, note in rc:
+        s = summ[(chk, pool)]
+        s["texts"].add(tid); s["date"] = date
+        if name is None:
+            s["noname"].add(tid)
+        else:
+            s["n"] += 1; s["then"][caught] += 1; s["now"][now] += 1
+        rrows.append([chk, pool, tlink(tid), cov[tid][1], name or "(no name in the text)", caught or "", now or "",
+                      "; ".join(json.loads(forms)), note or ""])
+    srows = []
+    for (chk, pool), s in sorted(summ.items()):
+        srows.append([chk, s["date"], pool, len(s["texts"]), len(s["noname"]), s["n"],
+                      s["then"]["strict"], s["then"]["wide"], s["then"]["missed"],
+                      s["now"]["strict"], s["now"]["wide"], s["now"]["missed"],
+                      pct(s["now"]["strict"], s["n"])])
+    page("recall.html", "Recall checks",
+         """<p>A recall check: texts are drawn at random and read whole (up to a few thousand characters),
+and every name seen by eye is written down with what caught it at the time: a strict pattern, only
+a wide one, or nothing. "Now" columns are recomputed against the current patterns, so they move as
+patterns are added. The samples are small; the percentages show direction, not a measured rate.</p>
+<p>The "now" numbers of an earlier check are optimistic: new patterns are written from the very
+names that check found missing. Only the "then" numbers of a fresh check measure the patterns
+honestly, so a new sample is drawn each round.</p>
+<p>The same reader wrote the patterns and judged what counts as a name.</p>
+<h2>By check</h2>%s<h2>Every name</h2>%s""" % (
+             table([col("check", "num"), col("date"), col("texts drawn from"), col("texts", "num"),
+                    col("texts with no name", "num", "texts in which the reader saw no name at all"),
+                    col("names seen", "num"), col("strict then", "num"), col("wide then", "num"),
+                    col("missed then", "num"), col("strict now", "num"), col("wide now", "num"),
+                    col("missed now", "num"), col("strict now %", "num")], srows, sort=[0, 1]),
+             table([col("check", "num"), col("pool"), col("text", "html"), col("model"), col("name seen by eye"),
+                    col("caught then"), col("caught now"), col("forms that were missed"), col("note")], rrows)))
 
     # -------------------------------------------------------------- uncovered
     urows = []

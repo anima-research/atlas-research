@@ -77,6 +77,33 @@ def text_flag(text, tagged):
     return "not prose (word check)" if share < 0.15 else ""
 
 
+DF = {}          # word -> share of texts that contain it (set in each worker)
+_WORD = re.compile(r"[a-z][a-z'\u2019-]*")
+
+
+def init_worker(df):
+    global DF
+    DF = df
+
+
+def doc_freq(snap, digest):
+    """Share of texts that contain each word (lower-cased), cached per snapshot."""
+    path = os.path.join(HERE, "data", "df_%s.json" % digest[:16])
+    if os.path.exists(path):
+        return json.load(open(path, encoding="utf-8"))
+    c, n = Counter(), 0
+    for (text,) in snap.execute("SELECT text FROM texts"):
+        c.update(set(_WORD.findall(text.lower()))); n += 1
+    df = {w: round(k / float(n), 5) for w, k in c.items() if k >= 3}
+    json.dump(df, open(path, "w", encoding="utf-8"))
+    return df
+
+
+def occurrences(low, n):
+    """How many times the string n occurs in the lower-cased text as a whole word or phrase."""
+    return len(re.findall(r"(?<![a-z])" + re.escape(n) + r"(?![a-z])", low))
+
+
 def scan(row):
     global COMPILED
     if COMPILED is None:
@@ -84,6 +111,9 @@ def scan(row):
     tid, text = row
     found = []
     masked = {}
+    low = None
+    occ = {}
+    seen_st = set()
     for p, rx in COMPILED:
         stop = STOPS.get(p.get("stop") or "", ())
         mw = p.get("max_words")
@@ -95,7 +125,19 @@ def scan(row):
             src = masked[p["mask"]]
         for m in rx.finditer(src):
             if p["yields"] == "statement":
+                # the hit is the sentence around the matched phrase
                 s, e = m.span()
+                while s > 0 and text[s - 1] not in ".!?\n":
+                    s -= 1
+                while e < len(text) and text[e] not in ".!?\n":
+                    e += 1
+                if e < len(text) and text[e] != "\n":
+                    e += 1
+                while s < e and text[s] in " \t":
+                    s += 1
+                if (p["id"], s) in seen_st:
+                    continue
+                seen_st.add((p["id"], s))
                 surf = text[s:e].strip()
                 if surf:
                     found.append((tid, p["id"], s, e, surf, ""))
@@ -115,6 +157,15 @@ def scan(row):
                 continue
             if not re.search(r"[a-z]", n):
                 continue
+            if p.get("max_df") and " " not in n and DF.get(n, 0) > p["max_df"]:
+                continue
+            if p.get("min_occ"):
+                if low is None:
+                    low = text.lower().replace("\u2019", "'")
+                if n not in occ:
+                    occ[n] = occurrences(low, n)
+                if occ[n] < p["min_occ"]:
+                    continue
             s, e = m.span(g)
             found.append((tid, p["id"], s, e, surf, n))
     return found
@@ -152,7 +203,8 @@ def main():
         "SELECT t.id, t.model, length(t.text), t.place_id FROM texts t")}
     print("texts: %d   content sha256: %s" % (len(rows), digest[:16]), file=sys.stderr)
 
-    with Pool(a.jobs) as pool:
+    df = doc_freq(snap, digest)
+    with Pool(a.jobs, initializer=init_worker, initargs=(df,)) as pool:
         mentions = [m for chunk in pool.imap(scan, rows, chunksize=200) for m in chunk]
     print("mentions: %d  (%.0fs)" % (len(mentions), time.time() - t0), file=sys.stderr)
 
@@ -167,7 +219,10 @@ def main():
       id TEXT, version INTEGER, round INTEGER, added TEXT, tier TEXT, yields TEXT,
       family TEXT, regex TEXT, flags TEXT, stop TEXT, max_words INTEGER,
       origin_text INTEGER, origin_excerpt TEXT, what TEXT, note TEXT,
-      status TEXT, retired_reason TEXT, mask TEXT, reject TEXT, tier_basis TEXT);
+      status TEXT, retired_reason TEXT, mask TEXT, reject TEXT, tier_basis TEXT,
+      min_occ INTEGER, max_df REAL);
+    CREATE TABLE recall (chk INTEGER, date TEXT, pool TEXT, text_id INTEGER, read_chars INTEGER,
+      name TEXT, caught TEXT, caught_now TEXT, forms_missed TEXT, note TEXT);
     CREATE TABLE pattern_eval (
       pattern_id TEXT PRIMARY KEY, n_read INTEGER, n_being INTEGER, n_place INTEGER,
       n_thing INTEGER, n_statement INTEGER, n_not INTEGER, n_broken INTEGER,
@@ -187,7 +242,7 @@ def main():
     CREATE TABLE names (
       norm TEXT PRIMARY KEY, display TEXT, n_texts INTEGER, n_texts_strict INTEGER,
       n_texts_new INTEGER, n_models INTEGER, n_models_strict INTEGER, n_mentions INTEGER,
-      patterns TEXT, top_models TEXT);
+      patterns TEXT, top_models TEXT, df REAL);
     CREATE TABLE pattern_model (pattern_id TEXT, model TEXT, n_mentions INTEGER, n_texts INTEGER);
     CREATE TABLE readings (round INTEGER, text_id INTEGER, basis TEXT, saw TEXT, note TEXT);
     CREATE TABLE labels (text_id INTEGER, pattern_id TEXT, start INTEGER, end INTEGER,
@@ -204,12 +259,12 @@ def main():
 
     for status, plist in (("active", P.PATTERNS), ("retired", P.RETIRED)):
         for p in plist:
-            db.execute("INSERT INTO patterns VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+            db.execute("INSERT INTO patterns VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
                 p["id"], p["version"], p["round"], p["added"], p["tier"], p["yields"],
                 p["family"], p["regex"], p.get("flags", ""), p.get("stop"),
                 p.get("max_words"), p["origin"]["text"], p["origin"]["excerpt"],
                 p["what"], p.get("note", ""), status, p.get("retired_reason"),
-                p.get("mask"), p.get("reject"), p.get("tier_basis")))
+                p.get("mask"), p.get("reject"), p.get("tier_basis"), p.get("min_occ"), p.get("max_df")))
     for name, words in P.STOPLISTS.items():
         db.executemany("INSERT INTO stoplists VALUES (?,?)", [(name, w) for w in words])
 
@@ -283,12 +338,28 @@ def main():
     for n, g in agg.items():
         top = ", ".join("%s %d" % (m.split("/")[-1], k) for m, k in g["models"].most_common(4))
         disp = (g["sdisp"] or g["disp"]).most_common(1)[0][0]
-        db.execute("INSERT INTO names VALUES (?,?,?,?,?,?,?,?,?,?)", (
+        db.execute("INSERT INTO names VALUES (?,?,?,?,?,?,?,?,?,?,?)", (
             n, disp, len(g["texts"]), g["strict"], g["new"], len(g["models"]),
-            len(g["smodels"]), g["n"], ",".join(sorted(g["pats"])), top))
+            len(g["smodels"]), g["n"], ",".join(sorted(g["pats"])), top,
+            df.get(n) if " " not in n else None))
     db.executemany("INSERT INTO pattern_model VALUES (?,?,?,?)",
                    [(pid, model, k, len(pm_t[(pid, model)])) for (pid, model), k in pm_m.items()])
 
+    # Recall checks: names seen by eye in texts read whole. `caught` is what was true when
+    # the text was read; `caught_now` is recomputed against the current patterns.
+    for r in load_jsonl("recall.jsonl"):
+        mine = per_text.get(r["text"], {})
+        for name, caught in r["names"].items():
+            n = norm(name)
+            hits = mine.get(n)
+            now = "missed" if not hits else "strict" if any(tier[h[0]] == "strict" for h in hits) else "wide"
+            db.execute("INSERT INTO recall VALUES (?,?,?,?,?,?,?,?,?,?)", (
+                r["check"], r["date"], r.get("pool", "covered"), r["text"], r["read_chars"], name,
+                caught, now, json.dumps(r.get("forms_missed", [])), r.get("note", "")))
+        if not r["names"]:
+            db.execute("INSERT INTO recall VALUES (?,?,?,?,?,?,?,?,?,?)", (
+                r["check"], r["date"], r.get("pool", "covered"), r["text"], r["read_chars"], None,
+                None, None, json.dumps(r.get("forms_missed", [])), r.get("note", "")))
     for r in load_jsonl("readings.jsonl"):
         db.execute("INSERT INTO readings VALUES (?,?,?,?,?)", (
             r["round"], r["text"], r.get("basis", ""), json.dumps(r.get("saw", [])), r.get("note", "")))

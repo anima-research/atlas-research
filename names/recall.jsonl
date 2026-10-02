@@ -10,3 +10,23 @@
 {"check": 1, "date": "2026-10-02", "text": 4431, "read_chars": 5000, "names": {"Cavern-Body": "strict", "Prismata": "strict", "Thread-wolves": "strict", "Blink-shrimp": "wide", "Gutter-bats": "wide", "Root-thread Fungus": "wide"}, "forms_missed": ["name in a numbered list line, then used without an article: Blink-shrimp graze on those sugars"], "note": "four Latin binomials in the same list lines are wide only and not counted here"}
 {"check": 1, "date": "2026-10-02", "text": 5559, "read_chars": 3997, "names": {"Luminari": "strict", "Zephyrs": "strict", "Shapers": "strict", "Elders": "strict"}, "forms_missed": []}
 {"check": 1, "date": "2026-10-02", "text": 12964, "read_chars": 4444, "names": {"Chorus": "strict", "Geophages": "strict", "Crucibles": "strict", "Weavers": "strict"}, "forms_missed": []}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 31331, "read_chars": 1653, "names": {}, "note": "'a little animal', 'the animals'; no name"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 31507, "read_chars": 2399, "names": {"shell-builders": "missed"}, "forms_missed": ["'The oldest shell-builders': an adjective between 'the' and the compound"]}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 16583, "read_chars": 932, "names": {}, "note": "'the inhabitants'; no name"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 16591, "read_chars": 1303, "names": {}, "note": "ordinary animals and plants; no name"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 5804, "read_chars": 2108, "names": {}, "note": "says the things have no names; the statement is caught"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 5630, "read_chars": 3200, "names": {}, "forms_missed": ["statement: 'What lives in this place is not easily named'"]}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 5159, "read_chars": 3200, "names": {}, "note": "ordinary species words: salamanders, mites, raptors"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 15148, "read_chars": 2868, "names": {"scale-insects": "wide", "disk-colonies": "wide"}}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 17851, "read_chars": 3085, "names": {"crystalline beings": "missed", "fire beings": "missed", "wind beings": "missed", "star beings": "missed"}, "forms_missed": ["'The fire beings are': a describing word and a general word for beings, as sentence subject"]}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 18153, "read_chars": 3200, "names": {}, "note": "'the inhabitants', 'the people of the plateau'; no name"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 32085, "read_chars": 3200, "names": {}, "forms_missed": ["statement about a name that is withheld: 'Her name is used below the mountain. Up here there is seldom occasion for it.'"], "note": "'the one with the round ears', 'the round-eared animal': descriptions"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 32036, "read_chars": 3200, "names": {"silver swimmers": "missed"}, "note": "'the disk', 'the animal' for the main being"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 29575, "read_chars": 3200, "names": {}, "note": "'the larger animal in the crack'; no name"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 29461, "read_chars": 3200, "names": {}, "note": "'the person who made the bridge'; no name"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 1190, "read_chars": 1755, "names": {}, "note": "ordinary sea animals; no name"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 1199, "read_chars": 1909, "names": {}, "note": "no beings described beyond 'small creatures'"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 30805, "read_chars": 3200, "names": {"housing birds": "missed", "fin birds": "missed"}, "forms_missed": ["'The housing birds time their returns': a describing word and 'birds', as sentence subject"]}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 30738, "read_chars": 3200, "names": {}, "note": "first 3,200 characters describe the land only"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 27463, "read_chars": 3200, "names": {}, "note": "'they', 'the occupant'; no name"}
+{"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 27440, "read_chars": 3200, "names": {}, "note": "'the inhabitant', 'it'; no name"}
