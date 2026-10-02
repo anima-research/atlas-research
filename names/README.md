@@ -13,8 +13,10 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
 | `labels.jsonl` | verdicts on sampled hits, keyed by text id and character span | yes |
 | `readings.jsonl` | which texts were read by eye, how they were chosen, what was seen | yes |
 | `rounds.jsonl` | one line of counts per round | yes |
+| `recall.jsonl` | covered texts read whole: every name seen by eye, and whether a strict pattern, only a wide one, or nothing caught it | yes |
 | `extract.py` | snapshot + the files above -> `data/names.db` | |
 | `sample.py`, `label.py` | draw a seeded sample of a pattern's hits; record verdicts on it | |
+| `show.py` | print texts with the current hits marked inline, for reading | |
 | `build_site.py` | `data/names.db` -> `site/` | |
 | `data/`, `site/` | derived; rebuilt by the commands below | no |
 
