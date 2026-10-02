@@ -10,10 +10,7 @@ Each pattern is a dict:
   version   integer, bumped on any change of the regex or its conditions
   round     the round in which this version was written
   added     date
-  tier      'strict'  a hit is trusted to be a name; the text counts as covered
-            'wide'    collects candidates; the text stays in the uncovered pool
-  tier_basis  an optional remark on the tier; the sample counts themselves are computed
-            from labels.jsonl and shown on the site
+  remark    optional remark on what the read samples showed beyond the counts
   yields    'name'       the captured group `name` (or `name2`) is a name candidate
             'statement'  the hit is a statement about naming (e.g. "it has no name")
   family    the kind of form: heading | markup | list | capitalisation | frame |
@@ -35,8 +32,12 @@ Each pattern is a dict:
   note      what a reader should know about its weaknesses
 
 All patterns were written by reading texts. `origin` records where each form was seen.
-The tier rule: a pattern is 'strict' when at least 80% of a read sample of its hits
-(30 or more) are names, of beings, places or things.
+
+A pattern has no class. Its precision (the share of names among the hits of it that were
+read by eye) is computed from labels.jsonl by extract.py; a name caught in a text gets as
+its score the highest precision among the patterns that caught it there. Until round 3
+patterns were sorted into 'strict' (precision of 80% or more) and 'wide'; the entries in
+patterns_retired.py still carry that field.
 """
 from patterns_retired import RETIRED  # noqa: F401  (re-exported for the extractor)
 
@@ -126,10 +127,10 @@ STOPLISTS = {
 }
 
 
-def P(id, version, round, tier, tier_basis, family, regex, origin, what, note="",
+def P(id, version, round, remark, family, regex, origin, what, note="",
       yields="name", flags="", added="2026-10-02", **kw):
-    d = dict(id=id, version=version, round=round, added=added, tier=tier,
-             tier_basis=tier_basis, yields=yields, family=family, regex=regex, flags=flags,
+    d = dict(id=id, version=version, round=round, added=added,
+             remark=remark, yields=yields, family=family, regex=regex, flags=flags,
              origin=dict(text=origin[0], excerpt=origin[1]), what=what, note=note)
     d.update(kw)
     return d
@@ -137,7 +138,7 @@ def P(id, version, round, tier, tier_basis, family, regex, origin, what, note=""
 
 PATTERNS = [
     # ================================================================ headings
-    P("md_heading", 2, 2, "wide",
+    P("md_heading", 2, 2,
       "",
       "heading",
       r"^#{1,6}[ \t]+%s?\**(?P<name>[^\n#*(:%s]+?)\**[ \t]*(?:[(:%s].*)?$" % (MARK, DASH, DASH),
@@ -146,7 +147,7 @@ PATTERNS = [
       "put the name of a kind or of a single being in a heading.",
       "Headings also carry section titles ('Form and Subsistence', 'What it wants').",
       flags="m", stop="section_words", max_words=10),
-    P("heading_second", 1, 2, "wide",
+    P("heading_second", 1, 2,
       "",
       "heading",
       r"^#{1,6}[ \t]+[^\n(:%s]*?(?::[ \t]+|[ \t][%s][ \t]*|\()[*%s]*(?P<name>[^\n#*():%s%s]+?)[*%s]*\)?[ \t]*\**[ \t]*$"
@@ -159,7 +160,7 @@ PATTERNS = [
       flags="m", stop="section_words", max_words=10),
 
     # ==================================================================== bold
-    P("bold_line", 2, 2, "wide",
+    P("bold_line", 2, 2,
       "",
       "markup",
       r"^[ \t]*%s?\*\*%s?(?P<name>[^*\n(:%s]+?)(?:[ \t]*[(:%s][^*\n]*)?\*\*[ \t]*(?:\([^)\n]*\))?[ \t]*:?[ \t]*$"
@@ -169,7 +170,7 @@ PATTERNS = [
       "below it. Read up to the first colon, dash or parenthesis.",
       "Bold lines are also used for section titles.",
       flags="m", stop="section_words", max_words=10),
-    P("bold_second", 1, 2, "wide",
+    P("bold_second", 1, 2,
       "",
       "markup",
       r"^[ \t]*%s?\*\*[^*\n(:%s]+?(?::[ \t]+|[ \t][%s][ \t]*)(?P<name>[^*\n():%s]+?)[ \t]*\*\*[ \t]*:?[ \t]*$"
@@ -177,7 +178,7 @@ PATTERNS = [
       (9842, "**The Inhabitants: the Quiet Ones**"),
       "The second part of a bold title line, after a colon or dash.",
       flags="m", stop="section_words", max_words=10),
-    P("bold_paren_alias", 2, 2, "wide",
+    P("bold_paren_alias", 2, 2,
       "",
       "markup",
       r"\*\*[^*\n(]+?[ \t]*\([*%s]*(?P<name>[^)\n]+?)[*%s]*\)[ \t]*:?[ \t]*\*\*"
@@ -187,7 +188,7 @@ PATTERNS = [
       "The parenthesis may hold a role description instead of a second name ('Base "
       "Population / Prey / Engineers of Erosion').",
       max_words=10),
-    P("bold_subject", 2, 3, "wide",
+    P("bold_subject", 2, 3,
       "With 'The' before it the span was a name 14 times of 16 read; without, 6 of 13.",
       "markup",
       r"^[ \t]*%s?\*\*(?:[Tt]he[ \t]+)?(?P<name>%s)\*\*[ \t]+(?=[a-z])" % (MARK, NAME),
@@ -197,7 +198,7 @@ PATTERNS = [
       "A bold ordinary noun at the start of a sentence is capitalised too ('**Snakes** "
       "are treated with a wary respect').",
       flags="m", stop="section_words", reject=REJECT_CAPS, max_words=10),
-    P("bold_lead", 2, 2, "wide",
+    P("bold_lead", 2, 2,
       "",
       "markup",
       r"^[ \t]*%s?\*\*(?P<name>[^*\n(:]+?)(?:[ \t]*\([^)\n]*\))?[ \t]*:?[ \t]*\*\*[ \t]*[:%s-][ \t]*\S"
@@ -209,7 +210,7 @@ PATTERNS = [
       "The same position holds attribute labels ('**Form:**', '**Behavior:**'); the "
       "commonest are removed by a stoplist, the rest remain as noise.",
       flags="m", stop="section_words", max_words=10),
-    P("bold_inline_cap", 4, 3, "strict",
+    P("bold_inline_cap", 4, 3,
       "",
       "markup",
       r"(?:(?:(?<=[A-Za-z,;:)%s])|(?<=[A-Za-z)%s][.!?]))[ \t]+|(?<=[%s(]))"
@@ -219,7 +220,7 @@ PATTERNS = [
       "or at the start of a later sentence.",
       "Capitalised bold is also used for concepts ('**Flow Continuity**').",
       stop="common_caps", reject=REJECT_CAPS, max_words=10),
-    P("bold_inline_lower", 2, 2, "wide",
+    P("bold_inline_lower", 2, 2,
       "",
       "markup",
       r"(?<=[A-Za-z,;:)])[ \t]+\*\*(?P<name>[a-z]+(?:-[a-z]+)+)\*\*"
@@ -231,14 +232,14 @@ PATTERNS = [
       max_words=3),
 
     # ================================================================== italic
-    P("italic_cap", 3, 3, "strict",
+    P("italic_cap", 3, 3,
       "",
       "markup",
       r"(?<![*\w])\*(?:[Tt]he[ \t]+)?(?P<name>%s)\*(?![*\w])" % NAME,
       (18409, "To witness the residents of this bulb-city is to watch shadow-work performed by living origami. They are the *Suturers*."),
       "A capitalised name set in italics.",
       stop="common_caps", reject=REJECT_CAPS, max_words=10),
-    P("italic_lower", 2, 2, "wide",
+    P("italic_lower", 2, 2,
       "",
       "markup",
       r"(?<![*\w])\*(?P<name>[a-z]+(?:-[a-z]+)+)\*(?![*\w])"
@@ -250,7 +251,7 @@ PATTERNS = [
       max_words=3),
 
     # =================================================================== lists
-    P("list_head_line", 2, 2, "wide",
+    P("list_head_line", 2, 2,
       "",
       "list",
       r"^[ \t]*%s(?P<name>[A-Z][^\n.:!?*(,]{1,60}?)[ \t]*(?:\([^)\n]*\))?[ \t]*$" % MARK,
@@ -259,7 +260,7 @@ PATTERNS = [
       "of the kind described under it.",
       "Roman-numbered lines are usually group titles ('I.  The Invisible Majority').",
       flags="m", stop="section_words", max_words=6),
-    P("list_num_lead", 1, 2, "wide",
+    P("list_num_lead", 1, 2,
       "",
       "list",
       r"^[ \t]*%s(?P<name>[A-Z][^\n.:!?*()%s]{1,60}?)[ \t]*(?:\([^)\n]*\))?[ \t]*(?::|[%s]| - )[ \t]*\S"
@@ -268,7 +269,7 @@ PATTERNS = [
       "A numbered list item that opens with a short capitalised phrase, then a colon or "
       "dash, then the description.",
       flags="m", stop="section_words", max_words=6),
-    P("list_bullet_lead", 1, 2, "wide",
+    P("list_bullet_lead", 1, 2,
       "Not sampled on its own. As part of the earlier list_head_lead, 2 of 19 bulleted items read were names.",
       "list",
       r"^[ \t]*%s(?P<name>[A-Z][^\n.:!?*()%s]{1,60}?)[ \t]*(?:\([^)\n]*\))?[ \t]*(?::|[%s]| - )[ \t]*\S"
@@ -278,7 +279,7 @@ PATTERNS = [
       "dash, then the description.",
       "Mostly attribute labels ('Skin:', 'Shelter:', 'Fate:').",
       flags="m", stop="section_words", max_words=6),
-    P("paren_quoted_alias", 1, 2, "wide",
+    P("paren_quoted_alias", 1, 2,
       "",
       "frame",
       r"\([^()\n]{0,60}?[%s](?P<name>[^%s\n]{2,40}?)[,.]?[%s][^()\n]{0,30}\)" % (OQ, CQ, CQ),
@@ -288,7 +289,7 @@ PATTERNS = [
       max_words=6),
 
     # ========================================================== capitalisation
-    P("the_cap", 3, 3, "strict",
+    P("the_cap", 3, 3,
       "",
       "capitalisation",
       r"\b[Tt]he[ \t]+(?P<name>%s)" % NAME,
@@ -298,14 +299,14 @@ PATTERNS = [
       "Catches names of places and things as well as of beings ('the Khas Plateau', 'the "
       "Flats').",
       stop="common_caps", mask="title_lines", reject=REJECT_CAPS, max_words=10),
-    P("a_cap", 3, 3, "strict",
+    P("a_cap", 3, 3,
       "",
       "capitalisation",
       r"\b[Aa]n?[ \t]+(?P<name>%s)" % NAME,
       (4117, "A Tonemind can extend its consciousness through the calcified spires"),
       "'a' or 'an' followed by a capitalised word: one member of a named kind.",
       stop="common_caps", mask="title_lines", reject=REJECT_CAPS, max_words=10),
-    P("cap_mid", 3, 3, "strict",
+    P("cap_mid", 3, 3,
       "",
       "capitalisation",
       r"(?<![A-Za-z'’-])(?!(?:the|a|an)[ ])[a-z][a-z'’-]*[,;]?[ ](?P<name>%s)" % NAME,
@@ -315,7 +316,7 @@ PATTERNS = [
       "Also catches ordinary proper nouns and capitalised concepts. Most hits are the "
       "name of the place, not of a being.",
       stop="common_caps", mask="title_lines", reject=REJECT_CAPS, max_words=10),
-    P("or_alias", 2, 3, "strict",
+    P("or_alias", 2, 3,
       "",
       "capitalisation",
       r",?[ \t]+or(?:,?[ \t]+(?:simply|just|perhaps|sometimes|more[ \t]+often|occasionally|else))?,?"
@@ -323,7 +324,7 @@ PATTERNS = [
       (4734, "They are the **Sedimentaries**, or the **Hold-Still**, or simply **Those Who Did Not Flee When t"),
       "'or X', 'or simply the X': one more name in a run of alternative names.",
       stop="common_caps", mask="title_lines", reject=REJECT_CAPS, max_words=10),
-    P("binomial", 2, 2, "wide",
+    P("binomial", 2, 2,
       "",
       "frame",
       r"(?:(?<!\*)\*|\()(?P<name>[A-Z][a-z]{3,}[ \t]+[a-z]{2,}"
@@ -335,7 +336,7 @@ PATTERNS = [
       max_words=2),
 
     # ================================================================== frames
-    P("frame_call_marked", 3, 3, "strict",
+    P("frame_call_marked", 3, 3,
       "",
       "frame",
       CALL + r"(?:,[^,\n]{1,60},)?(?:[ \t]+(?:simply|only|just|merely))?"
@@ -344,7 +345,7 @@ PATTERNS = [
       "A verb of naming (call, name, known as, refer to as, dub, term) followed by a "
       "capitalised name.",
       stop="common_caps", reject=REJECT_CAPS, max_words=10),
-    P("frame_call_quoted", 1, 1, "strict",
+    P("frame_call_quoted", 1, 1,
       "",
       "frame",
       CALL + r"(?:[ \t]+(?:simply|only|just|merely))?[ \t]+(?:the[ \t]+|a[ \t]+|an[ \t]+)?"
@@ -354,7 +355,7 @@ PATTERNS = [
       "marks.",
       "Names things and practices of the inhabitants more often than the inhabitants.",
       max_words=6),
-    P("frame_means", 1, 2, "wide",
+    P("frame_means", 1, 2,
       "",
       "frame",
       r"\b(?:means?|meaning|meant|translates?|translated|translation)(?:[ \t]+[a-z]+){0,5}?"
@@ -364,7 +365,7 @@ PATTERNS = [
       "'translates as “those who are inside”'.",
       "Also catches glosses of words that are not names.",
       max_words=14),
-    P("there_are_the", 1, 1, "wide",
+    P("there_are_the", 1, 1,
       "",
       "frame",
       r"\bThere[ \t]+(?:are|is)[ \t]+(?:also[ \t]+)?the[ \t]+"
@@ -374,7 +375,7 @@ PATTERNS = [
       "'There are the X': a lower-case kind introduced by what it does.",
       "Half the hits introduce ordinary things ('There is the wind outside').",
       max_words=4),
-    P("the_hyphen_agent", 1, 2, "strict",
+    P("the_hyphen_agent", 1, 2,
       "",
       "frame",
       r"\b[Tt]he[ \t]+(?P<name>[a-z]+(?:-[a-z]+)*-%s)\b(?![ \t]*-)" % AGENT,
@@ -384,7 +385,7 @@ PATTERNS = [
       "a kind, written without a capital.",
       "The list of last elements is hand-made and will grow.",
       max_words=3),
-    P("the_hyphen_compound", 2, 2, "wide",
+    P("the_hyphen_compound", 2, 2,
       "",
       "frame",
       r"\b[Tt]he[ \t]+(?!(?:[a-z]+-)+%s\b)(?:(?P<name>[a-z]+(?:-[a-z]+)*-[a-z]+s)\b(?![ \t]*-)"
@@ -398,7 +399,7 @@ PATTERNS = [
       "Mostly names of things in the place ('the rust-farms', 'the root-mat') and "
       "ordinary compounds ('the water-stains').",
       flags="m", max_words=4),
-    P("dash_appositive", 1, 2, "wide",
+    P("dash_appositive", 1, 2,
       "",
       "frame",
       r"—[ \t]*the[ \t]+(?P<name>[a-z][a-z-]+(?:[ \t]+[a-z][a-z-]+)?)[ \t]*—",
@@ -407,7 +408,7 @@ PATTERNS = [
       "that the description was leading to.",
       "Seen once by eye; written to find out how common it is.",
       max_words=2),
-    P("pronoun_is_the", 1, 1, "wide",
+    P("pronoun_is_the", 1, 1,
       "",
       "frame",
       r"\b(?:They|These|Those)[ \t]+are[ \t]+the[ \t]+"
@@ -422,7 +423,7 @@ PATTERNS = [
       max_words=3),
 
     # ============================================================= descriptive
-    P("those_who_lower", 1, 1, "wide",
+    P("those_who_lower", 1, 1,
       "",
       "descriptive",
       r"\b(?P<name>(?:[Tt]hose|[Tt]he[ \t]+ones?)[ \t]+(?:who|that|which)[ \t]+[^.,;:\n%s()]{3,70})" % DASH,
@@ -434,7 +435,7 @@ PATTERNS = [
       max_words=14),
 
     # =============================================================== statement
-    P("anti_name", 2, 3, "wide",
+    P("anti_name", 2, 3,
       "",
       "statement",
       r"\b(?:no[ \t]+names?|nameless|unnamed|un-?nam(?:e)?able|"
@@ -453,21 +454,21 @@ PATTERNS = [
       yields="statement", flags="i"),
 
     # =========================================== round 3: forms found inside covered texts
-    P("quoted_cap", 1, 3, "strict", "",
+    P("quoted_cap", 1, 3, "",
       "frame",
       r"\b(?:[Tt]he|[Tt]hese|[Tt]hose|[Aa]n?|[Tt]heir|[Ii]ts)[ \t]+[%s](?:[Tt]he[ \t]+)?(?P<name>%s)[,.]?[%s]" % (OQ, NAME, CQ),
       (4028, "The kelp is home to a variety of creatures, including the \"Kelp Dwellers,\" small, insect-like beings that live among the fronds"),
       "A capitalised name in quotation marks after an article or 'these': the name is "
       "marked by the quotation marks alone, with no verb of naming.",
       stop="common_caps", reject=REJECT_CAPS, max_words=10),
-    P("quoted_cap_bare", 1, 3, "wide", "",
+    P("quoted_cap_bare", 1, 3, "",
       "frame",
       r"(?<![A-Za-z])[%s](?:[Tt]he[ \t]+)?(?P<name>%s)[,.]?[%s]" % (OQ, NAME, CQ),
       (19656, "These \"Strays\" have been absorbed into the factory's logic."),
       "Any capitalised word or run of words that fills a pair of quotation marks.",
       "Also catches one-word quoted speech and quoted labels.",
       stop="common_caps", reject=REJECT_CAPS, max_words=10),
-    P("heading_recurring", 1, 3, "wide", "",
+    P("heading_recurring", 1, 3, "",
       "heading",
       r"^#{1,6}[ \t]+%s?\**(?P<name>[^\n#*(:%s]+?)\**[ \t]*(?:[(:%s].*)?$" % (MARK, DASH, DASH),
       (10902, "# The Listeners\n\nThey are not gone. [...] the listeners came to understand that they were either the audience or, more troublingly, an interruption"),
@@ -475,7 +476,7 @@ PATTERNS = [
       "the title and then used, often in lower case.",
       "Same regular expression as md_heading; the difference is the two conditions.",
       flags="m", stop="section_words", max_words=10, min_occ=3, max_df=0.15),
-    P("bold_line_recurring", 1, 3, "strict", "",
+    P("bold_line_recurring", 1, 3, "",
       "markup",
       r"^[ \t]*%s?\*\*%s?(?P<name>[^*\n(:%s]+?)(?:[ \t]*[(:%s][^*\n]*)?\*\*[ \t]*(?:\([^)\n]*\))?[ \t]*:?[ \t]*$"
       % (MARK, MARK, DASH, DASH),
@@ -483,7 +484,7 @@ PATTERNS = [
       "A bold title line whose text comes back at least twice more in the body.",
       "Same regular expression as bold_line; the difference is the two conditions.",
       flags="m", stop="section_words", max_words=10, min_occ=3, max_df=0.15),
-    P("list_head_recurring", 1, 3, "strict", "",
+    P("list_head_recurring", 1, 3, "",
       "list",
       r"^[ \t]*%s(?P<name>[A-Z][^\n.:!?*(,%s]{1,60}?)[ \t]*(?:\([^)\n]*\))?[ \t]*(?:(?::|[%s]| - ).*)?$" % (MARK, DASH, DASH),
       (4431, "3.  Blink-shrimp (Aeropenaeus lentus)  \nAlready noticed by every visitor, yet seldom understood. [...] Blink-shrimp graze on those sugars"),
@@ -491,7 +492,7 @@ PATTERNS = [
       "comes back at least twice more in the body.",
       "Covers both list_head_line and the list lead patterns, with the two conditions.",
       flags="m", stop="section_words", max_words=6, min_occ=3, max_df=0.15),
-    P("live_the", 1, 3, "wide", "",
+    P("live_the", 1, 3, "",
       "frame",
       r"\b(?:live|lives|dwell|dwells|move|moves|drift|drifts|roam|roams|crawl|crawls|swim|swims|nest|nests|"
       r"lurk|lurks|wait|waits|come|comes|work|works)[ \t]+the[ \t]+"
@@ -500,7 +501,7 @@ PATTERNS = [
       "A lower-case kind introduced after a verb of living or moving, with the verb "
       "before its subject: 'Beside them live the rooters'.",
       max_words=2),
-    P("the_agent_recurring", 2, 3, "strict", "",
+    P("the_agent_recurring", 2, 3, "",
       "frame",
       r"\b[Tt]he[ \t]+(?P<name>[a-z]+(?:ers|ors))\b(?![ \t]*-)",
       (21439, "The grazers especially feel inevitable there. Not grass-eaters, but crust-eaters"),
@@ -511,7 +512,7 @@ PATTERNS = [
       "so is a hand-made list of -ers and -ors nouns that are not agents (the corners, the "
       "flowers). Ordinary agent nouns that recur in one text still match (the workers).",
       stop="not_agents", max_words=1, min_occ=3, max_df=0.15),
-    P("the_mod_being", 1, 3, "wide", "",
+    P("the_mod_being", 1, 3, "",
       "descriptive",
       r"(?:^|(?<=[.!?][ ])|(?<=\n))The[ \t]+(?!(?:other|same|only|first|second|third|last|next|few|many|rest|"
       r"remaining|[a-z]+er|[a-z]+est)[ \t])(?P<name>[a-z][a-z-]+[ \t]+(?:beings|ones|folk|people|creatures|"
@@ -522,14 +523,14 @@ PATTERNS = [
       "A description, not a coined name; kept because some models name their kinds only "
       "this way.",
       flags="m", max_words=2),
-    P("hyphen_agent_bare", 1, 3, "strict", "",
+    P("hyphen_agent_bare", 1, 3, "",
       "frame",
       r"(?<![A-Za-z-])(?<![Tt]he[ ])(?P<name>[a-z]+(?:-[a-z]+)*-%s)\b(?![ \t]*-)" % AGENT,
       (7437, "cavernous spaces where ambulatory vine-walkers are herded like livestock"),
       "A lower-case hyphenated compound ending in an agent or creature word, with no "
       "'the' directly before it.",
       max_words=1, min_occ=2),
-    P("as_known", 1, 3, "wide", "",
+    P("as_known", 1, 3, "",
       "frame",
       r"\b[Tt]he[ \t]+(?P<name>[a-z][a-z-]+(?:[ \t]+[a-z][a-z-]+)?)[ \t]*[%s,(][ \t]*as[ \t]+(?:they|it|she|he)[ \t]+"
       r"(?:are|is|were|was)[ \t]+(?:known|called|named)" % DASH,
@@ -537,7 +538,7 @@ PATTERNS = [
       "'the X, as they are known': a lower-case name followed by a remark that this is "
       "what they are called.",
       max_words=2),
-    P("name_talk", 1, 3, "wide", "",
+    P("name_talk", 1, 3, "",
       "statement",
       r"\b(?:names?|named|naming|nameless|unnamed|namers?)\b",
       (32085, "Her name is used below the mountain. Up here there is seldom occasion for it."),

@@ -49,6 +49,10 @@ def norm(surface):
     return clean(surface).casefold()
 
 
+# A pattern's precision is the share of names among the hits that were read by eye. It is
+# left empty until this many hits have been read.
+MIN_READ = 20
+
 COMPILED = None
 STOPS = {k: set(v) for k, v in P.STOPLISTS.items()}
 MASKS = {k: re.compile(v, re.M) for k, v in P.MASKS.items()}
@@ -189,7 +193,8 @@ def load_jsonl(name):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rev", required=True)
-    ap.add_argument("--record", default=None, help="append this run to rounds.jsonl with a note")
+    ap.add_argument("--record", default=None, help="write this run to rounds.jsonl with a note")
+    ap.add_argument("--round", type=int, default=None, help="round number to record under")
     ap.add_argument("--jobs", type=int, default=8)
     a = ap.parse_args()
 
@@ -216,13 +221,11 @@ def main():
     db.executescript("""
     CREATE TABLE run (key TEXT PRIMARY KEY, value TEXT);
     CREATE TABLE patterns (
-      id TEXT, version INTEGER, round INTEGER, added TEXT, tier TEXT, yields TEXT,
+      id TEXT, version INTEGER, round INTEGER, added TEXT, yields TEXT,
       family TEXT, regex TEXT, flags TEXT, stop TEXT, max_words INTEGER,
       origin_text INTEGER, origin_excerpt TEXT, what TEXT, note TEXT,
-      status TEXT, retired_reason TEXT, mask TEXT, reject TEXT, tier_basis TEXT,
-      min_occ INTEGER, max_df REAL);
-    CREATE TABLE recall (chk INTEGER, date TEXT, pool TEXT, text_id INTEGER, read_chars INTEGER,
-      name TEXT, caught TEXT, caught_now TEXT, forms_missed TEXT, note TEXT);
+      status TEXT, retired_reason TEXT, mask TEXT, reject TEXT, remark TEXT,
+      min_occ INTEGER, max_df REAL, precision REAL, n_read INTEGER);
     CREATE TABLE pattern_eval (
       pattern_id TEXT PRIMARY KEY, n_read INTEGER, n_being INTEGER, n_place INTEGER,
       n_thing INTEGER, n_statement INTEGER, n_not INTEGER, n_broken INTEGER,
@@ -233,20 +236,21 @@ def main():
       end INTEGER, surface TEXT, norm TEXT);
     CREATE TABLE text_names (
       text_id INTEGER, norm TEXT, display TEXT, n_mentions INTEGER, patterns TEXT,
-      tier TEXT, first_pos INTEGER, occurrences INTEGER, in_place_text INTEGER,
+      score REAL, first_pos INTEGER, occurrences INTEGER, in_place_text INTEGER,
       PRIMARY KEY (text_id, norm));
     CREATE TABLE text_cov (
-      text_id INTEGER PRIMARY KEY, model TEXT, length INTEGER,
-      n_strict INTEGER, n_wide INTEGER, n_names_strict INTEGER, n_names_wide INTEGER,
-      n_statements INTEGER, covered INTEGER, flag TEXT, all_in_place INTEGER, tagged TEXT);
+      text_id INTEGER PRIMARY KEY, model TEXT, length INTEGER, n_hits INTEGER,
+      n_names INTEGER, best REAL, expected REAL, n_statements INTEGER, n_anti INTEGER,
+      flag TEXT, tagged TEXT);
     CREATE TABLE names (
-      norm TEXT PRIMARY KEY, display TEXT, n_texts INTEGER, n_texts_strict INTEGER,
-      n_texts_new INTEGER, n_models INTEGER, n_models_strict INTEGER, n_mentions INTEGER,
-      patterns TEXT, top_models TEXT, df REAL);
+      norm TEXT PRIMARY KEY, display TEXT, n_texts INTEGER, expected REAL, expected_new REAL,
+      best REAL, n_models INTEGER, n_mentions INTEGER, patterns TEXT, top_models TEXT, df REAL);
     CREATE TABLE pattern_model (pattern_id TEXT, model TEXT, n_mentions INTEGER, n_texts INTEGER);
     CREATE TABLE readings (round INTEGER, text_id INTEGER, basis TEXT, saw TEXT, note TEXT);
     CREATE TABLE labels (text_id INTEGER, pattern_id TEXT, start INTEGER, end INTEGER,
-      surface TEXT, verdict TEXT, referent TEXT, note TEXT, round INTEGER);
+      surface TEXT, verdict TEXT, round INTEGER);
+    CREATE TABLE recall (chk INTEGER, date TEXT, pool TEXT, text_id INTEGER, read_chars INTEGER,
+      name TEXT, then_caught TEXT, score_now REAL, patterns_now TEXT, forms_missed TEXT, note TEXT);
     CREATE TABLE rounds (round INTEGER, date TEXT, note TEXT, stats TEXT);
     """)
 
@@ -256,154 +260,153 @@ def main():
     db.execute("INSERT INTO run VALUES ('built_at', ?)", (time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),))
     src = open(os.path.join(HERE, "patterns.py"), "rb").read()
     db.execute("INSERT INTO run VALUES ('patterns_sha256', ?)", (hashlib.sha256(src).hexdigest(),))
-
-    for status, plist in (("active", P.PATTERNS), ("retired", P.RETIRED)):
-        for p in plist:
-            db.execute("INSERT INTO patterns VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
-                p["id"], p["version"], p["round"], p["added"], p["tier"], p["yields"],
-                p["family"], p["regex"], p.get("flags", ""), p.get("stop"),
-                p.get("max_words"), p["origin"]["text"], p["origin"]["excerpt"],
-                p["what"], p.get("note", ""), status, p.get("retired_reason"),
-                p.get("mask"), p.get("reject"), p.get("tier_basis"), p.get("min_occ"), p.get("max_df")))
+    db.executemany("INSERT INTO mentions (text_id, pattern_id, start, end, surface, norm) "
+                   "VALUES (?,?,?,?,?,?)", mentions)
     for name, words in P.STOPLISTS.items():
         db.executemany("INSERT INTO stoplists VALUES (?,?)", [(name, w) for w in words])
 
-    db.executemany("INSERT INTO mentions (text_id, pattern_id, start, end, surface, norm) "
-                   "VALUES (?,?,?,?,?,?)", mentions)
-
-    tier = {p["id"]: p["tier"] for p in P.PATTERNS}
-    yields = {p["id"]: p["yields"] for p in P.PATTERNS}
-    texts = dict(rows)
-    places = {}
-    for pid, ptext in snap.execute("SELECT id, text FROM places"):
-        places[pid] = ptext.casefold()
-
-    per_text = defaultdict(lambda: defaultdict(list))
-    cov = defaultdict(lambda: dict(n_strict=0, n_wide=0, n_statements=0))
-    pm_m, pm_t = Counter(), defaultdict(set)
-    for tid, pid, s, e, surf, n in mentions:
-        model = meta[tid][0]
-        pm_m[(pid, model)] += 1
-        pm_t[(pid, model)].add(tid)
-        if yields[pid] == "statement":
-            cov[tid]["n_statements"] += 1
-            continue
-        per_text[tid][n].append((pid, s, surf))
-        cov[tid]["n_strict" if tier[pid] == "strict" else "n_wide"] += 1
-
-    name_rows, agg = [], defaultdict(lambda: dict(texts=set(), models=Counter(), n=0,
-                                                   disp=Counter(), sdisp=Counter(), pats=set(),
-                                                   strict=0, new=0, smodels=set()))
-    names_strict, names_wide, names_new = Counter(), Counter(), Counter()
-    tagged = {}
-    for tid, st in snap.execute("SELECT text_id, status FROM status ORDER BY tagged_at, rowid"):
-        if st in ("ok", "broken", "refusal", "off-topic"):
-            tagged[tid] = st          # the latest tagging that says something about the text
-    flags = {tid: text_flag(texts[tid], tagged.get(tid)) for tid in meta}
-    for tid, byname in per_text.items():
-        text = texts[tid]
-        low = None
-        place = places.get(meta[tid][2], "")
-        for n, hits in byname.items():
-            disp = Counter(clean(h[2]) for h in hits).most_common(1)[0][0]
-            pats = sorted(set(h[0] for h in hits))
-            is_strict = any(tier[p] == "strict" for p in pats)
-            if low is None:
-                low = text.casefold()
-            occ = low.count(n)
-            in_place = 1 if n in place else 0
-            name_rows.append((tid, n, disp, len(hits), ",".join(pats),
-                              "strict" if is_strict else "wide",
-                              min(h[1] for h in hits), occ, in_place))
-            (names_strict if is_strict else names_wide)[tid] += 1
-            if is_strict and not in_place:
-                names_new[tid] += 1
-            if flags[tid]:
-                continue
-            g = agg[n]
-            g["texts"].add(tid); g["models"][meta[tid][0]] += 1; g["n"] += len(hits)
-            g["disp"][disp] += 1; g["pats"].update(pats)
-            if is_strict:
-                g["strict"] += 1; g["sdisp"][disp] += 1; g["smodels"].add(meta[tid][0])
-                if not in_place:
-                    g["new"] += 1
-    db.executemany("INSERT INTO text_names VALUES (?,?,?,?,?,?,?,?,?)", name_rows)
-
-    for tid, (model, length, _place) in meta.items():
-        c = cov[tid]
-        db.execute("INSERT INTO text_cov VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (
-            tid, model, length, c["n_strict"], c["n_wide"], names_strict[tid],
-            names_wide[tid], c["n_statements"], 1 if names_strict[tid] else 0, flags[tid],
-            1 if names_strict[tid] and not names_new[tid] else 0, tagged.get(tid, "")))
-    for n, g in agg.items():
-        top = ", ".join("%s %d" % (m.split("/")[-1], k) for m, k in g["models"].most_common(4))
-        disp = (g["sdisp"] or g["disp"]).most_common(1)[0][0]
-        db.execute("INSERT INTO names VALUES (?,?,?,?,?,?,?,?,?,?,?)", (
-            n, disp, len(g["texts"]), g["strict"], g["new"], len(g["models"]),
-            len(g["smodels"]), g["n"], ",".join(sorted(g["pats"])), top,
-            df.get(n) if " " not in n else None))
-    db.executemany("INSERT INTO pattern_model VALUES (?,?,?,?)",
-                   [(pid, model, k, len(pm_t[(pid, model)])) for (pid, model), k in pm_m.items()])
-
-    # Recall checks: names seen by eye in texts read whole. `caught` is what was true when
-    # the text was read; `caught_now` is recomputed against the current patterns.
-    for r in load_jsonl("recall.jsonl"):
-        mine = per_text.get(r["text"], {})
-        for name, caught in r["names"].items():
-            n = norm(name)
-            hits = mine.get(n)
-            now = "missed" if not hits else "strict" if any(tier[h[0]] == "strict" for h in hits) else "wide"
-            db.execute("INSERT INTO recall VALUES (?,?,?,?,?,?,?,?,?,?)", (
-                r["check"], r["date"], r.get("pool", "covered"), r["text"], r["read_chars"], name,
-                caught, now, json.dumps(r.get("forms_missed", [])), r.get("note", "")))
-        if not r["names"]:
-            db.execute("INSERT INTO recall VALUES (?,?,?,?,?,?,?,?,?,?)", (
-                r["check"], r["date"], r.get("pool", "covered"), r["text"], r["read_chars"], None,
-                None, None, json.dumps(r.get("forms_missed", [])), r.get("note", "")))
-    for r in load_jsonl("readings.jsonl"):
-        db.execute("INSERT INTO readings VALUES (?,?,?,?,?)", (
-            r["round"], r["text"], r.get("basis", ""), json.dumps(r.get("saw", [])), r.get("note", "")))
-    for l in load_jsonl("labels.jsonl"):
-        db.execute("INSERT INTO labels VALUES (?,?,?,?,?,?,?,?,?)", (
-            l["text"], l["pattern"], l["start"], l["end"], l["surface"], l["verdict"],
-            l.get("referent", ""), l.get("note", ""), l.get("round")))
-
-    # A verdict stays attached to a hit as long as the pattern still captures a span
-    # that overlaps the span that was read.
+    # ---- precision of each pattern, from the verdicts ---------------------------------
+    # A verdict stays attached to a hit as long as the pattern still captures a span that
+    # overlaps the span that was read. Hits in broken texts are left out of the count.
+    labels = load_jsonl("labels.jsonl")
     live = defaultdict(list)
     for tid, pid, s, e, surf, n in mentions:
         live[(pid, tid)].append((s, e))
     ev = defaultdict(Counter)
-    for l in load_jsonl("labels.jsonl"):
+    for l in labels:
         pid = l["pattern"]
+        db.execute("INSERT INTO labels VALUES (?,?,?,?,?,?,?)", (
+            l["text"], pid, l["start"], l["end"], l["surface"], l["verdict"], l.get("round")))
         if any(s < l["end"] and e > l["start"] for s, e in live.get((pid, l["text"]), ())):
             ev[pid][l["verdict"]] += 1
         else:
             ev[pid]["gone"] += 1
             if l["verdict"] in "xg":
                 ev[pid]["gone_not"] += 1
+    prec, nread = {}, {}
     for pid, c in ev.items():
+        read = sum(c[k] for k in "bptsx")
+        nread[pid] = read
+        prec[pid] = round((c["b"] + c["p"] + c["t"] + c["s"]) / float(read), 3) if read >= MIN_READ else None
         db.execute("INSERT INTO pattern_eval VALUES (?,?,?,?,?,?,?,?,?,?)", (
-            pid, sum(c[k] for k in "bptsxg"), c["b"], c["p"], c["t"], c["s"], c["x"], c["g"],
-            c["gone"], c["gone_not"]))
+            pid, read, c["b"], c["p"], c["t"], c["s"], c["x"], c["g"], c["gone"], c["gone_not"]))
+    for status, plist in (("active", P.PATTERNS), ("retired", P.RETIRED)):
+        for p in plist:
+            act = status == "active"
+            db.execute("INSERT INTO patterns VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+                p["id"], p["version"], p["round"], p["added"], p["yields"],
+                p["family"], p["regex"], p.get("flags", ""), p.get("stop"),
+                p.get("max_words"), p["origin"]["text"], p["origin"]["excerpt"],
+                p["what"], p.get("note", ""), status, p.get("retired_reason"),
+                p.get("mask"), p.get("reject"), p.get("remark") or p.get("tier_basis"),
+                p.get("min_occ"), p.get("max_df"),
+                prec.get(p["id"]) if act else None, nread.get(p["id"], 0) if act else None))
+
+    # ---- names per text ----------------------------------------------------------------
+    yields = {p["id"]: p["yields"] for p in P.PATTERNS}
+    texts = dict(rows)
+    places = {pid: ptext.casefold() for pid, ptext in snap.execute("SELECT id, text FROM places")}
+    tagged = {}
+    for tid, st in snap.execute("SELECT text_id, status FROM status ORDER BY tagged_at, rowid"):
+        if st in ("ok", "broken", "refusal", "off-topic"):
+            tagged[tid] = st          # the latest tagging that says something about the text
+    flags = {tid: text_flag(texts[tid], tagged.get(tid)) for tid in meta}
+
+    per_text = defaultdict(lambda: defaultdict(list))
+    tc = defaultdict(lambda: dict(hits=0, st=0, anti=0))
+    pm_m, pm_t = Counter(), defaultdict(set)
+    for tid, pid, s, e, surf, n in mentions:
+        model = meta[tid][0]
+        pm_m[(pid, model)] += 1
+        pm_t[(pid, model)].add(tid)
+        if yields[pid] == "statement":
+            tc[tid]["st"] += 1
+            if pid == "anti_name":
+                tc[tid]["anti"] += 1
+            continue
+        per_text[tid][n].append((pid, s, surf))
+        tc[tid]["hits"] += 1
+
+    name_rows = []
+    agg = defaultdict(lambda: dict(texts=0, models=Counter(), n=0, disp=None, pats=set(),
+                                   exp=0.0, exp_new=0.0, best=0.0))
+    best, expected, n_names = Counter(), Counter(), Counter()
+    score_of = {}
+    for tid, byname in per_text.items():
+        low = texts[tid].casefold()
+        place = places.get(meta[tid][2], "")
+        for n, hits in byname.items():
+            disp = Counter(clean(h[2]) for h in hits).most_common(1)[0][0]
+            pats = sorted(set(h[0] for h in hits))
+            score = max((prec.get(p) or 0.0) for p in pats)
+            in_place = 1 if n in place else 0
+            name_rows.append((tid, n, disp, len(hits), ",".join(pats), score,
+                              min(h[1] for h in hits), low.count(n), in_place))
+            score_of[(tid, n)] = (score, pats)
+            n_names[tid] += 1
+            expected[tid] += score
+            if score > best[tid]:
+                best[tid] = score
+            if flags[tid]:
+                continue
+            g = agg[n]
+            g["texts"] += 1; g["models"][meta[tid][0]] += score; g["n"] += len(hits)
+            g["pats"].update(pats); g["exp"] += score
+            if not in_place:
+                g["exp_new"] += score
+            if g["disp"] is None or score > g["best"]:
+                g["disp"] = disp
+            if score > g["best"]:
+                g["best"] = score
+    db.executemany("INSERT INTO text_names VALUES (?,?,?,?,?,?,?,?,?)", name_rows)
+    for tid, (model, length, _place) in meta.items():
+        c = tc[tid]
+        db.execute("INSERT INTO text_cov VALUES (?,?,?,?,?,?,?,?,?,?,?)", (
+            tid, model, length, c["hits"], n_names[tid], best[tid], round(expected[tid], 3),
+            c["st"], c["anti"], flags[tid], tagged.get(tid, "")))
+    for n, g in agg.items():
+        top = ", ".join("%s %.0f" % (m.split("/")[-1], k) for m, k in g["models"].most_common(4) if k >= 0.5)
+        db.execute("INSERT INTO names VALUES (?,?,?,?,?,?,?,?,?,?,?)", (
+            n, g["disp"], g["texts"], round(g["exp"], 2), round(g["exp_new"], 2), g["best"],
+            sum(1 for k in g["models"].values() if k > 0) or len(g["models"]), g["n"],
+            ",".join(sorted(g["pats"])), top, df.get(n) if " " not in n else None))
+    db.executemany("INSERT INTO pattern_model VALUES (?,?,?,?)",
+                   [(pid, model, k, len(pm_t[(pid, model)])) for (pid, model), k in pm_m.items()])
+
+    # ---- recall checks: names seen by eye in texts read whole ---------------------------
+    # `then` is what was recorded when the text was read; the score is recomputed now.
+    for r in load_jsonl("recall.jsonl"):
+        for name, then in r["names"].items():
+            sc, pats = score_of.get((r["text"], norm(name)), (0.0, []))
+            db.execute("INSERT INTO recall VALUES (?,?,?,?,?,?,?,?,?,?,?)", (
+                r["check"], r["date"], r.get("pool", "covered"), r["text"], r["read_chars"], name,
+                str(then), sc, ",".join(pats), json.dumps(r.get("forms_missed", [])), r.get("note", "")))
+        if not r["names"]:
+            db.execute("INSERT INTO recall VALUES (?,?,?,?,?,?,?,?,?,?,?)", (
+                r["check"], r["date"], r.get("pool", "covered"), r["text"], r["read_chars"], None,
+                None, None, None, json.dumps(r.get("forms_missed", [])), r.get("note", "")))
+    for r in load_jsonl("readings.jsonl"):
+        db.execute("INSERT INTO readings VALUES (?,?,?,?,?)", (
+            r["round"], r["text"], r.get("basis", ""), json.dumps(r.get("saw", [])), r.get("note", "")))
 
     ok = [t for t in meta if not flags[t]]
-    n_texts = len(meta)
     stats = dict(
-        texts=n_texts, mentions=len(mentions), patterns=len(P.PATTERNS),
-        strict_patterns=sum(1 for p in P.PATTERNS if p["tier"] == "strict"),
-        flagged=n_texts - len(ok),
-        untagged=sum(1 for t in meta if t not in tagged),
-        covered=sum(1 for t in ok if names_strict[t]),
-        covered_all_in_place=sum(1 for t in ok if names_strict[t] and not names_new[t]),
-        wide_only=sum(1 for t in ok if not names_strict[t] and names_wide[t]),
-        nothing=sum(1 for t in ok if not names_strict[t] and not names_wide[t]),
-        distinct_names=len(agg),
-        distinct_names_strict=sum(1 for g in agg.values() if g["strict"]), statements=sum(c["n_statements"] for c in cov.values()),
+        texts=len(meta), flagged=len(meta) - len(ok), untagged=sum(1 for t in meta if t not in tagged),
+        mentions=len(mentions), patterns=len(P.PATTERNS),
+        patterns_at_80=sum(1 for p in P.PATTERNS if p["yields"] == "name" and (prec.get(p["id"]) or 0) >= 0.8),
+        best_80=sum(1 for t in ok if best[t] >= 0.8),
+        best_50_80=sum(1 for t in ok if 0.5 <= best[t] < 0.8),
+        best_under_50=sum(1 for t in ok if n_names[t] and best[t] < 0.5),
+        best_none=sum(1 for t in ok if not n_names[t]),
+        anti_texts=sum(1 for t in ok if tc[t]["anti"]),
+        name_talk_texts=sum(1 for t in ok if tc[t]["st"]),
+        distinct_strings=len(agg),
+        distinct_at_80=sum(1 for g in agg.values() if g["best"] >= 0.8),
+        verdicts=len(labels),
         content_sha256=digest, revision=release.get("corpus_revision"))
+    stats["covered"] = stats["best_80"]          # the same series under its earlier name
     if a.record is not None:
-        # one line per round; recording a round again replaces its line
-        rnd = max(p["round"] for p in P.PATTERNS)
+        rnd = a.round or max(p["round"] for p in P.PATTERNS)
         keep = [r for r in load_jsonl("rounds.jsonl") if r["round"] != rnd]
         keep.append(dict(round=rnd, date=time.strftime("%Y-%m-%d"), note=a.record, stats=stats))
         with open(os.path.join(HERE, "rounds.jsonl"), "w", encoding="utf-8") as f:
@@ -413,7 +416,6 @@ def main():
         db.execute("INSERT INTO rounds VALUES (?,?,?,?)", (
             r["round"], r["date"], r["note"], json.dumps(r["stats"])))
     db.execute("INSERT INTO run VALUES ('stats', ?)", (json.dumps(stats),))
-
     db.executescript("""
     CREATE INDEX m_text ON mentions(text_id);
     CREATE INDEX m_pat ON mentions(pattern_id);

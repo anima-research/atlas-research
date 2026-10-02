@@ -8,7 +8,7 @@ import argparse, os
 import patterns as P
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ORDER = ["id", "version", "round", "added", "tier", "tier_basis", "yields", "family", "regex",
+ORDER = ["id", "version", "round", "added", "tier", "tier_basis", "remark", "yields", "family", "regex",
          "flags", "stop", "mask", "reject", "max_words", "min_occ", "max_df", "origin", "what",
          "note", "retired_reason"]
 ap = argparse.ArgumentParser()

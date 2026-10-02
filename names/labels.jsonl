@@ -1292,3 +1292,126 @@
 {"pattern": "the_agent_recurring", "text": 13527, "start": 2624, "end": 2635, "surface": "mistweavers", "verdict": "b", "round": 3, "seed": "2"}
 {"pattern": "the_agent_recurring", "text": 27233, "start": 9059, "end": 9066, "surface": "gliders", "verdict": "b", "round": 3, "seed": "2"}
 {"pattern": "the_agent_recurring", "text": 13824, "start": 9020, "end": 9028, "surface": "builders", "verdict": "b", "round": 3, "seed": "2"}
+{"pattern": "binomial", "text": 4459, "start": 3821, "end": 3844, "surface": "Aetherosepia alveolaris", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 8657, "start": 1307, "end": 1330, "surface": "Tenuibrachion cellarius", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 13921, "start": 41, "end": 62, "surface": "Coleoptera horologica", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 10088, "start": 2261, "end": 2282, "surface": "Myrmekiophysa sonorus", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 4407, "start": 2790, "end": 2803, "surface": "Capra nubilus", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 14499, "start": 2581, "end": 2601, "surface": "Siliceous neuromimes", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 12604, "start": 2592, "end": 2608, "surface": "Gutta coleoptera", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 11602, "start": 1633, "end": 1653, "surface": "Desmarestia aculeata", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 1803, "start": 977, "end": 994, "surface": "Cognitis aquatica", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 10275, "start": 4070, "end": 4087, "surface": "Luminaria frigida", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 8836, "start": 147, "end": 164, "surface": "Pyroclasta refusa", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 13921, "start": 7037, "end": 7056, "surface": "Rattus concatenatus", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 12561, "start": 2834, "end": 2854, "surface": "Aerophytus nebulosus", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 15757, "start": 1646, "end": 1664, "surface": "Carbunculus volans", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 9203, "start": 1559, "end": 1576, "surface": "Fungi georhythmus", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 9116, "start": 3540, "end": 3561, "surface": "Pulmocorpus profundus", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 7764, "start": 4352, "end": 4369, "surface": "Rattus norvegicus", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 4407, "start": 3322, "end": 3333, "surface": "Draco remex", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 17647, "start": 3266, "end": 3282, "surface": "Paries mutabilis", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "binomial", "text": 10230, "start": 2785, "end": 2803, "surface": "Pseudocaris lucida", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "list_bullet_lead", "text": 15874, "start": 622, "end": 626, "surface": "Mind", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15821, "start": 957, "end": 962, "surface": "Flesh", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15818, "start": 6495, "end": 6505, "surface": "Gray Kadal", "verdict": "b", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 21056, "start": 14566, "end": 14576, "surface": "Behavioral", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15783, "start": 5550, "end": 5564, "surface": "Quiet Furnaces", "verdict": "b", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15776, "start": 5443, "end": 5450, "surface": "Stature", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 21043, "start": 9493, "end": 9499, "surface": "Bodies", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 4456, "start": 2492, "end": 2505, "surface": "Upper shelves", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15791, "start": 4446, "end": 4457, "surface": "Composition", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15828, "start": 3688, "end": 3695, "surface": "Hunting", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15772, "start": 1556, "end": 1596, "surface": "Human-sized, though seldom fully upright", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15741, "start": 3507, "end": 3517, "surface": "Life Cycle", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15868, "start": 897, "end": 928, "surface": "Artisans who make the silencers", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 21127, "start": 25066, "end": 25097, "surface": "A host of hybrid micro-entities", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15851, "start": 1067, "end": 1087, "surface": "Locomotion & Gravity", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15867, "start": 3059, "end": 3063, "surface": "Fall", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15800, "start": 5248, "end": 5257, "surface": "Lint-moss", "verdict": "b", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15741, "start": 3741, "end": 3752, "surface": "Personality", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15850, "start": 665, "end": 677, "surface": "Rust-chewers", "verdict": "b", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 20988, "start": 1997, "end": 2030, "surface": "Fronds behave like tuned antennas", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 21001, "start": 1622, "end": 1665, "surface": "The thick conduits underfoot are old habits", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 4203, "start": 6560, "end": 6564, "surface": "Fire", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15767, "start": 5818, "end": 5833, "surface": "The Static Hive", "verdict": "b", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 4456, "start": 414, "end": 421, "surface": "Stature", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 21034, "start": 21129, "end": 21155, "surface": "Reweighting what they pass", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15767, "start": 4415, "end": 4421, "surface": "Ritual", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 21126, "start": 9261, "end": 9295, "surface": "A unique spectrum of ambient sound", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15783, "start": 5728, "end": 5749, "surface": "Internal-gas Plankton", "verdict": "b", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 4402, "start": 1646, "end": 1668, "surface": "Language is a spectrum", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "list_bullet_lead", "text": 15291, "start": 11063, "end": 11070, "surface": "Dynamic", "verdict": "x", "round": 4, "seed": "1"}
+{"pattern": "bold_lead", "text": 19189, "start": 3644, "end": 3662, "surface": "The Anchor Tenders", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 14424, "start": 1019, "end": 1030, "surface": "Velvet mats", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 25468, "start": 3656, "end": 3671, "surface": "Magnetic Fields", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 6821, "start": 7339, "end": 7364, "surface": "Engineers and Maintainers", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 12604, "start": 730, "end": 742, "surface": "Silica Slugs", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 5490, "start": 3241, "end": 3252, "surface": "Mistwalkers", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 19163, "start": 3909, "end": 3918, "surface": "The Slime", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 12578, "start": 1678, "end": 1693, "surface": "The Sun Bathers", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 17448, "start": 2287, "end": 2304, "surface": "The Pool-Ephemera", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 10297, "start": 1816, "end": 1829, "surface": "Stone-Singers", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 12566, "start": 3862, "end": 3876, "surface": "Bark-Behemoths", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 5400, "start": 1169, "end": 1178, "surface": "Abilities", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 17831, "start": 1504, "end": 1525, "surface": "The Architects of Mud", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 25595, "start": 3241, "end": 3268, "surface": "Predator-Prey Relationships", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 23059, "start": 5428, "end": 5450, "surface": "The Paradox of Silence", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 19428, "start": 2849, "end": 2868, "surface": "Metabolism and Form", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 18993, "start": 818, "end": 836, "surface": "The Obsidian Shell", "verdict": "t", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 12609, "start": 5420, "end": 5440, "surface": "The Industrial Pulse", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 19403, "start": 4576, "end": 4596, "surface": "Behavior and Purpose", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_lead", "text": 18461, "start": 2491, "end": 2514, "surface": "The Scuttling Resistors", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 30020, "start": 1254, "end": 1264, "surface": "weep-frogs", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 14076, "start": 4402, "end": 4417, "surface": "chemical memory", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 31382, "start": 22, "end": 31, "surface": "stillborn", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 6479, "start": 8346, "end": 8356, "surface": "inner heat", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 18108, "start": 7739, "end": 7745, "surface": "system", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 6244, "start": 1139, "end": 1146, "surface": "network", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 6229, "start": 1486, "end": 1497, "surface": "first order", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 6108, "start": 2489, "end": 2496, "surface": "bio-ink", "verdict": "t", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 30513, "start": 14896, "end": 14908, "surface": "cairn-makers", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 18985, "start": 2118, "end": 2130, "surface": "bio-adhesive", "verdict": "t", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 10185, "start": 1759, "end": 1772, "surface": "weeping rocks", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 7851, "start": 2551, "end": 2566, "surface": "armored isopods", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 6183, "start": 787, "end": 816, "surface": "slow-pulsing gelatinous blobs", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 14395, "start": 4408, "end": 4428, "surface": "tensioned instrument", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 23041, "start": 5995, "end": 6007, "surface": "fungus-trees", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 10223, "start": 83, "end": 94, "surface": "silt-whales", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 14197, "start": 3339, "end": 3354, "surface": "substrate-paste", "verdict": "t", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 15464, "start": 2322, "end": 2348, "surface": "reverberation in resonance", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 18043, "start": 9645, "end": 9650, "surface": "flies", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 14270, "start": 6448, "end": 6461, "surface": "finished-ness", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 22212, "start": 3599, "end": 3609, "surface": "metabolism", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 6178, "start": 4290, "end": 4318, "surface": "post-organismic intelligence", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 30004, "start": 1387, "end": 1398, "surface": "iron-skinks", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 7910, "start": 859, "end": 868, "surface": "starlings", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "bold_inline_lower", "text": 5683, "start": 3107, "end": 3112, "surface": "light", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 18237, "start": 13324, "end": 13334, "surface": "experience", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 22908, "start": 4429, "end": 4436, "surface": "process", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 6177, "start": 2616, "end": 2622, "surface": "organs", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 6188, "start": 3270, "end": 3276, "surface": "mirror", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 12220, "start": 13191, "end": 13203, "surface": "a-linguistic", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 7784, "start": 1917, "end": 1928, "surface": "click-click", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 7749, "start": 1347, "end": 1357, "surface": "click-tick", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 18677, "start": 2492, "end": 2508, "surface": "biological thrum", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 22930, "start": 2201, "end": 2215, "surface": "echo-creatures", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 30294, "start": 2697, "end": 2712, "surface": "paling-striders", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 14582, "start": 9097, "end": 9116, "surface": "symbiotic intention", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 11577, "start": 7091, "end": 7100, "surface": "condition", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 10216, "start": 4195, "end": 4205, "surface": "chrysalids", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 29218, "start": 5176, "end": 5185, "surface": "tink-tink", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 5625, "start": 3747, "end": 3754, "surface": "thought", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 23180, "start": 3623, "end": 3638, "surface": "hollow-dwellers", "verdict": "b", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 28977, "start": 9238, "end": 9253, "surface": "presences-to-be", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 24974, "start": 16307, "end": 16310, "surface": "het", "verdict": "t", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 5822, "start": 144, "end": 149, "surface": "being", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 14569, "start": 8617, "end": 8625, "surface": "curation", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 6385, "start": 13312, "end": 13323, "surface": "in-progress", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 9039, "start": 3940, "end": 3944, "surface": "what", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 18283, "start": 3193, "end": 3201, "surface": "membrane", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 8702, "start": 4901, "end": 4905, "surface": "idea", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 6256, "start": 1007, "end": 1022, "surface": "thought-process", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 6103, "start": 1436, "end": 1448, "surface": "after-effect", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 23503, "start": 1557, "end": 1567, "surface": "impression", "verdict": "x", "round": 4, "seed": "2"}
+{"pattern": "italic_lower", "text": 6132, "start": 2913, "end": 2921, "surface": "variable", "verdict": "x", "round": 4, "seed": "2"}

@@ -16,6 +16,8 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
 | `recall.jsonl` | covered texts read whole: every name seen by eye, and whether a strict pattern, only a wide one, or nothing caught it | yes |
 | `extract.py` | snapshot + the files above -> `data/names.db` | |
 | `sample.py`, `label.py` | draw a seeded sample of a pattern's hits; record verdicts on it | |
+| `recall_add.py` | append a recall check to `recall.jsonl`, stamping each name with its score at that moment | |
+| `retire.py` | copy a pattern's current version to `patterns_retired.py` before changing it | |
 | `show.py` | print texts with the current hits marked inline, for reading | |
 | `build_site.py` | `data/names.db` -> `site/` | |
 | `data/`, `site/` | derived; rebuilt by the commands below | no |
@@ -30,8 +32,7 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
 3. `python3 extract.py --rev 15`
 4. `python3 sample.py <pattern> --n 30`, read, then `python3 label.py <pattern> <verdicts> --round N`
    (before changing a pattern: `python3 retire.py --reason "..." <pattern>`)
-5. Set `tier` from the verdicts (strict = at least 80% names in 30 or more read hits).
-6. `python3 extract.py --rev 15 --record "what was done"` and `python3 build_site.py --rev 15`
+5. `python3 extract.py --rev 15 --round N --record "what was done"` and `python3 build_site.py --rev 15`
 
 ## What counts as a name (for the verdicts)
 
@@ -51,11 +52,30 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
 - The wording of the instruction the models were given is not public and is not quoted on the
   site or in this directory.
 - Everything here is in English: the site is meant to become part of a publication.
-- A wide pattern never removes a text from the uncovered pool. Only a strict pattern does.
+- A pattern has no class. Its precision is the share of names among its hits that were read
+  (computed from `labels.jsonl`, empty under 20 read). A name in a text scores the highest
+  precision among the patterns that caught it; a text's best score is the highest score among
+  its names. Cuts such as 0.8 or 0.5 appear only as display choices.
 - "Also in the place text" says where a name first appeared. It is not a test of whether the
   name is of a place or of a being: of the hits read so far that were in the place text, more
   were beings than places.
 - Sample counts shown on the site are computed from `labels.jsonl`, never typed by hand.
+
+## Texts without names
+
+A text with no name, and a text that says its beings have no name, are part of what is studied.
+
+- Said outright: the `anti_name` pattern collects the sentences ("it has no name for itself").
+- Not said: a pattern search cannot show absence. It collects candidates: texts whose best score
+  is low. Site page: Texts without names.
+- The candidate set is not the set of nameless texts. In recall check 3 (20 texts drawn from all
+  texts) 6 had no name of a being; 3 of the 6 had a best score under 0.5, the other 3 had a high
+  best score from the name of the place or from a wrong capture.
+- Final check, not done yet: give language models a large random sample with one question, "are
+  there names or titles of beings in this text?" (yes or no). Because of the point above, the
+  sample should be drawn across all best scores (more densely where the score is low), not only
+  from the candidates, and should include texts where names are known, to measure how often the
+  judges say "no" wrongly.
 
 ## Not done yet
 
@@ -63,11 +83,15 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
 - Singular and plural are separate names.
 - No model-specific exceptions.
 - The read-hits table on a pattern page also lists verdicts on hits the pattern no longer matches.
-- Not yet sampled to 30: `binomial` (13 read), `list_bullet_lead` (none), `as_known` (4 hits in all).
+- `as_known` has 4 hits in all and no precision.
 - Forms seen and not yet written as patterns: a bare capitalised plural opening a sentence
   ("Wanderers, conversely, roam"); a compound with an adjective between "the" and it ("the oldest
   shell-builders"); frames that say who gives the name ("they call themselves", "the keepers call
   them"), to be read off the hits of the naming-verb patterns.
 - `live_the` is mostly wrong on verbs that take an object (roam the, work the); "live the" alone
   was right 6 times in 10.
-- Recall check 3 (fresh sample of covered texts) is due at the start of round 4.
+- Forms seen in recall check 3 and not yet written as patterns: a title that designates one
+  inhabitant and does not recur ("The Floor That Eats"); a numbered heading followed by the same
+  capitalised name opening the next sentence without an article ("Glimmerbark Serpents are");
+  the second compound of a pair sharing one "the"; bold lower-case compound after a dash.
+- A fresh recall check is due at the start of each round (`recall_add.py`).

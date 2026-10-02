@@ -30,3 +30,23 @@
 {"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 30738, "read_chars": 3200, "names": {}, "note": "first 3,200 characters describe the land only"}
 {"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 27463, "read_chars": 3200, "names": {}, "note": "'they', 'the occupant'; no name"}
 {"check": 2, "date": "2026-10-02", "pool": "uncovered", "text": 27440, "read_chars": 3200, "names": {}, "note": "'the inhabitant', 'it'; no name"}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 21704, "read_chars": 4500, "names": {"Singers": 1.0, "Floor That Eats": 0.407, "Listening That Has No Body": 0.407}, "forms_missed": ["a heading that is a title for one inhabitant and does not recur: '### The Floor That Eats'"]}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 9215, "read_chars": 4500, "names": {"Listeners": 1.0}}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 1974, "read_chars": 2832, "names": {}, "note": "only the place is named (the Polycosm); the beings are 'a serpentine creature', 'a herd of quadrupedal grazers'"}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 30467, "read_chars": 4500, "names": {"copper-root": 0.893}, "forms_missed": ["a lower-case compound used as the name of a kind, singular: 'A copper-root may seem rooted for a lifetime'"]}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 28844, "read_chars": 4500, "names": {"Reachers": 1.0, "Crust": 1.0, "Drifter": 1.0, "Carvers": 1.0, "Dissolved": 0.414}}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 3919, "read_chars": 4500, "names": {"Lumenfolk": 1.0, "Weavers": 1.0, "guest-selves": 0.0}, "forms_missed": ["bold lower-case compound after a dash: 'There are others, too—**guest-selves**'"]}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 7034, "read_chars": 4500, "names": {}, "note": "ordinary species words only"}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 9497, "read_chars": 4500, "names": {"Seam-Readers": 1.0, "Gliders": 1.0, "Eel-Lights": 1.0, "Nesters": 1.0}}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 11969, "read_chars": 4500, "names": {"Tenants of the Sound": 0.643, "Two That Might Be Sponges": 0.643, "Pale Shape in the Corridor": 0.643}, "forms_missed": ["a bold title line that designates one inhabitant and does not recur"]}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 25504, "read_chars": 4500, "names": {"Etherian Whisperwings": 1.0, "Glimmerbark Serpents": 0.407, "Mossweavers": 1.0, "Veilstalkers": 0.733, "Luminescent Burrowers": 0.407, "Sky Dancers": 0.733, "Mist Guardians": 0.893, "Phosphene Flora": 1.0}, "forms_missed": ["a numbered heading, then the same capitalised name opening the first sentence under it, with no article: '### 2. **Glimmerbark Serpents**' / 'Glimmerbark Serpents are sinuous reptiles'"]}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 23048, "read_chars": 3800, "names": {}, "note": "partly word salad, not flagged; one wrong capture (Barbados)"}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 30162, "read_chars": 3800, "names": {"tallow-eaters": 0.933}}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 7612, "read_chars": 3800, "names": {"wire-weavers": 0.933, "spore-harvesters": 0.0}, "forms_missed": ["second compound of a pair, sharing one 'the': 'the wire-weavers and spore-harvesters'"]}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 2234, "read_chars": 2981, "names": {"Mosskin": 1.0}}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 22425, "read_chars": 3397, "names": {}, "note": "'a small, long-limbed highland forager'; no name"}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 25307, "read_chars": 3800, "names": {}, "note": "ordinary species words; one wrong capture (Approximate)"}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 20447, "read_chars": 2859, "names": {}, "note": "'the being', 'the canyon'; no name"}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 30860, "read_chars": 3800, "names": {"ash-things": 0.933}}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 1795, "read_chars": 3800, "names": {"Vitreous Collective": 1.0, "Architects": 1.0}}
+{"check": 3, "date": "2026-10-02", "pool": "all", "text": 21064, "read_chars": 3800, "names": {"Fixers": 1.0}}
