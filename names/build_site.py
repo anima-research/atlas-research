@@ -18,7 +18,8 @@ VERDICTS = {"b": "being", "p": "place", "t": "thing", "s": "statement", "x": "no
             "g": "broken text"}
 NAV = [("index.html", "Overview"), ("patterns.html", "Patterns"), ("models.html", "Models"),
        ("names.html", "Names"), ("texts.html", "Texts"), ("no_names.html", "Texts without names"),
-       ("recall.html", "Recall checks"), ("readings.html", "Reading log"), ("flagged.html", "Flagged texts")]
+       ("recall.html", "Recall checks"), ("readings.html", "Reading log"), ("flagged.html", "Flagged texts"),
+       ("export.html", "Data export")]
 
 CSS = """
 body{font:15px/1.45 system-ui,sans-serif;margin:0 auto;max-width:1500px;padding:0 16px 60px;color:#222;background:#fff}
@@ -647,26 +648,129 @@ that names written in forms that the better patterns miss can be found here.</p>
             f.write(jdump(d))
     with open(os.path.join(SITE, "n", "models.json"), "w", encoding="utf-8") as f:
         f.write(jdump(models))
-    page("name.html", "Name", """<div id=head></div><div id=nt></div>
+    with open(os.path.join(SITE, "n", "model_counts.json"), "w", encoding="utf-8") as f:
+        f.write(jdump([sum(1 for r in cov.values() if r[1] == m and not r[9]) for m in models]))
+    page("name.html", "Name", """<div id=head></div><div id=sets></div><div id=nt></div>
 <script src="sha1.js"></script><script>
 (function () {
-  var n = new URLSearchParams(location.search).get('n') || '';
-  document.querySelector('h1').textContent = 'Name: ' + n;
-  var b = sha1(n).slice(0, 2);
-  Promise.all([fetch('n/' + b + '.json').then(function (r) { return r.json(); }),
-               fetch('n/models.json').then(function (r) { return r.json(); })]).then(function (res) {
-    var rows = (res[0][n] || []).map(function (r) {
-      return ['<a href="text.html?id=' + r[0] + '">#' + r[0] + '</a>', res[1][r[1]], r[2],
-              r[7], r[3], r[4], r[5] ? 'yes' : '', r[6]];
-    });
-    document.getElementById('head').innerHTML = '<p>' + rows.length + ' texts.</p>';
+  var qs = new URLSearchParams(location.search);
+  var parse = function (s) { return (s || '').split('|').map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean); };
+  var setA = parse(qs.get('n')), setB = parse(qs.get('vs'));
+  var h1 = document.querySelector('h1');
+  if (!setA.length) { h1.textContent = 'Name'; document.getElementById('head').innerHTML =
+    '<p>Give one string, or several joined by |, as <code>name.html?n=keeper|keepers</code>; add a second set with <code>&amp;vs=tender|tenders</code> to compare. Counts are of texts, so a text that has both forms is counted once.</p>'; return; }
+  h1.textContent = (setB.length ? 'Names: ' : 'Name: ') + setA.join(' | ') + (setB.length ? '  vs  ' + setB.join(' | ') : '');
+  var get = function (u) { return fetch(u).then(function (r) { return r.json(); }); };
+  var buckets = {};
+  var need = setA.concat(setB).map(function (n) { return sha1(n).slice(0, 2); }).filter(function (b, i, a) { return a.indexOf(b) === i; });
+  Promise.all([get('n/models.json'), get('n/model_counts.json')].concat(need.map(function (b) {
+    return get('n/' + b + '.json').then(function (d) { buckets[b] = d; });
+  }))).then(function (res) {
+    var models = res[0], counts = res[1];
+    var rowsOf = function (n) { return (buckets[sha1(n).slice(0, 2)] || {})[n] || []; };
+    // per set: text -> best row (highest score) over its strings
+    var gather = function (set) {
+      var by = {};
+      set.forEach(function (n) { rowsOf(n).forEach(function (r) {
+        var cur = by[r[0]];
+        if (!cur || r[2] > cur.score) by[r[0]] = {text: r[0], model: r[1], score: r[2], where: r[7], hits: r[3], occ: r[4], place: r[5], pats: r[6], strings: (cur ? cur.strings : [])};
+        by[r[0]].strings.push(n);
+      }); });
+      return by;
+    };
+    var A = gather(setA), B = setB.length ? gather(setB) : null;
+    var ids = Object.keys(A);
+    var perModel = models.map(function (m, i) {
+      var a = 0, a8 = 0, bb = 0, b8 = 0;
+      ids.forEach(function (t) { if (A[t].model === i) { a++; if (A[t].score >= 0.8) a8++; } });
+      if (B) Object.keys(B).forEach(function (t) { if (B[t].model === i) { bb++; if (B[t].score >= 0.8) b8++; } });
+      var row = [m, counts[i], a, counts[i] ? Math.round(1000 * a / counts[i]) / 10 : '', a8, counts[i] ? Math.round(1000 * a8 / counts[i]) / 10 : ''];
+      if (B) row = row.concat([bb, counts[i] ? Math.round(1000 * bb / counts[i]) / 10 : '', b8, counts[i] ? Math.round(1000 * b8 / counts[i]) / 10 : '']);
+      return row;
+    }).filter(function (r) { return r[2] || (B && r[6]); });
+    var n8 = ids.filter(function (t) { return A[t].score >= 0.8; }).length;
+    var head = '<p>' + ids.length + ' texts contain ' + (setA.length > 1 ? 'one of ' : '') + setA.join(' | ') + ' (' + n8 + ' at a score of 0.8 or more).';
+    if (B) { var bi = Object.keys(B); head += ' ' + bi.length + ' texts contain ' + setB.join(' | ') + ' (' + bi.filter(function (t) { return B[t].score >= 0.8; }).length + ' at 0.8 or more). ' +
+      Object.keys(A).filter(function (t) { return B[t]; }).length + ' texts contain both.'; }
+    document.getElementById('head').innerHTML = head + '</p>';
+    var cols = [{title: 'model', type: 'text'}, {title: 'texts', type: 'num', tip: 'counted texts of the model'},
+      {title: 'with ' + setA.join('|'), type: 'num', tip: 'texts of the model that contain any string of the first set, at any score'}, {title: '%', type: 'num'},
+      {title: 'at 0.8', type: 'num', tip: 'of those, texts where the string has a score of 0.8 or more'}, {title: '% at 0.8', type: 'num'}];
+    if (B) cols = cols.concat([{title: 'with ' + setB.join('|'), type: 'num'}, {title: '%', type: 'num'}, {title: 'at 0.8', type: 'num'}, {title: '% at 0.8', type: 'num'}]);
+    document.getElementById('sets').innerHTML = '<h2>By model</h2><div id=pm></div><h2>Texts</h2>';
+    makeTable(document.getElementById('pm'), {columns: cols, rows: perModel, pageSize: 130, sort: [5, -1]});
+    var trows = ids.map(function (t) { var r = A[t]; return ['<a href="text.html?id=' + t + '">#' + t + '</a>', models[r.model], r.strings.join(', '), r.score, r.where, r.hits, r.occ, r.place ? 'yes' : '', r.pats]; });
     makeTable(document.getElementById('nt'), {columns: [
-      {title: 'text', type: 'html'}, {title: 'model', type: 'text'}, {title: 'score', type: 'num'},
+      {title: 'text', type: 'html'}, {title: 'model', type: 'text'}, {title: 'strings', type: 'text', tip: 'which of the strings the text contains'},
+      {title: 'score', type: 'num', tip: 'the highest score among them in this text'},
       {title: 'where', type: 'text', tip: 'title only: caught in a title line and occurring nowhere else'},
       {title: 'hits', type: 'num'}, {title: 'occurrences in text', type: 'num', tip: 'times the string occurs in the text, any case'},
-      {title: 'also in place text', type: 'text'}, {title: 'patterns', type: 'text'}], rows: rows, pageSize: 300, sort: [2, -1]});
+      {title: 'also in place text', type: 'text'}, {title: 'patterns', type: 'text'}], rows: trows, pageSize: 300, sort: [3, -1]});
   });
 })();</script>""")
+
+    # ------------------------------------------------------------------ export
+    xdir = os.path.join(SITE, "export")
+    os.makedirs(xdir, exist_ok=True)
+    import csv
+    def dump_csv(name, header, rows, notes):
+        with open(os.path.join(xdir, name), "w", encoding="utf-8", newline="") as f:
+            w = csv.writer(f); w.writerow(header); w.writerows(rows)
+        return "### %s\n\n%s\n\n" % (name, "\n".join("- `%s`: %s" % kv for kv in zip(header, notes)))
+    notes = "# Data export\n\nThe tables behind this site, as CSV. Rebuilt with the site; same release, same patterns.\n\n"
+    notes += dump_csv("texts.csv",
+        ["text_id", "model", "length", "best_score_body", "best_score_title_only", "names_at_0_8", "expected_names",
+         "no_name_statements", "sentences_with_name", "corpus_status", "flag"],
+        [[tid, r[1], r[2], r[11], r[12], sum(1 for x in tn.get(tid, ()) if x[5] >= 0.8), r[6], r[8], r[7], r[10], r[9]]
+         for tid, r in sorted(cov.items())],
+        ["Atlas creature id (https://atlas.animalabs.ai/v3/creature/<id>)", "writer model", "characters",
+         "highest score among names the text uses outside a title line (0 = none)",
+         "highest score among title-only designations (0 = none)", "distinct strings with a score of 0.8 or more",
+         "sum of the scores of all strings caught", "sentences saying there is no name", "sentences using the word name",
+         "status recorded by the corpus taggers, empty if none", "why the text is left out of counts, empty if counted"])
+    notes += dump_csv("text_names.csv",
+        ["text_id", "string", "as_written", "score", "patterns", "hits", "first_position", "occurrences",
+         "in_place_text", "title_hits", "body_occurrences", "body_occurrences_same_capitals"],
+        [[r[0], r[1], r[2], r[5], r[4], r[3], r[6], r[7], r[8], r[9], r[10], r[11]]
+         for r in q("SELECT text_id, norm, display, n_mentions, patterns, score, first_pos, occurrences, "
+                    "in_place_text, in_title, body_occ, body_cased FROM text_names ORDER BY text_id, first_pos")],
+        ["text", "the string, lower-cased, article and markup removed", "as most often written in this text",
+         "highest precision among the patterns that caught it here", "patterns that caught it, comma-separated",
+         "pattern matches in this text", "character offset of the first hit", "times it occurs in the text, any case",
+         "1 if the string occurs in the description of the place", "hits in title lines",
+         "occurrences outside title lines (0 with title_hits > 0 = title only)", "of those, with the same capitals"])
+    notes += dump_csv("names.csv",
+        ["string", "as_written", "texts", "texts_at_0_8", "expected_texts", "expected_not_in_place", "expected_title_only",
+         "best_score", "models", "hits", "share_of_all_texts", "patterns"],
+        [[r[0], r[1], r[2], n80.get(r[0], 0), r[3], r[4], r[11], r[5], r[6], r[7], r[10], r[8]] for r in allnames],
+        ["the string, lower-cased", "as most often written where its score is highest", "texts where any pattern caught it",
+         "texts where a pattern of precision 0.8 or more caught it", "sum of scores over texts",
+         "the same over texts where the string is not in the place description",
+         "the same over texts where it is title only", "highest score in any text", "models", "pattern matches",
+         "for one word: share of all texts containing the word in any sense", "patterns that caught it anywhere"])
+    notes += dump_csv("patterns.csv",
+        ["pattern", "version", "round", "yields", "family", "precision", "hits_read", "regex", "what"],
+        [[p[0], p[1], p[2], p[4], p[5], p[21], p[22], p[6], p[12]] for p in active],
+        ["pattern id", "version", "round written", "name or statement", "form family",
+         "share of names among read hits (empty under 20 read)", "hits read by eye", "regular expression", "what it catches"])
+    notes += dump_csv("models.csv",
+        ["model", "texts", "flagged", "best_0_8", "best_0_5_0_8", "best_under_0_5", "nothing_caught",
+         "no_name_in_body", "of_those_titled", "texts_saying_no_name", "texts_using_word_name", "expected_names_per_text"],
+        [[m, per[m]["hi"] + per[m]["mid"] + per[m]["lo"] + per[m]["none"], per[m]["flag"], per[m]["hi"], per[m]["mid"],
+          per[m]["lo"], per[m]["none"], per[m]["body_lo"], per[m]["titled"], per[m]["anti"], per[m]["talk"],
+          round(per[m]["exp"] / max(1, per[m]["hi"] + per[m]["mid"] + per[m]["lo"] + per[m]["none"]), 3)] for m in models],
+        ["model", "counted texts", "flagged texts", "texts with best score 0.8 or more", "0.5 to 0.8", "under 0.5 but something caught",
+         "nothing caught", "best score in the body under 0.5", "of those, with a title-only designation",
+         "texts with a no-name statement", "texts using the word name", "sum of scores per text"])
+    with open(os.path.join(xdir, "README.md"), "w", encoding="utf-8") as f:
+        f.write(notes)
+    page("export.html", "Data export", "<p>The tables behind this site, as CSV, with their columns described. "
+         "Rebuilt with the site. Second-order questions (shares by model, groups of strings, singular and plural "
+         "together) are meant to be asked of these files; the site is for looking and checking.</p>"
+         "<ul>%s</ul><pre>%s</pre>" % (
+             "".join('<li><a href="export/%s">%s</a> (%s MB)</li>' % (n, n, round(os.path.getsize(os.path.join(xdir, n)) / 1e6, 1))
+                     for n in ("texts.csv", "text_names.csv", "names.csv", "patterns.csv", "models.csv", "README.md")),
+             E(notes)))
 
     # ------------------------------------------------------------------ texts
     os.makedirs(os.path.join(SITE, "x"), exist_ok=True)

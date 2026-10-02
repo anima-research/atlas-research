@@ -61,6 +61,15 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
   were beings than places.
 - Sample counts shown on the site are computed from `labels.jsonl`, never typed by hand.
 
+## Second-order questions
+
+The site answers one class of them directly: the share of each model's texts that contain any
+string of a set, counted by texts (`name.html?n=keeper|keepers`, with `&vs=tender|tenders` for a
+second set). Everything else is meant to be asked of the exported tables (site page Data export:
+`texts.csv`, `text_names.csv`, `names.csv`, `patterns.csv`, `models.csv`, each with its columns
+described in `export/README.md`). Singular and plural are not folded in the data; a lemma, if
+ever added, goes in a column of its own beside the string.
+
 ## Title only: the third state
 
 A string caught in a title line (heading, bold line, head of a list item) that occurs nowhere
