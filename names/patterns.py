@@ -13,6 +13,7 @@ Each pattern is a dict:
   remark    optional remark on what the read samples showed beyond the counts
   yields    'name'       the captured group `name` (or `name2`) is a name candidate
             'statement'  the hit is a statement about naming (e.g. "it has no name")
+            'namer'      the capture says who gives the name; not a name
   family    the kind of form: heading | markup | list | capitalisation | frame |
             descriptive | statement
   regex     Python `re` source
@@ -223,11 +224,11 @@ PATTERNS = [
       "or at the start of a later sentence.",
       "Capitalised bold is also used for concepts ('**Flow Continuity**').",
       stop="common_caps", reject=REJECT_CAPS, max_words=10),
-    P("bold_inline_lower", 2, 2,
+    P("bold_inline_lower", 3, 6,
       "",
       "markup",
-      r"(?<=[A-Za-z,;:)])[ \t]+\*\*(?P<name>[a-z]+(?:-[a-z]+)+)\*\*"
-      r"|\b(?:[Tt]he|[Aa]n?|[Tt]hese|[Tt]hose)[ \t]+\*\*(?P<name2>[a-z][^*\n]{1,40}?)\*\*",
+      r"(?:(?<=[A-Za-z,;:)])[ \t]+|(?<=[%s]))\*\*(?P<name>[a-z]+(?:-[a-z]+)+)\*\*"
+      r"|\b(?:[Tt]he|[Aa]n?|[Tt]hese|[Tt]hose)[ \t]+\*\*(?P<name2>[a-z][^*\n]{1,40}?)\*\*" % DASH,
       (12599, "Its inhabitants are **mechano-fauna**, organisms sculpted by vibration, dust, and the relentless hum of titanic engines"),
       "A lower-case term set in bold inside a sentence, when it is a hyphenated compound "
       "or follows an article: sometimes a coined word for the inhabitants.",
@@ -560,4 +561,53 @@ PATTERNS = [
       "The head of a list item whose text comes back in the body with the same capitals.",
       flags="m", stop="section_words", max_words=6, max_df=0.15, title="list_head", body="cased",
       labels_from=["list_head_line", "list_num_lead", "list_head_recurring"], added="2026-10-03"),
+
+    # ================================================== round 6: from recall check 4
+    P("there_are_bare", 2, 6, "", "frame",
+      r"\bThere[ \t]+(?:are|is)[ \t]+(?:also[ \t]+)?(?!(?:no|the|a|an|other|only|also|some|many|few|several|"
+      r"larger|smaller|other|two|three|four|five|six|tall|old|new|more)\b)"
+      r"(?P<name>[a-z]+(?:-[a-z]+)+|[a-z]+[ \t]+[a-z]+s)(?=[ \t]+(?:that|which|who)\b|[,:;])",
+      (16062, "There are hinge-ferns that open only to count passing dust."),
+      "'There are X that \u2026' with a lower-case coined kind and no article: a hyphenated "
+      "compound or a two-word plural.",
+      max_words=2, added="2026-10-03"),
+    P("paren_cap_alias", 1, 6, "", "frame",
+      r"(?<=[A-Za-z)*])[ \t]*\((?:[Tt]he[ \t]+)?(?P<name>%s)\)" % NAME,
+      (15825, "4. Slate-Meridian Worms (Furrow-Tenants)"),
+      "A capitalised run alone inside parentheses, right after a word: a second name "
+      "given beside the first.",
+      "Also catches parenthesised parameters and glosses written in capitals.",
+      stop="common_caps", reject=REJECT_CAPS, max_words=6, added="2026-10-03"),
+    P("frame_call_plain", 2, 6, "", "frame",
+      r"\b(?:(?:is|are|was|were)[ \t]+called|call(?:s|ed)?[ \t]+(?:it|them|her|him))[ \t]+the[ \t]+"
+      r"(?P<name>[a-z][a-z-]*(?:[ \t]+[a-z][a-z-]*)?)(?=[,.;:]|[ \t]+(?:since|because|for|though|although|as|if|and)\b)",
+      (23649, "Call it the resident, since no one has gotten close enough, or stayed sane enough in the getting, to ask it what it calls itself."),
+      "'is called the X', 'they call it the X': a lower-case designation after a verb of "
+      "naming, unmarked by capitals, italics or quotation marks.",
+      max_words=2, added="2026-10-03"),
+    P("the_pair_second", 1, 6, "", "frame",
+      r"\b[Tt]he[ \t]+[a-z]+(?:-[a-z]+)*-%s[ \t]+and[ \t]+(?P<name>[a-z]+(?:-[a-z]+)*-%s)\b" % (AGENT, AGENT),
+      (7612, "These are the wire-weavers and spore-harvesters, bodies segmented like abandoned circuit boards"),
+      "The second of two hyphenated agent compounds that share one 'the'.",
+      max_words=1, added="2026-10-03"),
+    P("bold_lead_titlecase", 1, 6, "", "markup",
+      r"^[ \t]*%s?\*\*(?P<name>%s[ \t]+%s(?:[ \t]+%s)?)\*\*[ \t]*:[ \t]*\S" % (MARK, CAPW, CAPW, CAPW),
+      (25624, "- **Twilight Skimmers**: Sleek and fast, these birds have adapted to the cold, damp air."),
+      "A bold lead of two or three capitalised words followed by a colon and a "
+      "description: the bestiary form, one entry per kind.",
+      "Attribute labels written in capitals match too ('**Size and Shape**' does not, "
+      "'**Magnetic Fields**' does).",
+      flags="m", stop="section_words", reject=REJECT_CAPS, max_words=3,
+      labels_from=["bold_lead"], added="2026-10-03"),
+    P("who_names", 1, 6, "", "frame",
+      r"\b(?P<name>(?:(?:[Tt]he|[Ii]ts|[Tt]heir|[Oo]ur|[Hh]is|[Hh]er)[ \t]+)?[A-Za-z][a-z]+(?:[ \t]+[a-z]+)?[ \t]+"
+      r"(?:might[ \t]+|would[ \t]+|sometimes[ \t]+|simply[ \t]+|still[ \t]+|once[ \t]+)?"
+      r"(?:call|calls|called|name|named|names|dubbed|dub|refer[ \t]+to)[ \t]+(?:it|them|her|him|themselves|itself|ourselves|this|these|those|me|us|you))\b"
+      r"|(?:called|named|known|dubbed)[ \t]+[^.\n,]{0,40}?[ \t]+by[ \t]+(?P<name2>(?:the[ \t]+)?[a-z]+(?:[ \t]+[a-z]+)?)\b",
+      (17195, "They call themselves the **Foundry-Wardens**, though the term is less a title than a description"),
+      "Who gives the name: the subject of a verb of naming with its object ('they call "
+      "themselves', 'the locals call them', 'we might call it'), or the agent after 'by' "
+      "('called the Hollow Choir by the townsfolk'). Not a name; a record of the namer.",
+      "A sentence like 'you might call it a shell' matches as well.",
+      yields="namer", max_words=6, added="2026-10-03"),
 ]

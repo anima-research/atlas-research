@@ -101,6 +101,14 @@ A text with no name, and a text that says its beings have no name, are part of w
   from the candidates, and should include texts where names are known, to measure how often the
   judges say "no" wrongly.
 
+## Who gives the name
+
+`who_names` records the subject of a verb of naming with its object ("they call themselves",
+"the locals call them", "one researcher called it") and the agent after "by". It yields a
+namer, not a name; its captures are listed on its pattern page. First counts (r15): "they call
+themselves" 685 hits, "do not call themselves" 153, "do not name themselves" 66; names given by
+others ("people call them", "outsiders refer to them") are rarer.
+
 ## Not done yet
 
 - Places and beings are not told apart.

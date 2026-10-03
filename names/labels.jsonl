@@ -1512,3 +1512,248 @@
 {"pattern": "list_head_again_lower", "text": 4462, "start": 2554, "end": 2564, "surface": "Coil Gulls", "verdict": "b", "round": 5, "seed": "1"}
 {"pattern": "list_head_again_lower", "text": 15871, "start": 7145, "end": 7159, "surface": "Moss Batteries", "verdict": "b", "round": 5, "seed": "1"}
 {"pattern": "list_head_again_lower", "text": 15777, "start": 2021, "end": 2032, "surface": "Plate Cacti", "verdict": "b", "round": 5, "seed": "1"}
+{"pattern": "there_are_bare", "text": 25381, "start": 4276, "end": 4289, "surface": "the distances", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 24355, "start": 4541, "end": 4557, "surface": "mineral scrapers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 9812, "start": 1427, "end": 1434, "surface": "no ears", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 30433, "start": 7268, "end": 7280, "surface": "no burrowers", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 23970, "start": 7049, "end": 7064, "surface": "other residents", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 27205, "start": 3595, "end": 3605, "surface": "no farmers", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 27904, "start": 10983, "end": 10999, "surface": "signal organisms", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 18117, "start": 19695, "end": 19705, "surface": "no flowers", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 13986, "start": 388, "end": 400, "surface": "five species", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 15925, "start": 5459, "end": 5475, "surface": "also inhabitants", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 21613, "start": 3038, "end": 3049, "surface": "chime-birds", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 30229, "start": 3493, "end": 3506, "surface": "larger things", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 6951, "start": 8865, "end": 8877, "surface": "no conflicts", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 25004, "start": 8631, "end": 8643, "surface": "old channels", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 18271, "start": 15731, "end": 15740, "surface": "no graves", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 30413, "start": 17016, "end": 17028, "surface": "moss patches", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 30513, "start": 13861, "end": 13875, "surface": "larger animals", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 21012, "start": 8426, "end": 8442, "surface": "pebble-burrowers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 30453, "start": 8914, "end": 8930, "surface": "polychaete worms", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 13583, "start": 3693, "end": 3709, "surface": "larger creatures", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 19231, "start": 3983, "end": 3991, "surface": "no tools", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 32049, "start": 1408, "end": 1418, "surface": "four limbs", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 4904, "start": 568, "end": 578, "surface": "tall trees", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 21139, "start": 20227, "end": 20238, "surface": "only bodies", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 29369, "start": 1326, "end": 1338, "surface": "touch-speech", "verdict": "t", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 324, "start": 4205, "end": 4222, "surface": "only predecessors", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 30391, "start": 14467, "end": 14481, "surface": "no settlements", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 25218, "start": 5830, "end": 5841, "surface": "pipe divers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 9251, "start": 909, "end": 916, "surface": "no eyes", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 18044, "start": 8786, "end": 8796, "surface": "no mammals", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 30587, "start": 12659, "end": 12664, "surface": "water", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 16554, "start": 128, "end": 133, "surface": "small", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 7373, "start": 6675, "end": 6684, "surface": "survivors", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 8724, "start": 3841, "end": 3853, "surface": "its thoughts", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 28396, "start": 15139, "end": 15149, "surface": "not static", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 8613, "start": 389, "end": 394, "surface": "large", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 11097, "start": 458, "end": 467, "surface": "buildings", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 30485, "start": 20805, "end": 20815, "surface": "its organs", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 31471, "start": 2409, "end": 2412, "surface": "shy", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 19080, "start": 69, "end": 77, "surface": "not born", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 10552, "start": 4608, "end": 4618, "surface": "not hunted", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 10205, "start": 4474, "end": 4486, "surface": "less defined", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 5391, "start": 5234, "end": 5240, "surface": "rarely", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 7111, "start": 9531, "end": 9536, "surface": "rarer", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 7355, "start": 486, "end": 498, "surface": "not invaders", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 6583, "start": 2863, "end": 2871, "surface": "enormous", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 18132, "start": 152, "end": 163, "surface": "its tissues", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 30551, "start": 22926, "end": 22935, "surface": "not alien", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 23784, "start": 1360, "end": 1374, "surface": "called anchors", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 21040, "start": 9742, "end": 9752, "surface": "not theirs", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 10401, "start": 4206, "end": 4217, "surface": "not tenants", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 11649, "start": 29602, "end": 29607, "surface": "place", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 12072, "start": 1131, "end": 1141, "surface": "scavengers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 26613, "start": 4708, "end": 4721, "surface": "most numerous", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 5532, "start": 310, "end": 315, "surface": "small", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 20461, "start": 2913, "end": 2923, "surface": "not agents", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 15468, "start": 3130, "end": 3137, "surface": "quieter", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 13925, "start": 8145, "end": 8151, "surface": "called", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 6652, "start": 2931, "end": 2941, "surface": "serpentine", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "inhabitants_are_the", "text": 9501, "start": 4011, "end": 4024, "surface": "shear-grazers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 22127, "start": 2196, "end": 2211, "surface": "Decommissioners", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 17689, "start": 1244, "end": 1260, "surface": "Sulfate-Reducers", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 17322, "start": 2088, "end": 2095, "surface": "Beetles", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 5472, "start": 4991, "end": 5000, "surface": "Resonarum", "verdict": "t", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 17322, "start": 4053, "end": 4068, "surface": "Parasitic Wasps", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 27813, "start": 3968, "end": 3982, "surface": "Apex Geometric", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 28866, "start": 6268, "end": 6281, "surface": "Great Absence", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 4432, "start": 594, "end": 619, "surface": "Ferruginous Siphoskimmers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 27734, "start": 670, "end": 675, "surface": "Hands", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 18437, "start": 566, "end": 579, "surface": "Primary Fauna", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 8653, "start": 238, "end": 254, "surface": "Noise That Walks", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 4412, "start": 1968, "end": 1979, "surface": "City Itself", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 12660, "start": 1782, "end": 1800, "surface": "Arthropod Analogue", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 19824, "start": 3105, "end": 3117, "surface": "Silt-Walkers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 18770, "start": 312, "end": 321, "surface": "Scuttlers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 19747, "start": 2426, "end": 2438, "surface": "Aerial Fixed", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 12509, "start": 3893, "end": 3905, "surface": "Lichencustos", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 18746, "start": 2519, "end": 2536, "surface": "Fauna Integration", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 22074, "start": 4619, "end": 4638, "surface": "Siphonophore-Loooms", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 10274, "start": 4781, "end": 4796, "surface": "Echoes in Steel", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 12501, "start": 4311, "end": 4334, "surface": "Subsurface Mineralizers", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 19383, "start": 4757, "end": 4767, "surface": "Scriveners", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 19199, "start": 2817, "end": 2832, "surface": "Self-Perception", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 12578, "start": 262, "end": 276, "surface": "Silent Grazers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 12618, "start": 854, "end": 870, "surface": "Vertical Masters", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 19071, "start": 336, "end": 348, "surface": "Slow Process", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 19167, "start": 3949, "end": 3963, "surface": "Builders' Echo", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 14142, "start": 5842, "end": 5856, "surface": "Plateau Itself", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 4432, "start": 6846, "end": 6861, "surface": "Verdigris Skins", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "paren_cap_alias", "text": 22153, "start": 5449, "end": 5455, "surface": "Slicks", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 26021, "start": 8161, "end": 8172, "surface": "quiet guest", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 9024, "start": 332, "end": 348, "surface": "errors-with-legs", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 26396, "start": 4473, "end": 4479, "surface": "growth", "verdict": "t", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 25289, "start": 6151, "end": 6163, "surface": "long hearing", "verdict": "t", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 30500, "start": 8376, "end": 8393, "surface": "single inhabitant", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 31721, "start": 4536, "end": 4541, "surface": "owner", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 9209, "start": 3049, "end": 3054, "surface": "ruler", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 9950, "start": 4755, "end": 4765, "surface": "inhabitant", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 30429, "start": 9728, "end": 9733, "surface": "larva", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 26352, "start": 12602, "end": 12607, "surface": "child", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 6438, "start": 320, "end": 324, "surface": "body", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 11036, "start": 359, "end": 364, "surface": "brain", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 21690, "start": 8897, "end": 8903, "surface": "glance", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 2507, "start": 60, "end": 70, "surface": "shimmering", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 9783, "start": 215, "end": 220, "surface": "world", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 23555, "start": 4354, "end": 4363, "surface": "formation", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 30507, "start": 15054, "end": 15057, "surface": "god", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 14669, "start": 6493, "end": 6501, "surface": "organism", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 28638, "start": 7561, "end": 7566, "surface": "night", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 30438, "start": 772, "end": 782, "surface": "population", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 32101, "start": 8598, "end": 8602, "surface": "name", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 30870, "start": 659, "end": 663, "surface": "face", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 8048, "start": 3355, "end": 3364, "surface": "structure", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 31707, "start": 4683, "end": 4687, "surface": "mate", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 6484, "start": 201, "end": 209, "surface": "creature", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 21948, "start": 2411, "end": 2418, "surface": "village", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 30438, "start": 18446, "end": 18454, "surface": "resident", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 21758, "start": 1235, "end": 1248, "surface": "creature even", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 24966, "start": 1047, "end": 1051, "surface": "room", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "frame_call_plain", "text": 22238, "start": 698, "end": 705, "surface": "society", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 28468, "start": 7186, "end": 7201, "surface": "ground-watchers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 5257, "start": 12586, "end": 12601, "surface": "surface-traders", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 14431, "start": 9003, "end": 9016, "surface": "fence-menders", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 28150, "start": 22702, "end": 22713, "surface": "rust-makers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 21639, "start": 386, "end": 398, "surface": "night-rivers", "verdict": "t", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 14372, "start": 3762, "end": 3775, "surface": "sound-keepers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 30540, "start": 17281, "end": 17292, "surface": "glue-makers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 6904, "start": 2196, "end": 2212, "surface": "frond-assemblers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 4606, "start": 8304, "end": 8312, "surface": "gear-kin", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 10203, "start": 6232, "end": 6244, "surface": "manta-beasts", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 28120, "start": 6212, "end": 6227, "surface": "machine-tenders", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 13984, "start": 25563, "end": 25578, "surface": "vesh-collectors", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 5226, "start": 2621, "end": 2635, "surface": "plate-scrapers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 29747, "start": 4105, "end": 4118, "surface": "egg-gatherers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 7444, "start": 588, "end": 600, "surface": "flat-roamers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 30680, "start": 2424, "end": 2432, "surface": "pump-men", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 30005, "start": 4676, "end": 4691, "surface": "ballast-minders", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 28450, "start": 2324, "end": 2336, "surface": "paper-makers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 30446, "start": 26403, "end": 26415, "surface": "dew-dwellers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "the_pair_second", "text": 19688, "start": 2221, "end": 2242, "surface": "nutrient-distributors", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 20943, "start": 1774, "end": 1788, "surface": "Aerial Insects", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25475, "start": 1636, "end": 1655, "surface": "Mechanivore Beetles", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 20706, "start": 1644, "end": 1662, "surface": "Nimble Leafrunners", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 5373, "start": 1979, "end": 1995, "surface": "Engineered Flora", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25425, "start": 379, "end": 392, "surface": "Moss Crawlers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 22369, "start": 1585, "end": 1593, "surface": "Run Days", "verdict": "t", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 5490, "start": 4582, "end": 4593, "surface": "Mossy Trees", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25624, "start": 1512, "end": 1525, "surface": "Algae Grazers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 5385, "start": 1642, "end": 1654, "surface": "Mist Walkers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25417, "start": 86, "end": 106, "surface": "Bioluminescent Fungi", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25526, "start": 523, "end": 540, "surface": "Glimmering Mosses", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25582, "start": 3064, "end": 3083, "surface": "Condensation Shapes", "verdict": "t", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25357, "start": 766, "end": 782, "surface": "Harmonic Cicadas", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 5898, "start": 6839, "end": 6856, "surface": "Dynamic Ecosystem", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 20776, "start": 4235, "end": 4252, "surface": "Aquatic Musicians", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 4975, "start": 2456, "end": 2466, "surface": "Pulse Rays", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 20866, "start": 2268, "end": 2288, "surface": "Silicate Crustaceans", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 5365, "start": 5405, "end": 5417, "surface": "Evening Calm", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 6638, "start": 1464, "end": 1479, "surface": "The Outer Tiers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 14972, "start": 2214, "end": 2230, "surface": "The Welder Bride", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 5545, "start": 464, "end": 477, "surface": "Glowing Moths", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 20706, "start": 1098, "end": 1118, "surface": "Stalwart Stonebeasts", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 3426, "start": 901, "end": 919, "surface": "The Sculpted Stone", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25373, "start": 2599, "end": 2612, "surface": "Algae Carpets", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 8694, "start": 2164, "end": 2178, "surface": "The Mossmovers", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25414, "start": 1386, "end": 1408, "surface": "Bioluminescent Beetles", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 22699, "start": 1037, "end": 1053, "surface": "The Root-Crawler", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25595, "start": 3613, "end": 3633, "surface": "Resource Utilization", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 25479, "start": 4023, "end": 4034, "surface": "Energy Flux", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "bold_lead_titlecase", "text": 23016, "start": 2499, "end": 2519, "surface": "The Resonant Silence", "verdict": "b", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 1788, "start": 27, "end": 42, "surface": "It calls itself", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 21378, "start": 14580, "end": 14602, "surface": "would have called them", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 18882, "start": 185, "end": 202, "surface": "one can call them", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 23278, "start": 6902, "end": 6924, "surface": "They called themselves", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 18984, "start": 3579, "end": 3594, "surface": "one can call it", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 3345, "start": 4507, "end": 4512, "surface": "sight", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 30737, "start": 492, "end": 509, "surface": "would not call it", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 9630, "start": 5788, "end": 5818, "surface": "from elsewhere might call them", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 29489, "start": 7695, "end": 7707, "surface": "She calls it", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 25776, "start": 6138, "end": 6160, "surface": "the earth to call them", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 15538, "start": 183, "end": 210, "surface": "would never name themselves", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 28898, "start": 4819, "end": 4836, "surface": "you can call them", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 31711, "start": 4175, "end": 4189, "surface": "They call this", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 23584, "start": 2161, "end": 2178, "surface": "are the calls you", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 9058, "start": 3003, "end": 3020, "surface": "here to name them", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 21386, "start": 3577, "end": 3599, "surface": "do not name themselves", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 1530, "start": 177, "end": 206, "surface": "outsiders often refer to them", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 28287, "start": 108, "end": 119, "surface": "You call it", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 24130, "start": 92, "end": 112, "surface": "They call themselves", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 30376, "start": 24414, "end": 24433, "surface": "one could call them", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 23659, "start": 68, "end": 87, "surface": "around to name them", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 5642, "start": 3322, "end": 3340, "surface": "you cannot name it", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 6446, "start": 767, "end": 783, "surface": "for to name them", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 14874, "start": 90, "end": 104, "surface": "have a name it", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 21579, "start": 4222, "end": 4237, "surface": "what to call it", "verdict": "x", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 3309, "start": 6537, "end": 6561, "surface": "one researcher called it", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 11147, "start": 3324, "end": 3348, "surface": "might have called itself", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 28334, "start": 5165, "end": 5179, "surface": "One calls them", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 14002, "start": 0, "end": 20, "surface": "They call themselves", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "who_names", "text": 17191, "start": 180, "end": 195, "surface": "were to name it", "verdict": "s", "round": 6, "seed": "1"}
+{"pattern": "there_are_bare", "text": 2653, "start": 5336, "end": 5348, "surface": "vent-keepers", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 29486, "start": 5876, "end": 5889, "surface": "loose objects", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 24397, "start": 5056, "end": 5074, "surface": "dispersed citizens", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 30480, "start": 14833, "end": 14844, "surface": "scent-moths", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 9506, "start": 3946, "end": 3962, "surface": "choral overtones", "verdict": "t", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 3339, "start": 11614, "end": 11631, "surface": "oligochaete worms", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 28451, "start": 12806, "end": 12825, "surface": "lichen preparations", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 2686, "start": 3145, "end": 3163, "surface": "official schedules", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 24359, "start": 8545, "end": 8554, "surface": "dust-bees", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 22370, "start": 457, "end": 471, "surface": "fog-collectors", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 12206, "start": 19605, "end": 19617, "surface": "rove beetles", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 21045, "start": 14034, "end": 14049, "surface": "patch-creatures", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 21369, "start": 7681, "end": 7693, "surface": "phase-hounds", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 24068, "start": 1162, "end": 1176, "surface": "water families", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 13598, "start": 2144, "end": 2158, "surface": "even varieties", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 28400, "start": 17360, "end": 17372, "surface": "weir-keepers", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 13881, "start": 27331, "end": 27352, "surface": "philosophical schools", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 29407, "start": 4693, "end": 4712, "surface": "experienced workers", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 2616, "start": 3085, "end": 3097, "surface": "root-keepers", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "there_are_bare", "text": 16082, "start": 4960, "end": 4972, "surface": "minute flies", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 26137, "start": 9505, "end": 9510, "surface": "sward", "verdict": "t", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 23784, "start": 10993, "end": 11001, "surface": "listener", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 21876, "start": 4460, "end": 4474, "surface": "new architects", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 27006, "start": 117, "end": 124, "surface": "silence", "verdict": "t", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 28205, "start": 15039, "end": 15048, "surface": "wrongness", "verdict": "t", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 26738, "start": 8587, "end": 8598, "surface": "pipe-voices", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 29365, "start": 480, "end": 487, "surface": "heaters", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 23396, "start": 880, "end": 885, "surface": "flock", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 24207, "start": 3623, "end": 3632, "surface": "courtfish", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 30957, "start": 1028, "end": 1036, "surface": "moorfolk", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 21946, "start": 412, "end": 425, "surface": "whole ecology", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 26749, "start": 7995, "end": 7999, "surface": "glow", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 26298, "start": 935, "end": 939, "surface": "lace", "verdict": "t", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 26334, "start": 486, "end": 492, "surface": "primer", "verdict": "t", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 23413, "start": 7172, "end": 7178, "surface": "soaked", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 26491, "start": 5292, "end": 5302, "surface": "first page", "verdict": "t", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 31544, "start": 1861, "end": 1867, "surface": "keeper", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 26113, "start": 11572, "end": 11583, "surface": "doorkeepers", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 21302, "start": 7479, "end": 7484, "surface": "water", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 26716, "start": 8640, "end": 8648, "surface": "dreaming", "verdict": "t", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 21721, "start": 870, "end": 884, "surface": "secret economy", "verdict": "t", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 17713, "start": 7529, "end": 7535, "surface": "sealer", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 31105, "start": 9227, "end": 9237, "surface": "hammerfolk", "verdict": "b", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 31985, "start": 4214, "end": 4217, "surface": "bed", "verdict": "x", "round": 6, "seed": "2"}
+{"pattern": "frame_call_plain", "text": 29479, "start": 937, "end": 948, "surface": "sump animal", "verdict": "b", "round": 6, "seed": "2"}

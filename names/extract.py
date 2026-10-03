@@ -159,6 +159,13 @@ def scan(row):
                 masked[p["mask"]] = MASKS[p["mask"]].sub(lambda m: " " * len(m.group(0)), text)
             src = masked[p["mask"]]
         for m in rx.finditer(src):
+            if p["yields"] == "namer":
+                g = "name" if m.group("name") is not None else "name2"
+                surf = m.group(g)
+                n = norm(surf)
+                if n:
+                    found.append((tid, p["id"], m.start(g), m.end(g), surf, n))
+                continue
             if p["yields"] == "statement":
                 # the hit is the sentence around the matched phrase
                 s, e = m.span()
@@ -371,6 +378,8 @@ def main():
             tc[tid]["st"] += 1
             if pid == "anti_name":
                 tc[tid]["anti"] += 1
+            continue
+        if yields[pid] == "namer":
             continue
         per_text[tid][n].append((pid, s, surf))
         tc[tid]["hits"] += 1

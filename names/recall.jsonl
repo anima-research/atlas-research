@@ -50,3 +50,23 @@
 {"check": 3, "date": "2026-10-02", "pool": "all", "text": 30860, "read_chars": 3800, "names": {"ash-things": 0.933}}
 {"check": 3, "date": "2026-10-02", "pool": "all", "text": 1795, "read_chars": 3800, "names": {"Vitreous Collective": 1.0, "Architects": 1.0}}
 {"check": 3, "date": "2026-10-02", "pool": "all", "text": 21064, "read_chars": 3800, "names": {"Fixers": 1.0}}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 19579, "read_chars": 3209, "names": {"Architect of Formation": 1.0}}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 18707, "read_chars": 3781, "names": {"Membrane-Walkers": 1.0, "Silt-Siphons": 1.0, "Static Ghosts": 1.0, "record-keepers": 0.933}}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 21880, "read_chars": 3800, "names": {"Tenders": 1.0}}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 30877, "read_chars": 3800, "names": {"swimmers": 1.0, "small ones": 0.5}, "forms_missed": ["'The smallest walkers', 'The basin swimmers': a lower-case kind with a describing word before it"]}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 5497, "read_chars": 3800, "names": {}, "note": "categories only (fungi, vegetation, fauna); 'a small, bat-like being'"}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 1570, "read_chars": 1914, "names": {}, "note": "'information-entities', 'these beings'; no name"}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 26701, "read_chars": 3800, "names": {"workers": 1.0, "Atta": 0.862, "Macrocheles": 0.862, "ones that never leave": 0.167}, "note": "two real genus names"}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 23711, "read_chars": 3800, "names": {"Tender": 1.0}}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 13214, "read_chars": 3411, "names": {}, "note": "'the machines'; no name"}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 1959, "read_chars": 2644, "names": {}, "note": "ordinary species words; 'a hardy people'"}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 495, "read_chars": 3500, "names": {"Smiths of the Drowning Forge": 0.441}, "forms_missed": ["bold title line designating the inhabitants, never repeated"], "note": "'the eldest', 'the middle child', 'the youngest' as designations"}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 15825, "read_chars": 3500, "names": {"Rim-Masons": 1.0, "Vitrilaria coronans": 1.0, "Moss-Leopards": 1.0, "Pardofelis bryoidis": 1.0, "Glass Mayflies": 0.729, "Ordovicia vitrea": 1.0, "Slate-Meridian Worms": 0.729, "Furrow-Tenants": 0.0, "Wind-Sybil": 1.0}, "forms_missed": ["a second name in parentheses after a list head, without quotation marks: '4. Slate-Meridian Worms (Furrow-Tenants)'"]}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 12773, "read_chars": 3500, "names": {"Huskspeakers": 0.862}}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 18313, "read_chars": 3500, "names": {}, "note": "'the strange, unknown beings'; parameter echo text"}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 16062, "read_chars": 3500, "names": {"trunkworks": 0.0, "hinge-ferns": 0.0, "antenna reeds": 0.0, "vine-cables": 0.0}, "forms_missed": ["lower-case coined kinds without an article: 'The oldest inhabitants are the trunkworks', 'There are hinge-ferns that', 'There are antenna reeds that'"]}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 3650, "read_chars": 2432, "names": {}, "note": "'mutualist arthropods', 'the plant-architecture'; no name"}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 25624, "read_chars": 3500, "names": {"Twilight Skimmers": 0.447, "Mist Ravens": 0.447, "Frost Weasels": 0.447, "Glacial Bears": 0.447, "Shimmer Minnows": 0.447, "Algae Grazers": 0.447, "Bioluminescent Barnacles": 0.447, "Reef Crabs": 0.447, "Twilight Frogs": 0.447, "Moss Lizards": 0.447, "Shadow Algae": 0.447, "Luminark Eels": 0.447, "Depth Divers": 0.447, "Cavern Squids": 0.447}, "forms_missed": ["a bestiary: bold lead with colon, Title Case, each name used once"]}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 23649, "read_chars": 3500, "names": {"light-creatures": 0.933, "resident": 0.0}, "forms_missed": ["'Call it the resident, since no one has ... to ask it what it calls itself': a lower-case designation after a verb of naming, unmarked"]}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 7328, "read_chars": 3500, "names": {"Grove-Mind": 1.0}}
+{"check": 4, "date": "2026-10-02", "pool": "all", "text": 14177, "read_chars": 3500, "names": {"Weavers": 1.0}}
