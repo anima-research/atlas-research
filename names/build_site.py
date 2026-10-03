@@ -303,9 +303,9 @@ def main():
                       pct(st["covered"], o), st.get("best_none", st.get("nothing", "")), note])
     body = """
 <p>This site shows a study in progress: finding the names that language models gave to the
-beings they wrote into the <a href="https://atlas.animalabs.ai">Atlas</a>. The Atlas asks each
-model to describe who or what lives in a place the same model described earlier. No text has a
-name field; the names are inside the prose, in many forms. The study collects them with regular
+beings they wrote into the <a href="https://atlas.animalabs.ai">Atlas</a>. Each creature text
+belongs to a place text that the same model had written before it. No text has a name field; the
+names are inside the prose, in many forms. The study collects them with regular
 expressions, and this site shows every pattern, what it catches, and what is still missed. It
 also tracks the texts in which no name is found, and the texts that say outright that there is
 no name.</p>
