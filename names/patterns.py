@@ -630,4 +630,44 @@ PATTERNS = [
       "A sentence saying that what lives here is not a creature but a process, a condition, "
       "a tendency, a pattern: the inhabitant denied the shape of a being.",
       yields="statement", flags="i", added="2026-10-03"),
+
+    # ====================== round 8: from recall check 5 and the reading of undetermined texts
+    P("call_them_bare", 2, 8, "", "frame",
+      r"(?:^|(?<=[.!?][ ])|(?<=\n))Call[ \t]+(?:them|it|her|him)[ \t]+(?!(?:home|that|this|it|anything|something|nothing|what|whatever|alive|dead|people|animals|plants)\b)"
+      r"(?P<name>[a-z][a-z-]+)(?=[,.;:]|[ \t]+(?:for|since|because|if|though|although)\b)",
+      (23681, "Call them tenders, for lack of anything truer."),
+      "'Call them X,' with a bare lower-case word and no article: a name offered to the "
+      "reader with a shrug.",
+      max_words=1, added="2026-10-03"),
+    P("rare_plural", 1, 8, "", "capitalisation",
+      r"\b[Tt]he[ \t]+(?P<name>[a-z]{5,}s)\b",
+      (16197, "Chief among these inhabitants are the lumigroves"),
+      "'the' followed by a lower-case plural word that almost no other text in the corpus "
+      "uses (in at most about ten texts of 32,000) and that this text uses at least twice: "
+      "a coined word written without capitals or hyphen (lumigroves, chittikins, yurtlings).",
+      "Rare ordinary words match too; the rarity is measured across the corpus, not against a "
+      "dictionary.",
+      max_words=1, max_df=0.0003, min_occ=2, added="2026-10-03"),
+    P("the_ones_recurring", 1, 8, "", "descriptive",
+      r"\b[Tt]he[ \t]+(?P<name>[a-z]+(?:-[a-z]+)?[ \t]+(?:ones|things))\b",
+      (25733, "the long ones"),
+      "'the X ones', 'the X things' used at least twice in the text: a describing word and "
+      "a general word, fixed into a label by repetition.",
+      max_words=2, min_occ=2, added="2026-10-03"),
+    P("they_are_bare", 1, 8, "", "frame",
+      r"\b(?:They|These|Those)[ \t]+are[ \t]+(?P<name>[a-z]+(?:ers|ors|ards|ists|folk|kin|men|women))\b(?![ \t]+(?:of|in|at|who|that|which))",
+      (12372, "They are stewards of this equilibrium."),
+      "'They are X' with a bare role word: stewards, builders, keepers.",
+      "Written from one reading; the sentence with 'of' after the word is excluded "
+      "('stewards of this equilibrium'), which loses the origin itself.",
+      max_words=1, added="2026-10-03"),
+    P("the_hyphen_agent_singular", 2, 8, "", "frame",
+      r"\b[Tt]he[ \t]+(?P<name>[a-z]+(?:-[a-z]+)*-(?!(?:water|color|colour|cover|matter|cluster|fiber|fibre|floor|filter|"
+      r"feeder|layer|order|border|corner|center|centre|chamber|tower|river|quarter|shelter|number|letter|power|"
+      r"ember|cinder|timber|weather|paper|copper|silver|other|ever|over|under|after|inner|outer|upper|lower)\b)"
+      r"(?:[a-z]+(?:er|or)|man|woman|keeper|maker|tender|born|kin))\b(?![ \t]*-)",
+      (29509, "the door-maker"),
+      "'the' followed by a singular hyphenated agent compound (the door-maker, the "
+      "lamp-keeper): the singular of the_hyphen_agent, used at least twice.",
+      max_words=1, min_occ=2, added="2026-10-03"),
 ]

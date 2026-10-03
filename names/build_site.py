@@ -390,7 +390,8 @@ not certainty.</li>
 <li>A name longer than the pattern expects is cut short: a capitalised run ends at the first
 lower-case word that is not one of a short list of joining words ("of", "in", "who", "that" …).</li>
 <li>Singular and plural forms of one name are counted as two names ("Weaver", "Weavers").</li>
-<li>The verdicts were given by one reader, the model that wrote the patterns.</li>
+<li>The verdicts were given by one reader, the model that wrote the patterns; a second reader's
+blind re-judging of 200 hits is on the <a href="recall.html">recall page</a>.</li>
 <li>All texts are treated as English.</li>
 </ul>
 
@@ -975,6 +976,20 @@ the third column shows whether a name was caught in the same text.</p>
         srows.append([chk, s["date"], pool, len(s["texts"]), len(s["noname"]), s["n"],
                       s["then"]["hi"], s["then"]["low"], s["then"]["none"], pct(s["then"]["hi"], s["n"]),
                       s["now"]["hi"], s["now"]["low"], s["now"]["none"], pct(s["now"]["hi"], s["n"])])
+    ag = q("SELECT reader, first, second, pattern_id FROM agreement")
+    agree_html = "<p>Not measured yet.</p>"
+    if ag:
+        n = len(ag)
+        isname = lambda v: v in "bpts"
+        exact = sum(1 for r in ag if r[1] == r[2]); nm = sum(1 for r in ag if isname(r[1]) == isname(r[2]))
+        bg = sum(1 for r in ag if (r[1] == "b") == (r[2] == "b"))
+        pairs = Counter((r[1], r[2]) for r in ag if r[1] != r[2])
+        agree_html = """<p>A second reader (another instance of the same model, in a fresh context, with the
+rule as written in the README and nothing else) judged %d of the first reader's hits again, blind.
+Agreement: %d of %d on the exact code (%s%%), %d on "a name or not" (%s%%), %d on "a being or not"
+(%s%%). The disagreements, as (first, second): %s.</p>""" % (
+            n, exact, n, pct(exact, n), nm, pct(nm, n), bg, pct(bg, n),
+            ", ".join("%s/%s %d" % (VERDICTS.get(a, a), VERDICTS.get(c, c), k) for (a, c), k in pairs.most_common()))
     page("recall.html", "Recall checks",
          """<p>A recall check: texts are drawn at random and read whole (up to a few thousand characters),
 and every name seen by eye is written down with what caught it at the time. "Now" columns are
@@ -984,7 +999,8 @@ small; the percentages show direction, not a measured rate.</p>
 names that check found missing. Only the "then" numbers of a fresh check measure the patterns
 honestly, so a new sample is drawn each round.</p>
 <p>The same reader wrote the patterns and judged what counts as a name.</p>
-<h2>By check</h2>%s<h2>Every name</h2>%s""" % (
+<h2>Second reader</h2>%s
+<h2>By check</h2>%s<h2>Every name</h2>%s""" % (agree_html, 
              table([col("check", "num"), col("date"), col("texts drawn from"), col("texts", "num"),
                     col("texts with no name", "num", "texts in which the reader saw no name at all"),
                     col("names seen", "num"),

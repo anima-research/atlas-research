@@ -1,0 +1,200 @@
+{"reader": "second", "seed": "1", "text": 21046, "pattern": "list_head_lead", "start": 2765, "end": 2811, "surface": "A bank of resonance shells along the left wall", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 8790, "pattern": "bold_line_recurring", "start": 4187, "end": 4205, "surface": "The Burial-Keepers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 17272, "pattern": "bold_second", "start": 2257, "end": 2275, "surface": "The Thermal Riders", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 3325, "pattern": "heading_only", "start": 8274, "end": 8301, "surface": "Their Use of the Structures", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 10518, "pattern": "a_cap", "start": 6468, "end": 6474, "surface": "Tender", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 13176, "pattern": "the_mod_being", "start": 593, "end": 609, "surface": "flightless birds", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 18158, "pattern": "bold_line", "start": 4583, "end": 4602, "surface": "The Living Industry", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 12627, "pattern": "bold_paren_alias", "start": 728, "end": 750, "surface": "Predators of the Swarm", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 18947, "pattern": "the_hyphen_compound", "start": 1466, "end": 1476, "surface": "floor-grid", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 12621, "pattern": "quoted_cap_bare", "start": 1954, "end": 1967, "surface": "First Erosion", "first": "t", "second": "t"}
+{"reader": "second", "seed": "1", "text": 10160, "pattern": "being_is_process", "start": 4869, "end": 4985, "surface": "It is not a creature but a phenomenon, a void that absorbs sound and motion, preserving the stasis of the ecosystem.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 16253, "pattern": "quoted_cap", "start": 2334, "end": 2344, "surface": "Mystifiers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 10398, "pattern": "pronoun_is_the", "start": 2114, "end": 2120, "surface": "fading", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 28120, "pattern": "the_pair_second", "start": 6212, "end": 6227, "surface": "machine-tenders", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 14000, "pattern": "list_head_lead", "start": 2777, "end": 2789, "surface": "Deeper still", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 5545, "pattern": "bold_lead_titlecase", "start": 464, "end": 477, "surface": "Glowing Moths", "first": "x", "second": "b"}
+{"reader": "second", "seed": "1", "text": 15829, "pattern": "list_head_again_lower", "start": 560, "end": 578, "surface": "The Filament Cloud", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 9850, "pattern": "bold_second", "start": 2637, "end": 2655, "surface": "Elemental Pilgrims", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 30954, "pattern": "frame_means", "start": 4255, "end": 4271, "surface": "get off the wall", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 18132, "pattern": "inhabitants_are_the", "start": 152, "end": 163, "surface": "its tissues", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 10222, "pattern": "heading_again_cased", "start": 3532, "end": 3546, "surface": "Scrap-Crawlers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 5455, "pattern": "bold_subject", "start": 945, "end": 962, "surface": "Feathered Soarers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 25447, "pattern": "bold_lead", "start": 1963, "end": 1974, "surface": "Rust Eaters", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 26494, "pattern": "cap_mid", "start": 17089, "end": 17095, "surface": "Ashlar", "first": "p", "second": "p"}
+{"reader": "second", "seed": "1", "text": 9988, "pattern": "name_talk", "start": 5494, "end": 5524, "surface": "**Presences Without Names:**", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 6453, "pattern": "bold_line", "start": 5114, "end": 5130, "surface": "The Husktrawlers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 8782, "pattern": "italic_lower", "start": 245, "end": 247, "surface": "is", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 4606, "pattern": "the_pair_second", "start": 8304, "end": 8312, "surface": "gear-kin", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 2653, "pattern": "there_are_bare", "start": 5336, "end": 5348, "surface": "vent-keepers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 25475, "pattern": "bold_line_again_lower", "start": 1953, "end": 1967, "surface": "Aerial Gliders", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 5821, "pattern": "pronoun_is_the", "start": 1925, "end": 1929, "surface": "heat", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 20461, "pattern": "inhabitants_are_the", "start": 2913, "end": 2923, "surface": "not agents", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 30467, "pattern": "name_talk", "start": 24885, "end": 24949, "surface": "And if one must name its inhabitants more simply, then say this:", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 4407, "pattern": "binomial", "start": 3322, "end": 3333, "surface": "Draco remex", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 6316, "pattern": "italic_lower", "start": 167, "end": 174, "surface": "through", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 23928, "pattern": "the_mod_being", "start": 3398, "end": 3413, "surface": "mountain people", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 4442, "pattern": "list_num_lead", "start": 4213, "end": 4233, "surface": "The quiet architects", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 5759, "pattern": "those_who_lower", "start": 2331, "end": 2364, "surface": "the ones who are not there at all", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 22023, "pattern": "anti_name", "start": 5181, "end": 5250, "surface": "They have no name for themselves, for they have no language of words.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 10230, "pattern": "binomial", "start": 4944, "end": 4959, "surface": "Aethyros ferrox", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 17416, "pattern": "bold_second", "start": 3447, "end": 3500, "surface": "“The Weave-Walkers,” “Spire-Tappers,” “Ridge-Singers”", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 23784, "pattern": "frame_call_plain", "start": 10993, "end": 11001, "surface": "listener", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 4459, "pattern": "binomial", "start": 3821, "end": 3844, "surface": "Aetherosepia alveolaris", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 17296, "pattern": "bold_line_only", "start": 2178, "end": 2207, "surface": "The Lifecycle of the Membrane", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 13976, "pattern": "the_agent_recurring", "start": 13586, "end": 13595, "surface": "gardeners", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 22397, "pattern": "bold_lead", "start": 2366, "end": 2378, "surface": "Latchwrights", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 5879, "pattern": "place_is_inhabitant", "start": 8748, "end": 8795, "surface": "This place is alive, and it knows you are here.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 15862, "pattern": "list_head_recurring", "start": 206, "end": 222, "surface": "The Vaulted Root", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 20271, "pattern": "the_hyphen_agent", "start": 5612, "end": 5622, "surface": "sound-eels", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 10954, "pattern": "dash_appositive", "start": 169, "end": 184, "surface": "scale-creatures", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 4187, "pattern": "frame_call_quoted", "start": 3815, "end": 3829, "surface": "moment-essence", "first": "t", "second": "b"}
+{"reader": "second", "seed": "1", "text": 24993, "pattern": "the_mod_being", "start": 12132, "end": 12144, "surface": "settled ones", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 30376, "pattern": "who_names", "start": 24414, "end": 24433, "surface": "one could call them", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 9783, "pattern": "frame_call_plain", "start": 215, "end": 220, "surface": "world", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 2580, "pattern": "frame_call_marked", "start": 97, "end": 111, "surface": "Frequency Folk", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 14601, "pattern": "frame_call_quoted", "start": 7700, "end": 7706, "surface": "velvet", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 27800, "pattern": "bold_second", "start": 4045, "end": 4062, "surface": "The Shadow-Strays", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 26679, "pattern": "the_agent_recurring", "start": 4921, "end": 4931, "surface": "converters", "first": "t", "second": "x"}
+{"reader": "second", "seed": "1", "text": 4417, "pattern": "list_head_lead", "start": 911, "end": 922, "surface": "Litterglass", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 30453, "pattern": "there_are_bare", "start": 8914, "end": 8930, "surface": "polychaete worms", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 27524, "pattern": "bold_line", "start": 164, "end": 179, "surface": "The Vesper Rays", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 18471, "pattern": "quoted_cap_bare", "start": 4218, "end": 4228, "surface": "Unfinished", "first": "p", "second": "t"}
+{"reader": "second", "seed": "1", "text": 24409, "pattern": "the_mod_being", "start": 13647, "end": 13661, "surface": "plateau people", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 21386, "pattern": "who_names", "start": 3577, "end": 3599, "surface": "do not name themselves", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 13506, "pattern": "live_the", "start": 1556, "end": 1563, "surface": "deepest", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 8653, "pattern": "paren_cap_alias", "start": 238, "end": 254, "surface": "Noise That Walks", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 27110, "pattern": "bold_subject", "start": 3750, "end": 3759, "surface": "Emptiness", "first": "t", "second": "b"}
+{"reader": "second", "seed": "1", "text": 4466, "pattern": "list_head_again_lower", "start": 2917, "end": 2927, "surface": "Mist-moths", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 18437, "pattern": "paren_cap_alias", "start": 566, "end": 579, "surface": "Primary Fauna", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 28338, "pattern": "heading_recurring", "start": 8429, "end": 8443, "surface": "The Navigators", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 324, "pattern": "there_are_bare", "start": 4205, "end": 4222, "surface": "only predecessors", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 6170, "pattern": "name_talk", "start": 5522, "end": 5550, "surface": "Sunder does not have a name.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 19277, "pattern": "quoted_cap", "start": 67, "end": 84, "surface": "Resonant Dwellers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 12637, "pattern": "binomial", "start": 1692, "end": 1711, "surface": "Acidophilic biofilm", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 29859, "pattern": "live_the", "start": 2024, "end": 2034, "surface": "scavengers", "first": "b", "second": "x"}
+{"reader": "second", "seed": "1", "text": 10157, "pattern": "cap_mid", "start": 5025, "end": 5042, "surface": "Fungal Architects", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 28374, "pattern": "the_agent_recurring", "start": 11366, "end": 11374, "surface": "floaters", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 15950, "pattern": "name_talk", "start": 8428, "end": 8528, "surface": "” They name phases more confidently than places: Wet-Hanging, Salt-Tight, Deep-Heat, After-Breaking.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 14366, "pattern": "heading_second", "start": 4157, "end": 4189, "surface": "air as habitat, sound as weather", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 28771, "pattern": "md_heading", "start": 13987, "end": 14001, "surface": "The Daily Life", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 26462, "pattern": "md_heading", "start": 7033, "end": 7057, "surface": "The one on the soil side", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 8670, "pattern": "bold_lead", "start": 1890, "end": 1908, "surface": "The Column Forests", "first": "p", "second": "p"}
+{"reader": "second", "seed": "1", "text": 27966, "pattern": "bold_line_recurring", "start": 1625, "end": 1641, "surface": "The Stone-Eaters", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 7814, "pattern": "italic_cap", "start": 4268, "end": 4277, "surface": "Neobisium", "first": "x", "second": "b"}
+{"reader": "second", "seed": "1", "text": 31088, "pattern": "frame_means", "start": 3941, "end": 3977, "surface": "the fog is coming in from behind you", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 26298, "pattern": "frame_call_plain", "start": 935, "end": 939, "surface": "lace", "first": "t", "second": "b"}
+{"reader": "second", "seed": "1", "text": 24072, "pattern": "frame_call_quoted", "start": 2213, "end": 2223, "surface": "kilnhounds", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 1788, "pattern": "who_names", "start": 27, "end": 42, "surface": "It calls itself", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 23180, "pattern": "italic_lower", "start": 3623, "end": 3638, "surface": "hollow-dwellers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 21758, "pattern": "frame_call_plain", "start": 1235, "end": 1248, "surface": "creature even", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 15817, "pattern": "list_head_recurring", "start": 2179, "end": 2189, "surface": "Shadowfish", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 22929, "pattern": "bold_inline_lower", "start": 1027, "end": 1033, "surface": "shiver", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 24920, "pattern": "italic_lower", "start": 5458, "end": 5464, "surface": "mother", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 28792, "pattern": "bold_second", "start": 671, "end": 685, "surface": "The Skitterers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 10020, "pattern": "bold_line", "start": 503, "end": 524, "surface": "The Formless Artisans", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 30989, "pattern": "italic_lower", "start": 2438, "end": 2440, "surface": "in", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 4417, "pattern": "list_num_lead", "start": 3784, "end": 3794, "surface": "The Chorus", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 19626, "pattern": "quoted_cap", "start": 3304, "end": 3314, "surface": "Silt-Storm", "first": "t", "second": "t"}
+{"reader": "second", "seed": "1", "text": 21001, "pattern": "list_bullet_lead", "start": 1622, "end": 1665, "surface": "The thick conduits underfoot are old habits", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 21080, "pattern": "heading_second", "start": 2598, "end": 2616, "surface": "Microbes and Films", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 9625, "pattern": "frame_call_marked", "start": 1231, "end": 1236, "surface": "Torin", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 23413, "pattern": "frame_call_plain", "start": 7172, "end": 7178, "surface": "soaked", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 19167, "pattern": "paren_cap_alias", "start": 3949, "end": 3963, "surface": "Builders' Echo", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 14629, "pattern": "bold_subject", "start": 7857, "end": 7869, "surface": "Old Builders", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 15922, "pattern": "being_is_process", "start": 0, "end": 93, "surface": "What lives there is not a species so much as an arrangement that has learned to wear species.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 24651, "pattern": "heading_recurring", "start": 26211, "end": 26221, "surface": "The humans", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 15835, "pattern": "list_head_line", "start": 510, "end": 552, "surface": "Ferrivellum orchestrae – the violet lichen", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 12509, "pattern": "bold_paren_alias", "start": 3148, "end": 3160, "surface": "Palpifissura", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 15867, "pattern": "list_bullet_lead", "start": 3059, "end": 3063, "surface": "Fall", "first": "x", "second": "t"}
+{"reader": "second", "seed": "1", "text": 23388, "pattern": "the_hyphen_agent", "start": 8501, "end": 8513, "surface": "lure-bearers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 3029, "pattern": "frame_call_marked", "start": 63, "end": 70, "surface": "Curator", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 4432, "pattern": "paren_cap_alias", "start": 6846, "end": 6861, "surface": "Verdigris Skins", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 24647, "pattern": "bold_line", "start": 4124, "end": 4167, "surface": "What lived here before the plants were here", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 15790, "pattern": "list_head_recurring", "start": 1313, "end": 1325, "surface": "Clickhoppers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 5683, "pattern": "bold_inline_lower", "start": 3416, "end": 3430, "surface": "life and death", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 21436, "pattern": "being_is_process", "start": 0, "end": 76, "surface": "What lives here is not one thing but a temperament expressed in many bodies.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 8869, "pattern": "frame_call_quoted", "start": 9300, "end": 9312, "surface": "the long one", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 14669, "pattern": "frame_call_plain", "start": 6493, "end": 6501, "surface": "organism", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 15805, "pattern": "list_head_recurring", "start": 3804, "end": 3817, "surface": "The Sky-Bison", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 9883, "pattern": "heading_second", "start": 1473, "end": 1489, "surface": "The Mineral Mind", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 21105, "pattern": "bold_second", "start": 15729, "end": 15750, "surface": "mats and rotor discs.", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 9058, "pattern": "who_names", "start": 3003, "end": 3020, "surface": "here to name them", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 30480, "pattern": "there_are_bare", "start": 14833, "end": 14844, "surface": "scent-moths", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 25373, "pattern": "bold_lead", "start": 4314, "end": 4336, "surface": "Protection and Harmony", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 25555, "pattern": "bold_line_recurring", "start": 831, "end": 838, "surface": "Mammals", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 12562, "pattern": "binomial", "start": 2307, "end": 2323, "surface": "Diplopoda lorica", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 8776, "pattern": "binomial", "start": 737, "end": 758, "surface": "Calcium precipitators", "first": "x", "second": "b"}
+{"reader": "second", "seed": "1", "text": 6385, "pattern": "italic_lower", "start": 13312, "end": 13323, "surface": "in-progress", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 12057, "pattern": "being_is_process", "start": 19261, "end": 19390, "surface": "It is not a thing but a condition, an atmospheric property, a quality of the medium through which all other activities propagate.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 15854, "pattern": "list_head_lead", "start": 650, "end": 654, "surface": "Skin", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 25079, "pattern": "the_mod_being", "start": 12038, "end": 12049, "surface": "pale things", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 1647, "pattern": "the_cap", "start": 66, "end": 79, "surface": "Rift Furnaces", "first": "p", "second": "p"}
+{"reader": "second", "seed": "1", "text": 18944, "pattern": "a_cap", "start": 1713, "end": 1727, "surface": "Pulsar-Strider", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 27857, "pattern": "the_hyphen_agent", "start": 13113, "end": 13123, "surface": "valve-eels", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 12670, "pattern": "binomial", "start": 1700, "end": 1723, "surface": "Arachnopteron luminosus", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 30005, "pattern": "the_pair_second", "start": 4676, "end": 4691, "surface": "ballast-minders", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 14395, "pattern": "bold_inline_lower", "start": 4408, "end": 4428, "surface": "tensioned instrument", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 13215, "pattern": "cap_mid", "start": 197, "end": 201, "surface": "Iron", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 15761, "pattern": "list_num_lead", "start": 6449, "end": 6463, "surface": "The Latecomers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 14643, "pattern": "bold_line_again_lower", "start": 2133, "end": 2145, "surface": "The Rosettes", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 6652, "pattern": "inhabitants_are_the", "start": 2931, "end": 2941, "surface": "serpentine", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 7107, "pattern": "quoted_cap_bare", "start": 6536, "end": 6549, "surface": "Vine-Whispers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 12072, "pattern": "inhabitants_are_the", "start": 1131, "end": 1141, "surface": "scavengers", "first": "b", "second": "x"}
+{"reader": "second", "seed": "1", "text": 26212, "pattern": "dash_appositive", "start": 384, "end": 389, "surface": "spare", "first": "x", "second": "t"}
+{"reader": "second", "seed": "1", "text": 15470, "pattern": "place_is_inhabitant", "start": 121, "end": 159, "surface": "It is the chamber itself that listens.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 17426, "pattern": "being_is_process", "start": 2061, "end": 2110, "surface": "To them, you are not a being but a weather event.", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 11612, "pattern": "bold_line_recurring", "start": 12355, "end": 12371, "surface": "The Edge-Sitters", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 6599, "pattern": "a_cap", "start": 5989, "end": 6004, "surface": "Shard-Watcher’s", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 8048, "pattern": "frame_call_plain", "start": 3355, "end": 3364, "surface": "structure", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 9467, "pattern": "place_is_inhabitant", "start": 5705, "end": 5833, "surface": "Beneath it all is the vibration that lives in your teeth, the tectonic hum that says the place is alive and arguing with itself.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 27552, "pattern": "quoted_cap", "start": 4893, "end": 4897, "surface": "Roof", "first": "p", "second": "p"}
+{"reader": "second", "seed": "1", "text": 13647, "pattern": "the_hyphen_agent", "start": 2664, "end": 2677, "surface": "storm-weavers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 15777, "pattern": "list_head_again_lower", "start": 2021, "end": 2032, "surface": "Plate Cacti", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 5490, "pattern": "bold_lead_titlecase", "start": 4582, "end": 4593, "surface": "Mossy Trees", "first": "x", "second": "b"}
+{"reader": "second", "seed": "1", "text": 15896, "pattern": "list_head_again_lower", "start": 1582, "end": 1597, "surface": "Glassleaf Vines", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 19755, "pattern": "md_heading", "start": 2404, "end": 2443, "surface": "The Gear-Wights (The Remnant Sentience)", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 24425, "pattern": "being_is_process", "start": 4628, "end": 4732, "surface": "What continues is not a body but an arrangement: a broad, faint attentiveness carried from cell to cell.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 28450, "pattern": "the_pair_second", "start": 2324, "end": 2336, "surface": "paper-makers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 18500, "pattern": "bold_paren_alias", "start": 3654, "end": 3660, "surface": "If Any", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 10230, "pattern": "binomial", "start": 2785, "end": 2803, "surface": "Pseudocaris lucida", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 10936, "pattern": "heading_recurring", "start": 16621, "end": 16633, "surface": "The Returned", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 29032, "pattern": "dash_appositive", "start": 4328, "end": 4336, "surface": "dust-lid", "first": "t", "second": "t"}
+{"reader": "second", "seed": "1", "text": 4459, "pattern": "list_head_line", "start": 7154, "end": 7176, "surface": "Interactions & Economy", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 31140, "pattern": "frame_means", "start": 2295, "end": 2317, "surface": "still has a flaw in it", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 28712, "pattern": "frame_call_quoted", "start": 6555, "end": 6566, "surface": "coming true", "first": "t", "second": "t"}
+{"reader": "second", "seed": "1", "text": 4745, "pattern": "bold_subject", "start": 1605, "end": 1615, "surface": "Anchorites", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 23285, "pattern": "frame_call_quoted", "start": 3037, "end": 3045, "surface": "visiting", "first": "t", "second": "t"}
+{"reader": "second", "seed": "1", "text": 27178, "pattern": "being_is_process", "start": 7296, "end": 7396, "surface": "And finally there is the resident you cannot isolate, because it is not an organism but a condition.", "first": "s", "second": "s"}
+{"reader": "second", "seed": "1", "text": 12336, "pattern": "bold_line_recurring", "start": 333, "end": 346, "surface": "The Lumivores", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 13921, "pattern": "frame_means", "start": 4655, "end": 4684, "surface": "large visitor at northern rim", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 18984, "pattern": "who_names", "start": 3579, "end": 3594, "surface": "one can call it", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 21613, "pattern": "there_are_bare", "start": 3038, "end": 3049, "surface": "chime-birds", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 24916, "pattern": "frame_means", "start": 15498, "end": 15533, "surface": "the column here grew to four meters", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 3683, "pattern": "frame_call_marked", "start": 234, "end": 238, "surface": "Echo", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 24623, "pattern": "anti_name", "start": 679, "end": 697, "surface": "They have no name.", "first": "x", "second": "s"}
+{"reader": "second", "seed": "1", "text": 2726, "pattern": "list_num_lead", "start": 1972, "end": 1990, "surface": "Floatroot Colonies", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 32052, "pattern": "the_mod_being", "start": 5604, "end": 5620, "surface": "little creatures", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 16018, "pattern": "there_are_the", "start": 12175, "end": 12182, "surface": "animals", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 22452, "pattern": "frame_call_marked", "start": 582, "end": 591, "surface": "Sturzwame", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 26554, "pattern": "italic_lower", "start": 2529, "end": 2556, "surface": "the green remembers a shape", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 21699, "pattern": "the_cap", "start": 1316, "end": 1331, "surface": "Real Inhabitant", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 8656, "pattern": "bold_second", "start": 2398, "end": 2411, "surface": "The Burrowers", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 7653, "pattern": "the_hyphen_compound", "start": 9477, "end": 9487, "surface": "hab-blocks", "first": "t", "second": "t"}
+{"reader": "second", "seed": "1", "text": 9116, "pattern": "binomial", "start": 3540, "end": 3561, "surface": "Pulmocorpus profundus", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 3295, "pattern": "heading_recurring", "start": 23392, "end": 23407, "surface": "The City Itself", "first": "x", "second": "b"}
+{"reader": "second", "seed": "1", "text": 2623, "pattern": "list_num_lead", "start": 1621, "end": 1632, "surface": "Queen-forms", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 30413, "pattern": "there_are_bare", "start": 17016, "end": 17028, "surface": "moss patches", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 21613, "pattern": "hyphen_agent_bare", "start": 3038, "end": 3049, "surface": "chime-birds", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 8836, "pattern": "binomial", "start": 147, "end": 164, "surface": "Pyroclasta refusa", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 11103, "pattern": "paren_quoted_alias", "start": 8025, "end": 8030, "surface": "under", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 10275, "pattern": "binomial", "start": 4070, "end": 4087, "surface": "Luminaria frigida", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 27552, "pattern": "heading_second", "start": 531, "end": 549, "surface": "The Fracture-Vines", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 6273, "pattern": "bold_inline_lower", "start": 4877, "end": 4882, "surface": "pulse", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 14743, "pattern": "frame_call_quoted", "start": 663, "end": 668, "surface": "algae", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 20688, "pattern": "a_cap", "start": 6292, "end": 6300, "surface": "Deep One", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 18271, "pattern": "there_are_bare", "start": 15731, "end": 15740, "surface": "no graves", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 4459, "pattern": "list_head_recurring", "start": 353, "end": 365, "surface": "Basalt Weave", "first": "b", "second": "b"}
+{"reader": "second", "seed": "1", "text": 21024, "pattern": "name_talk", "start": 4711, "end": 4878, "surface": "It is not conscious co-cultivation; it is an emergent contract between nervous systems too small to house intention and microbial communities too diffuse to be named.", "first": "s", "second": "x"}
+{"reader": "second", "seed": "1", "text": 21690, "pattern": "frame_call_plain", "start": 8897, "end": 8903, "surface": "glance", "first": "x", "second": "x"}
+{"reader": "second", "seed": "1", "text": 21045, "pattern": "there_are_bare", "start": 14034, "end": 14049, "surface": "patch-creatures", "first": "b", "second": "b"}

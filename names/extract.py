@@ -69,6 +69,9 @@ owls gulls herons otters seals whales dolphins foxes wolves bears cats dogs hors
 pigs chickens humans people
 """.split())
 _SPECIES_RX = re.compile(r"[a-z]+")
+# The place was described to the writer with numbers on a 0-3 scale; some writers echo them
+# in the creature text ("Turbulence (3.0/3)", "a score of 2.5 out of 3").
+_PARAM_RX = re.compile(r"\b\d(?:\.\d)?\s*(?:/\s*3|out\s+of\s+3)\b")
 
 FUNCTION_WORDS = set(("the of and a to in is it that are as with for its not they their but "
                       "by from this or on at be an which have has was").split())
@@ -302,7 +305,10 @@ def main():
       text_id INTEGER PRIMARY KEY, model TEXT, length INTEGER, n_hits INTEGER,
       n_names INTEGER, best REAL, expected REAL, n_statements INTEGER, n_anti INTEGER,
       flag TEXT, tagged TEXT, best_body REAL, best_title_only REAL,
-      n_names_80 INTEGER, n_place_self INTEGER, n_process INTEGER, n_species INTEGER, kind TEXT);
+      n_names_80 INTEGER, n_place_self INTEGER, n_process INTEGER, n_species INTEGER, kind TEXT,
+      n_param_echo INTEGER);
+    CREATE TABLE agreement (reader TEXT, seed TEXT, text_id INTEGER, pattern_id TEXT, start INTEGER,
+      end INTEGER, surface TEXT, first TEXT, second TEXT);
     CREATE TABLE names (
       norm TEXT PRIMARY KEY, display TEXT, n_texts INTEGER, expected REAL, expected_new REAL,
       best REAL, n_models INTEGER, n_mentions INTEGER, patterns TEXT, top_models TEXT, df REAL,
@@ -483,10 +489,10 @@ def main():
         else:
             kind = "undetermined"
         kinds[kind] += 1
-        db.execute("INSERT INTO text_cov VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+        db.execute("INSERT INTO text_cov VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
             tid, model, length, c["hits"], n_names[tid], best[tid], round(expected[tid], 3),
             c["st"], c["anti"], flags[tid], tagged.get(tid, ""), best_body[tid], best_title[tid],
-            n80, c["place_self"], c["process"], n_sp, kind))
+            n80, c["place_self"], c["process"], n_sp, kind, len(_PARAM_RX.findall(texts[tid]))))
     for n, g in agg.items():
         top = ", ".join("%s %.0f" % (m.split("/")[-1], k) for m, k in g["models"].most_common(4) if k >= 0.5)
         db.execute("INSERT INTO names VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (
@@ -509,6 +515,9 @@ def main():
             db.execute("INSERT INTO recall VALUES (?,?,?,?,?,?,?,?,?,?,?)", (
                 r["check"], r["date"], r.get("pool", "covered"), r["text"], r["read_chars"], None,
                 None, None, None, json.dumps(r.get("forms_missed", [])), r.get("note", "")))
+    for r in load_jsonl("agreement.jsonl"):
+        db.execute("INSERT INTO agreement VALUES (?,?,?,?,?,?,?,?,?)", (
+            r["reader"], r["seed"], r["text"], r["pattern"], r["start"], r["end"], r["surface"], r["first"], r["second"]))
     for r in load_jsonl("readings.jsonl"):
         db.execute("INSERT INTO readings VALUES (?,?,?,?,?)", (
             r["round"], r["text"], r.get("basis", ""), json.dumps(r.get("saw", [])), r.get("note", "")))

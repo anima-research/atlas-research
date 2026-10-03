@@ -1817,3 +1817,167 @@
 {"pattern": "being_is_process", "text": 9712, "start": 0, "end": 82, "surface": "The first living thing you encounter is not a creature but a condition: the pause.", "verdict": "s", "round": 7, "seed": "1"}
 {"pattern": "being_is_process", "text": 31125, "start": 15646, "end": 15701, "surface": "It is not a person but the condition of being a person.", "verdict": "s", "round": 7, "seed": "1"}
 {"pattern": "being_is_process", "text": 21200, "start": 0, "end": 83, "surface": "What lives there is not one thing but a temperament distributed across many bodies.", "verdict": "s", "round": 7, "seed": "1"}
+{"pattern": "call_them_bare", "text": 22657, "start": 1249, "end": 1253, "surface": "home", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 17734, "start": 126, "end": 134, "surface": "anything", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 21615, "start": 6478, "end": 6489, "surface": "hushwrights", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 6524, "start": 194, "end": 203, "surface": "something", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 30991, "start": 1273, "end": 1280, "surface": "riggers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 5211, "start": 1614, "end": 1625, "surface": "decomposers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 17278, "start": 2380, "end": 2384, "surface": "home", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 10906, "start": 3124, "end": 3128, "surface": "home", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 1745, "start": 1976, "end": 1980, "surface": "that", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 30487, "start": 7898, "end": 7904, "surface": "people", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 736, "start": 2549, "end": 2553, "surface": "home", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 17750, "start": 700, "end": 704, "surface": "home", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 10150, "start": 7282, "end": 7286, "surface": "home", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 26069, "start": 8417, "end": 8426, "surface": "diagnosis", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 12012, "start": 2602, "end": 2606, "surface": "that", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 21444, "start": 9249, "end": 9254, "surface": "theft", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 9055, "start": 6560, "end": 6565, "surface": "sleep", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 26935, "start": 7659, "end": 7665, "surface": "plants", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 14607, "start": 8106, "end": 8112, "surface": "organs", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 10654, "start": 8577, "end": 8584, "surface": "animals", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 20686, "start": 3877, "end": 3882, "surface": "noise", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 13922, "start": 2863, "end": 2867, "surface": "that", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 30555, "start": 4022, "end": 4027, "surface": "alive", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 25104, "start": 6870, "end": 6874, "surface": "that", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 13926, "start": 28023, "end": 28032, "surface": "brassicas", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 31097, "start": 1032, "end": 1040, "surface": "slumpers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 26531, "start": 6742, "end": 6750, "surface": "padlocks", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 14280, "start": 2561, "end": 2573, "surface": "calciphorids", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 31012, "start": 1741, "end": 1750, "surface": "stillings", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 26232, "start": 11652, "end": 11659, "surface": "closers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 21680, "start": 5630, "end": 5640, "surface": "spillworks", "verdict": "t", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 13863, "start": 13359, "end": 13369, "surface": "launderers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 21675, "start": 13263, "end": 13270, "surface": "horners", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 23863, "start": 3594, "end": 3605, "surface": "hollowskins", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 25098, "start": 19193, "end": 19207, "surface": "threadclippers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 30560, "start": 5001, "end": 5009, "surface": "fanheads", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 30229, "start": 2296, "end": 2303, "surface": "dentils", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 14277, "start": 2979, "end": 2986, "surface": "menhirs", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 24257, "start": 4992, "end": 5002, "surface": "sievebacks", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 28348, "start": 11691, "end": 11698, "surface": "howlers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 26079, "start": 8160, "end": 8167, "surface": "fallers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 18014, "start": 10515, "end": 10524, "surface": "flatlings", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 25057, "start": 10954, "end": 10963, "surface": "hookbacks", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 21596, "start": 11148, "end": 11157, "surface": "microbats", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 28289, "start": 130, "end": 141, "surface": "industrials", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 31065, "start": 7562, "end": 7574, "surface": "scatterflies", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 17869, "start": 2153, "end": 2163, "surface": "hoverflies", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "rare_plural", "text": 21652, "start": 10413, "end": 10420, "surface": "blowers", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 28719, "start": 956, "end": 965, "surface": "flat ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 10882, "start": 1587, "end": 1596, "surface": "grey ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 28205, "start": 6966, "end": 6976, "surface": "large ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 9586, "start": 57, "end": 66, "surface": "long ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 4365, "start": 14942, "end": 14954, "surface": "shelled ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 17903, "start": 12457, "end": 12470, "surface": "larger things", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 23625, "start": 4472, "end": 4488, "surface": "long-legged ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 9308, "start": 4613, "end": 4624, "surface": "winged ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 11227, "start": 23363, "end": 23376, "surface": "unseen things", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 17713, "start": 894, "end": 902, "surface": "old ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 26350, "start": 8013, "end": 8024, "surface": "hollow ones", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 28592, "start": 12167, "end": 12179, "surface": "small things", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 232, "start": 5992, "end": 6003, "surface": "folded ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 17759, "start": 4702, "end": 4715, "surface": "youngest ones", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 3337, "start": 85, "end": 97, "surface": "large things", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 13845, "start": 9925, "end": 9934, "surface": "deep ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 11849, "start": 10054, "end": 10066, "surface": "large things", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 25001, "start": 11927, "end": 11941, "surface": "shelled things", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 18283, "start": 19148, "end": 19161, "surface": "legged things", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 14484, "start": 9628, "end": 9646, "surface": "translucent things", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 26319, "start": 7505, "end": 7514, "surface": "only ones", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 5313, "start": 6895, "end": 6905, "surface": "quick ones", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 3340, "start": 23471, "end": 23485, "surface": "strange things", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_ones_recurring", "text": 28639, "start": 11488, "end": 11502, "surface": "shelled things", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 30638, "start": 1505, "end": 1516, "surface": "literalists", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 27031, "start": 4205, "end": 4215, "surface": "correctors", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 16752, "start": 4146, "end": 4154, "surface": "curators", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 200, "start": 1830, "end": 1840, "surface": "caretakers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 9718, "start": 2575, "end": 2582, "surface": "feeders", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 6636, "start": 5240, "end": 5251, "surface": "pollinators", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 15666, "start": 2754, "end": 2762, "surface": "watchers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 17749, "start": 13514, "end": 13522, "surface": "pioneers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 19785, "start": 3984, "end": 3994, "surface": "scavengers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 26821, "start": 4166, "end": 4177, "surface": "maintainers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 30760, "start": 5751, "end": 5760, "surface": "neighbors", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 16710, "start": 3121, "end": 3128, "surface": "filters", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 18120, "start": 13289, "end": 13296, "surface": "grazers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 17488, "start": 2456, "end": 2465, "surface": "gardeners", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 21281, "start": 6424, "end": 6431, "surface": "keepers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 18265, "start": 14440, "end": 14449, "surface": "neighbors", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 30480, "start": 8345, "end": 8352, "surface": "workers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 17397, "start": 1971, "end": 1981, "surface": "caretakers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 24517, "start": 1974, "end": 1983, "surface": "observers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 9394, "start": 5429, "end": 5440, "surface": "translators", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 3619, "start": 126, "end": 133, "surface": "carvers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 4586, "start": 2172, "end": 2179, "surface": "grazers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 8270, "start": 5884, "end": 5890, "surface": "makers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "they_are_bare", "text": 9058, "start": 10111, "end": 10121, "surface": "scavengers", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 22842, "start": 7072, "end": 7085, "surface": "stone-sleeper", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 17757, "start": 4948, "end": 4963, "surface": "chamber-dweller", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 27979, "start": 17929, "end": 17940, "surface": "warm-sitter", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 12830, "start": 3291, "end": 3306, "surface": "crucible-lurker", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 24643, "start": 13368, "end": 13381, "surface": "basin-checker", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 10339, "start": 3588, "end": 3601, "surface": "filter-feeder", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 8945, "start": 15089, "end": 15100, "surface": "wound-maker", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 30481, "start": 33192, "end": 33203, "surface": "cairn-maker", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 11677, "start": 18690, "end": 18704, "surface": "sensor-cluster", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 8914, "start": 656, "end": 669, "surface": "filter-feeder", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 27965, "start": 12080, "end": 12093, "surface": "cairn-builder", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 27849, "start": 21641, "end": 21653, "surface": "plateau-born", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 27995, "start": 28344, "end": 28357, "surface": "boiler-tender", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 13934, "start": 2998, "end": 3009, "surface": "stone-color", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 29340, "start": 6624, "end": 6635, "surface": "bell-keeper", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 8324, "start": 2094, "end": 2105, "surface": "plant-water", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 4595, "start": 5021, "end": 5029, "surface": "echo-kin", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 30709, "start": 9091, "end": 9100, "surface": "mid-water", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 31214, "start": 29, "end": 37, "surface": "seam-kin", "verdict": "b", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 13834, "start": 10103, "end": 10115, "surface": "plant-matter", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 28178, "start": 16586, "end": 16598, "surface": "ground-cover", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 13843, "start": 7566, "end": 7575, "surface": "not-water", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 27990, "start": 14553, "end": 14563, "surface": "root-floor", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "the_hyphen_agent_singular", "text": 14795, "start": 930, "end": 942, "surface": "copper-fiber", "verdict": "x", "round": 8, "seed": "1"}
+{"pattern": "call_them_bare", "text": 24954, "start": 4539, "end": 4546, "surface": "nodules", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 10025, "start": 422, "end": 433, "surface": "inhabitants", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 21625, "start": 14512, "end": 14522, "surface": "leewarders", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 21677, "start": 330, "end": 336, "surface": "sieves", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 8857, "start": 1269, "end": 1280, "surface": "recognition", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 21021, "start": 3082, "end": 3092, "surface": "frondwings", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 24589, "start": 257, "end": 262, "surface": "moths", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 10023, "start": 1234, "end": 1239, "surface": "trees", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 24949, "start": 14595, "end": 14602, "surface": "ribbons", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 24719, "start": 7109, "end": 7113, "surface": "eels", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 4401, "start": 4111, "end": 4118, "surface": "ceramic", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 21623, "start": 314, "end": 324, "surface": "condensers", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 21622, "start": 15663, "end": 15669, "surface": "season", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 8958, "start": 1339, "end": 1348, "surface": "tolerance", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 14467, "start": 7459, "end": 7468, "surface": "listeners", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 21617, "start": 403, "end": 408, "surface": "skins", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 26116, "start": 11454, "end": 11460, "surface": "tuning", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 23605, "start": 3411, "end": 3421, "surface": "adaptation", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 7364, "start": 301, "end": 309, "surface": "denizens", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 287, "start": 392, "end": 399, "surface": "compact", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 21055, "start": 5152, "end": 5161, "surface": "threaders", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 28348, "start": 11490, "end": 11499, "surface": "chemistry", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 11578, "start": 165, "end": 172, "surface": "tenders", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "call_them_bare", "text": 24949, "start": 8574, "end": 8580, "surface": "waders", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 7460, "start": 5416, "end": 5426, "surface": "mantis-kin", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 30815, "start": 6025, "end": 6037, "surface": "cross-cutter", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 4379, "start": 23034, "end": 23046, "surface": "wall-clinger", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 3486, "start": 2017, "end": 2024, "surface": "dew-kin", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 6473, "start": 6210, "end": 6220, "surface": "tool-maker", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 10642, "start": 9177, "end": 9188, "surface": "gas-bladder", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 30173, "start": 9009, "end": 9018, "surface": "tally-man", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 4743, "start": 238, "end": 257, "surface": "seventeen-kilometer", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 32115, "start": 6673, "end": 6688, "surface": "chamber-dweller", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 3165, "start": 12142, "end": 12155, "surface": "cairn-builder", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 30124, "start": 1197, "end": 1208, "surface": "weft-walker", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 8945, "start": 6375, "end": 6386, "surface": "wound-maker", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 23396, "start": 8438, "end": 8450, "surface": "bell-heather", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 30544, "start": 10848, "end": 10858, "surface": "basin-born", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 27979, "start": 18553, "end": 18564, "surface": "warm-sitter", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 26517, "start": 15470, "end": 15482, "surface": "basin-tender", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 23237, "start": 4952, "end": 4966, "surface": "channel-walker", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 26191, "start": 11186, "end": 11195, "surface": "brake-man", "verdict": "b", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 7094, "start": 9757, "end": 9767, "surface": "lumen-deer", "verdict": "x", "round": 8, "seed": "2"}
+{"pattern": "the_hyphen_agent_singular", "text": 31154, "start": 8847, "end": 8859, "surface": "plateau-born", "verdict": "b", "round": 8, "seed": "2"}
