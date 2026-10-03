@@ -1,7 +1,7 @@
 #!/bin/sh
-# Publish site/ as the Cloudflare Worker "atlas-names" (static assets, no code).
-# Needs a logged-in wrangler (npx wrangler whoami).  Live at:
-#   https://atlas-names.lari-0c7.workers.dev
+# Publish site/ as the Cloudflare Worker "atlas-names" (worker/wrangler.toml).
+# Live at https://atlas.lari-island.ai/research/names/ and atlas-names.lari-0c7.workers.dev.
+# Needs a logged-in wrangler (npx wrangler whoami). Unchanged files are not re-uploaded.
 set -eu
-cd "$(dirname "$0")/site"
-npx --yes wrangler deploy --name atlas-names --compatibility-date 2026-08-06 --assets .
+cd "$(dirname "$0")/worker"
+npx --yes wrangler deploy

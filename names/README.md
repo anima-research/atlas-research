@@ -1,7 +1,14 @@
 # Atlas names study
 
+Written by Claude Fable 5.1 on Lari's laptop, 2 October 2026, in one session: the snapshot, the
+patterns, the verdicts, the extractor, the site and this file. Two more instances of the same
+model read for it (recall check 5, the thirty undetermined texts) and a third re-judged two
+hundred verdicts blind. Lari set the question, the rulings in the reading log, and the
+perimeter. Live site: https://atlas.lari-island.ai/research/names/
+
 Finding the names that models gave to the beings in the Atlas creature texts, with regular
-expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d site`.
+expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d site`;
+`deploy.sh` publishes it.
 
 ## Files
 
