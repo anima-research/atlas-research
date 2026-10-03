@@ -610,4 +610,24 @@ PATTERNS = [
       "('called the Hollow Choir by the townsfolk'). Not a name; a record of the namer.",
       "A sentence like 'you might call it a shell' matches as well.",
       yields="namer", max_words=6, added="2026-10-03"),
+
+    # ================================= round 7: the kind of answer, read from statements
+    P("place_is_inhabitant", 1, 7, "", "statement",
+      r"\b(?:what[ \t]+lives[ \t]+(?:here|there|in[ \t]+(?:it|this[ \t]+place))[ \t]+is[ \t]+(?:mostly[ \t]+|simply[ \t]+|largely[ \t]+|only[ \t]+|not[ \t]+a[ \t]+\w+[ \t]+but[ \t]+)?(?:the[ \t]+)?(?:%(L)s)(?:[ \t]+itself)?\b"
+      r"|(?:the[ \t]+)?(?:%(L)s)[ \t]+(?:itself[ \t]+)?is[ \t]+(?:alive|a[ \t]+being|a[ \t]+creature|an[ \t]+organism|a[ \t]+single[ \t]+organism|the[ \t]+(?:only[ \t]+|true[ \t]+|real[ \t]+|sole[ \t]+)?(?:inhabitant|resident|creature|being|occupant|tenant|organism)|what[ \t]+lives[ \t]+(?:here|there))\b"
+      r"|(?:inhabitant|resident|creature|being|occupant|tenant|organism)[ \t]+(?:here[ \t]+|there[ \t]+)?is[ \t]+the[ \t]+(?:%(L)s)(?:[ \t]+itself)?\b"
+      r"|(?:is|are)[ \t]+the[ \t]+(?:%(L)s)[ \t]+itself\b"
+      r"|the[ \t]+(?:%(L)s)[ \t]+is[ \t]+(?:it|them)\b)" % {"L": "place|land|city|basin|valley|plateau|canyon|mountain|chamber|room|hollow|cave|cavern|forest|grove|garden|town|quarter|works|mesa|ridge|cistern|vault|hall|plain|shelf|bowl|crater|gorge|lagoon|marsh|swamp|tower|engine|factory|machine|mill|reef|ocean|sea|lake|pool|river|island|spire|cleft|rift|substation|station|building|structure|architecture|landscape|terrain|ground|stone|rock|water|mist|fog|dark|darkness|silence|sound|hum|roar"},
+      (16062, "What lives there is mostly the place itself."),
+      "A sentence saying that the inhabitant is the place: 'what lives there is the place "
+      "itself', 'the canyon is a being', 'the inhabitants are the city'.",
+      "The words for the place are a hand-made list; a place called something else is missed.",
+      yields="statement", flags="i", added="2026-10-03"),
+    P("being_is_process", 1, 7, "", "statement",
+      r"\b(?:is|are)[ \t]+not[ \t]+(?:a[ \t]+|an[ \t]+|one[ \t]+)?(?:creature|creatures|animal|animals|being|beings|species|organism|organisms|people|person|thing|things|body|bodies|inhabitant|inhabitants)[ \t]+"
+      r"(?:but|so[ \t]+much[ \t]+as|at[ \t]+all[ \t]+but)[ \t]+(?:a[ \t]+|an[ \t]+|the[ \t]+)?(?:process|processes|condition|tendency|habit|pattern|patterns|state|weather|function|relationship|argument|disposition|appetite|temperament|verb|rhythm|property|phenomenon|event|events|arrangement|economy|metabolism|conversation|decision|preference)\b",
+      (24042, "What lives there is not a creature but a process that has begun, repeatedly, to resemble one."),
+      "A sentence saying that what lives here is not a creature but a process, a condition, "
+      "a tendency, a pattern: the inhabitant denied the shape of a being.",
+      yields="statement", flags="i", added="2026-10-03"),
 ]

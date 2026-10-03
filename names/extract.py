@@ -56,6 +56,20 @@ MIN_READ = 20
 COMPILED = None
 STOPS = {k: set(v) for k, v in P.STOPLISTS.items()}
 MASKS = {k: re.compile(v, re.M) for k, v in P.MASKS.items()}
+# Ordinary words for kinds of living things. A text that uses several of them and coins no
+# name is answering with ordinary biology.
+SPECIES_WORDS = set("""
+fish birds bird insects insect beetles beetle moths moth bats bat frogs frog worms worm crabs
+crab spiders spider salamanders salamander lizards lizard snakes snake goats goat deer rats rat
+mice mouse voles shrews shrimp snails snail slugs slug ants ant bees bee wasps wasp flies fly
+midges gnats mites lichen lichens moss mosses fungi fungus mushrooms algae ferns fern grasses
+grass trees tree shrubs reeds kelp coral corals jellyfish eels eel octopus squid plankton
+bacteria microbes crickets cicadas termites butterflies dragonflies hawks eagles ravens crows
+owls gulls herons otters seals whales dolphins foxes wolves bears cats dogs horses cattle sheep
+pigs chickens humans people
+""".split())
+_SPECIES_RX = re.compile(r"[a-z]+")
+
 FUNCTION_WORDS = set(("the of and a to in is it that are as with for its not they their but "
                       "by from this or on at be an which have has was").split())
 _TOK = re.compile(r"[A-Za-z']+")
@@ -287,7 +301,8 @@ def main():
     CREATE TABLE text_cov (
       text_id INTEGER PRIMARY KEY, model TEXT, length INTEGER, n_hits INTEGER,
       n_names INTEGER, best REAL, expected REAL, n_statements INTEGER, n_anti INTEGER,
-      flag TEXT, tagged TEXT, best_body REAL, best_title_only REAL);
+      flag TEXT, tagged TEXT, best_body REAL, best_title_only REAL,
+      n_names_80 INTEGER, n_place_self INTEGER, n_process INTEGER, n_species INTEGER, kind TEXT);
     CREATE TABLE names (
       norm TEXT PRIMARY KEY, display TEXT, n_texts INTEGER, expected REAL, expected_new REAL,
       best REAL, n_models INTEGER, n_mentions INTEGER, patterns TEXT, top_models TEXT, df REAL,
@@ -368,7 +383,7 @@ def main():
     flags = {tid: text_flag(texts[tid], tagged.get(tid)) for tid in meta}
 
     per_text = defaultdict(lambda: defaultdict(list))
-    tc = defaultdict(lambda: dict(hits=0, st=0, anti=0))
+    tc = defaultdict(lambda: dict(hits=0, st=0, anti=0, place_self=0, process=0))
     pm_m, pm_t = Counter(), defaultdict(set)
     for tid, pid, s, e, surf, n in mentions:
         model = meta[tid][0]
@@ -378,9 +393,15 @@ def main():
             tc[tid]["st"] += 1
             if pid == "anti_name":
                 tc[tid]["anti"] += 1
+            if pid == "place_is_inhabitant":
+                tc[tid]["place_self"] += 1
+            if pid == "being_is_process":
+                tc[tid]["process"] += 1
             continue
         if yields[pid] == "namer":
             continue
+        if yields[pid] == "statement":
+            pass
         per_text[tid][n].append((pid, s, surf))
         tc[tid]["hits"] += 1
 
@@ -433,11 +454,39 @@ def main():
             if score > g["best"]:
                 g["best"] = score
     db.executemany("INSERT INTO text_names VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", name_rows)
+    # The kind of answer a text gives to "who lives here", read from what was caught.
+    # A rule over signals; the signals are stored beside it so that any other rule can be
+    # applied later.
+    names80 = Counter()
+    for tid, n, disp, nm, pats, score, fp, tot, inpl, nt, body, cased in name_rows:
+        if score >= 0.8 and not (nt and body == 0):
+            names80[tid] += 1
+    kinds = Counter()
     for tid, (model, length, _place) in meta.items():
         c = tc[tid]
-        db.execute("INSERT INTO text_cov VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+        n_sp = len(set(w for w in _SPECIES_RX.findall(texts[tid].lower()) if w in SPECIES_WORDS))
+        n80 = names80[tid]
+        if flags[tid]:
+            kind = "flagged"
+        elif n80 >= 3:
+            kind = "catalogue"
+        elif n80 >= 1:
+            kind = "named"
+        elif c["place_self"]:
+            kind = "place itself"
+        elif c["process"]:
+            kind = "a process"
+        elif c["anti"]:
+            kind = "unnamed, said so"
+        elif n_sp >= 4:
+            kind = "ordinary biology"
+        else:
+            kind = "undetermined"
+        kinds[kind] += 1
+        db.execute("INSERT INTO text_cov VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
             tid, model, length, c["hits"], n_names[tid], best[tid], round(expected[tid], 3),
-            c["st"], c["anti"], flags[tid], tagged.get(tid, ""), best_body[tid], best_title[tid]))
+            c["st"], c["anti"], flags[tid], tagged.get(tid, ""), best_body[tid], best_title[tid],
+            n80, c["place_self"], c["process"], n_sp, kind))
     for n, g in agg.items():
         top = ", ".join("%s %.0f" % (m.split("/")[-1], k) for m, k in g["models"].most_common(4) if k >= 0.5)
         db.execute("INSERT INTO names VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (
@@ -477,6 +526,9 @@ def main():
         body_under_50=sum(1 for t in ok if best_body[t] < 0.5),
         titled_not_named=sum(1 for t in ok if best_body[t] < 0.5 and best_title[t] >= 0.5),
         titled_any_not_named=sum(1 for t in ok if best_body[t] < 0.5 and best_title[t] > 0),
+        kinds=dict(kinds),
+        place_self_texts=sum(1 for t in ok if tc[t]["place_self"]),
+        process_texts=sum(1 for t in ok if tc[t]["process"]),
         anti_texts=sum(1 for t in ok if tc[t]["anti"]),
         name_talk_texts=sum(1 for t in ok if tc[t]["st"]),
         distinct_strings=len(agg),

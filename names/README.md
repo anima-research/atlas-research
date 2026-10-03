@@ -85,6 +85,17 @@ made because the precision differs: a heading that never recurs designates an in
 the time, one that recurs with the same capitals 0.94. A pattern split out of earlier ones
 inherits their verdicts where it captures the same place (`labels_from`).
 
+## Kinds of answer
+
+The unit of the study was the name; the text was only where names lie. That put "the canyon is
+a being" and "diverse marine life" in the same box (nothing caught). Since round 7 every text
+has a kind of answer, by a stated rule over what was caught: catalogue / named / place itself /
+a process / unnamed, said so / ordinary biology / undetermined. The signals the rule reads
+(names at 0.8 used in the body, place-is-inhabitant sentences, process sentences, no-name
+sentences, species words) are stored beside the kind in `text_cov` and `texts.csv`, so another
+rule can be applied without re-reading. Two statement patterns feed it: `place_is_inhabitant`
+and `being_is_process`.
+
 ## Texts without names
 
 A text with no name, and a text that says its beings have no name, are part of what is studied.

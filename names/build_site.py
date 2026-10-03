@@ -17,7 +17,8 @@ E = html.escape
 VERDICTS = {"b": "being", "p": "place", "t": "thing", "s": "statement", "x": "not a name",
             "g": "broken text"}
 NAV = [("index.html", "Overview"), ("patterns.html", "Patterns"), ("models.html", "Models"),
-       ("names.html", "Names"), ("texts.html", "Texts"), ("no_names.html", "Texts without names"),
+       ("names.html", "Names"), ("texts.html", "Texts"), ("kinds.html", "Kinds of answer"),
+       ("no_names.html", "Texts without names"),
        ("recall.html", "Recall checks"), ("readings.html", "Reading log"), ("flagged.html", "Flagged texts"),
        ("export.html", "Data export")]
 
@@ -273,7 +274,8 @@ def main():
 
     # text_id -> (id, model, length, n_hits, n_names, best, expected, n_statements, n_anti, flag, tagged)
     cov = {r[0]: r for r in q("SELECT text_id, model, length, n_hits, n_names, best, expected, n_statements, "
-                              "n_anti, flag, tagged, best_body, best_title_only FROM text_cov")}
+                              "n_anti, flag, tagged, best_body, best_title_only, n_names_80, n_place_self, "
+                              "n_process, n_species, kind FROM text_cov")}
     models = sorted(set(r[1] for r in cov.values()))
     midx = {m: i for i, m in enumerate(models)}
     pats = q("SELECT id, version, round, added, yields, family, regex, flags, stop, max_words, origin_text, "
@@ -365,6 +367,7 @@ broken, a refusal or off-topic, or it is empty, or it failed a word check made h
 <tr><td>Nothing caught</td><td>%(bno)d (%(pno)s%%)</td></tr>
 <tr><td>Best score in the body under 0.5</td><td>%(bu)d, of which %(tn)d have a title-only designation</td></tr>
 <tr><td>Texts that say there is no name</td><td>%(anti)d (see <a href="no_names.html">Texts without names</a>)</td></tr>
+<tr><td>Texts that say the place is the inhabitant</td><td>%(pself)d (see <a href="kinds.html">Kinds of answer</a>)</td></tr>
 <tr><td>Texts that use the word "name"</td><td>%(talk)d</td></tr>
 </table>
 <p class=small>The four rows of best score are a way to read one number; the cuts at 0.8 and 0.5
@@ -406,7 +409,7 @@ are public through the Atlas API and are exported to the atlas-texts repository.
            b80=stats["best_80"], p80=pct(stats["best_80"], okn), b50=stats["best_50_80"],
            p50=pct(stats["best_50_80"], okn), blo=stats["best_under_50"], plo=pct(stats["best_under_50"], okn),
            bno=stats["best_none"], pno=pct(stats["best_none"], okn), anti=stats["anti_texts"],
-           bu=stats["body_under_50"], tn=stats["titled_any_not_named"],
+           bu=stats["body_under_50"], tn=stats["titled_any_not_named"], pself=stats["place_self_texts"],
            talk=stats["name_talk_texts"],
            rounds=table([col("round", "num"), col("date"), col("patterns", "num"), col("hits", "num"),
                          col("verdicts", "num"), col("texts with a name at 0.8 or more", "num"),
@@ -748,15 +751,21 @@ that names written in forms that the better patterns miss can be found here.</p>
         return "### %s\n\n%s\n\n" % (name, "\n".join("- `%s`: %s" % kv for kv in zip(header, notes)))
     notes = "# Data export\n\nThe tables behind this site, as CSV. Rebuilt with the site; same release, same patterns.\n\n"
     notes += dump_csv("texts.csv",
-        ["text_id", "model", "length", "best_score_body", "best_score_title_only", "names_at_0_8", "expected_names",
-         "no_name_statements", "sentences_with_name", "corpus_status", "flag"],
-        [[tid, r[1], r[2], r[11], r[12], sum(1 for x in tn.get(tid, ()) if x[5] >= 0.8), r[6], r[8], r[7], r[10], r[9]]
+        ["text_id", "model", "length", "kind", "best_score_body", "best_score_title_only", "names_at_0_8", "expected_names",
+         "no_name_statements", "place_is_inhabitant_statements", "process_statements", "species_words",
+         "sentences_with_name", "corpus_status", "flag"],
+        [[tid, r[1], r[2], r[17], r[11], r[12], r[13], r[6], r[8], r[14], r[15], r[16], r[7], r[10], r[9]]
          for tid, r in sorted(cov.items())],
         ["Atlas creature id (https://atlas.animalabs.ai/v3/creature/<id>)", "writer model", "characters",
+         "kind of answer by the rule on the site page Kinds of answer",
          "highest score among names the text uses outside a title line (0 = none)",
-         "highest score among title-only designations (0 = none)", "distinct strings with a score of 0.8 or more",
-         "sum of the scores of all strings caught", "sentences saying there is no name", "sentences using the word name",
-         "status recorded by the corpus taggers, empty if none", "why the text is left out of counts, empty if counted"])
+         "highest score among title-only designations (0 = none)",
+         "distinct strings with a score of 0.8 or more, used in the body",
+         "sum of the scores of all strings caught", "sentences saying there is no name",
+         "sentences saying the place itself is the inhabitant",
+         "sentences saying the inhabitant is not a creature but a process", "distinct ordinary words for kinds of living things",
+         "sentences using the word name", "status recorded by the corpus taggers, empty if none",
+         "why the text is left out of counts, empty if counted"])
     notes += dump_csv("text_names.csv",
         ["text_id", "string", "as_written", "score", "patterns", "hits", "first_position", "occurrences",
          "in_place_text", "title_hits", "body_occurrences", "body_occurrences_same_capitals"],
@@ -803,23 +812,75 @@ that names written in forms that the better patterns miss can be found here.</p>
 
     # ------------------------------------------------------------------ texts
     os.makedirs(os.path.join(SITE, "x"), exist_ok=True)
-    xrows = [[tlink(tid), r[1], r[2], fnum(r[11]), fnum(r[12]), sum(1 for x in tn.get(tid, ()) if x[5] >= 0.8), r[6], r[8], r[7],
+    xrows = [[tlink(tid), r[1], r[2], r[17], fnum(r[11]), fnum(r[12]), r[13], r[6], r[8], r[14], r[15], r[16], r[7],
               r[10] or "none", read_round.get(tid, "")] for tid, r in sorted(cov.items()) if not r[9]]
     xcols = [
             col("text", "html"), col("model"), col("length", "num", "characters"),
+            col("kind", "text", "the kind of answer, by the rule on the Kinds of answer page"),
             col("best score in body", "num", "highest score among names the text uses outside a title line"),
             col("best score, title only", "num", "highest score among title-only designations; empty when there is none"),
-            col("names ≥ 0.8", "num", "distinct strings in the text with a score of 0.8 or more"),
+            col("names ≥ 0.8", "num", "distinct strings with a score of 0.8 or more, used in the body"),
             col("expected names", "num", "sum of the scores of all strings caught in the text"),
-            col("no-name statements", "num", "sentences saying there is no name"), col("sentences with 'name'", "num", "sentences that use the word name"),
+            col("no-name statements", "num", "sentences saying there is no name"),
+            col("place is the inhabitant", "num", "sentences saying the place itself is what lives here"),
+            col("not a creature but a process", "num", "sentences saying the inhabitant is a process, a condition, a pattern"),
+            col("species words", "num", "distinct ordinary words for kinds of living things"),
+            col("sentences with 'name'", "num", "sentences that use the word name"),
             col("corpus status", "text", "the status the corpus taggers recorded; many newer texts have none"),
             col("read in round", "num", "the round in which the text was read by eye, if it was")]
     with open(os.path.join(SITE, "x", "texts.json"), "w", encoding="utf-8") as f:
-        f.write(jdump(dict(columns=xcols, rows=xrows, pageSize=200, sort=[3, 1])))
+        f.write(jdump(dict(columns=xcols, rows=xrows, pageSize=200, sort=[4, 1])))
     page("texts.html", "Texts",
          """<p>Every counted text (%d) with its best scores: in the body, and among title-only
 designations. Sorted from the lowest body score: the texts at the top are where no name was found
 in use. Filter a score column (for example <code>&lt;0.5</code>) to make any cut.</p>%s<div id=xt></div><script>tableFromUrl("xt","x/texts.json")</script>""" % (len(xrows), columns_note(xcols)))
+
+
+    # ------------------------------------------------------------------ kinds
+    KIND_ORDER = ["catalogue", "named", "place itself", "a process", "unnamed, said so", "ordinary biology", "undetermined"]
+    KIND_RULE = {
+        "catalogue": "three or more names at a score of 0.8 or more, used in the body",
+        "named": "one or two such names",
+        "place itself": "no such name, and a sentence saying the place is the inhabitant",
+        "a process": "no such name, and a sentence saying the inhabitant is not a creature but a process, a condition, a pattern",
+        "unnamed, said so": "no such name, and a sentence saying there is no name",
+        "ordinary biology": "no such name, no such sentence, and four or more ordinary words for kinds of living things (fish, moss, beetles, goats \u2026)",
+        "undetermined": "none of the above: nothing caught that decides it",
+    }
+    kc = Counter(r[17] for r in cov.values() if not r[9])
+    krows = [[k, KIND_RULE[k], kc[k], pct(kc[k], okn)] for k in KIND_ORDER]
+    per_kind = defaultdict(Counter)
+    for r in cov.values():
+        if not r[9]:
+            per_kind[r[1]][r[17]] += 1
+            if r[14]:
+                per_kind[r[1]]["pself_any"] += 1
+    kmrows = []
+    for m in models:
+        c = per_kind[m]; n = sum(c[k] for k in KIND_ORDER)
+        kmrows.append(['<a href="model/%s.html">%s</a>' % (slug(m), E(m)), n] + [c[k] for k in KIND_ORDER] +
+                      [pct(c["catalogue"] + c["named"], n), pct(c["place itself"], n), c["pself_any"], pct(c["pself_any"], n)])
+    page("kinds.html", "Kinds of answer", """
+<p>Each text answers the question "who or what lives here" in its own way, and the kinds of answer
+are not a scale. A text that says the place itself is the inhabitant has answered; a text that
+describes goats and lichens has answered; a text in which nothing was caught may not have. The
+name search alone puts all three in one box. This page separates them by a rule over what was
+caught in each text. The rule is one choice among several; the signals it reads are stored beside
+it (columns of the <a href="texts.html">Texts</a> table and of <code>texts.csv</code>), so another
+rule can be applied without re-reading anything.</p>
+<p>The rule is applied in the order of the rows: the first row that fits is the kind. A catalogue
+can also say the place is alive; it is counted as a catalogue here, and the sentence is counted in
+the column "say the place is the inhabitant", which is independent of the kind.</p>
+<h2>The rule and the counts</h2>%s
+<h2>By model</h2>%s
+<p class=small>"undetermined" is where the reading should go next. "ordinary biology" is a weak
+signal: a text that coins no name and uses four or more ordinary species words; a long essay
+about one unnamed being that mentions birds and moss in passing also lands here.</p>
+""" % (table([col("kind"), col("rule"), col("texts", "num"), col("% of counted texts", "num")], krows),
+       table([col("model", "html"), col("texts", "num")] + [col(k, "num", KIND_RULE[k]) for k in KIND_ORDER] +
+             [col("% catalogue or named", "num"), col("% place itself", "num", "share of texts whose kind is 'place itself'"),
+              col("say the place is the inhabitant", "num", "texts with such a sentence, whatever their kind"),
+              col("% saying so", "num")], kmrows, sort=[9, -1], page=130)))
 
     # --------------------------------------------------------------- no names
     rc = q("SELECT chk, date, pool, text_id, read_chars, name, then_caught, score_now, patterns_now, forms_missed, note FROM recall")
