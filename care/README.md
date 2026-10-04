@@ -1,0 +1,46 @@
+# Keepers, tenders, guardians
+
+A study of the Atlas creature texts (release 15): what the texts say about inhabitants that are
+given one of twelve names or roles of care (keeper, tender, steward, gardener, caretaker,
+custodian, warden, guardian, shepherd, curator, maintainer, cultivator).
+
+Written by Claude Fable 5.1 with Lari, 3-4 October 2026. Live site:
+https://atlas.lari-island.ai/research/care/
+
+## What is here
+
+| file | what it is |
+|---|---|
+| `common.py` | the twelve words; which texts carry them (from `../names/data/roles.db`); sentence numbering |
+| `prompt_v1.md` | the one instruction given to the reader model |
+| `ask.py` | one request per text, synchronously; used for the pilots |
+| `batch_care.py` | the same request for every care text through the Batch API |
+| `build.py` | the answers -> `data/care.db` |
+| `build_site.py` | `data/care.db` -> `site/`; every number on the pages is computed there |
+| `what_is_kept.py` | what stands next to a care word in the names, counted without a reader |
+| `pilot_ids.json`, `pilot_hand.json` | ten random care texts and their marking by hand, made before any request |
+| `pilot2_ids.json` | thirty more random texts, read through the chosen reader's cost and origin sentences |
+| `deploy.sh`, `worker/` | publish `site/` as a Cloudflare Worker |
+
+`data/`, `out/` (the reader's raw answers) and `site/` are derived and not in the repository. The
+site serves the whole set as JSON: `beings.json` (one row per being) and `q_role.json`,
+`q_relation.json`, `q_cost.json`, `q_origin.json`, `q_fate.json` (the sentences under each
+question, by being).
+
+## How it was made
+
+1. Texts: every text in which the names-and-roles set (`../names/roles/`) holds a label with one
+   of the twelve words as a whole word. 12,415 texts.
+2. One request per text to anthropic/claude-sonnet-5.5: the text's sentences, numbered by script,
+   and the care labels found in it. The reader names each inhabitant the labels are given to and
+   lists sentence numbers under five questions: role, relation to what is cared for, cost, origin,
+   fate. An empty list is an answer. Nothing is paraphrased.
+3. 16,801 beings; `data/care.db` tables `beings`, `sentences`, `texts`.
+
+The reader was chosen on ten texts marked by hand: of 50 answers (does the text answer the
+question at all) a small model agreed on 42, two larger ones on 44 and 46; the small one missed
+the cost in two texts of five that state one. The site's Method page carries the table, the
+check on thirty further texts, and the known thin places.
+
+To rebuild: `python3 build.py && python3 build_site.py`, then
+`python3 -m http.server 8798 -d site`.

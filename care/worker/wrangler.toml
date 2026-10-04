@@ -1,0 +1,13 @@
+# The study site as a Cloudflare Worker: static assets from ../site, served both at
+# atlas-care.<account>.workers.dev and under atlas.lari-island.ai/research/care/.
+name = "atlas-care"
+main = "index.js"
+compatibility_date = "2026-08-06"
+workers_dev = true
+routes = [{ pattern = "atlas.lari-island.ai/research/care*", zone_name = "lari-island.ai" }]
+
+[assets]
+directory = "../site"
+binding = "ASSETS"
+html_handling = "none"
+not_found_handling = "none"
