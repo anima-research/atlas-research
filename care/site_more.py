@@ -4,9 +4,8 @@ import itertools
 # ---------- extra.json: what the portrait page needs beyond beings.json ----------
 kept_top = {}
 for w in STEMS:
-    a = sorted(((len(v), x) for (ww, x), v in pre.items() if ww == w and len(v) >= 2), reverse=True)[:14]
-    o = sorted(((len(v), x) for (ww, x), v in of.items() if ww == w and len(v) >= 2), reverse=True)[:14]
-    kept_top[w] = {'pre': [[x, n] for n, x in a], 'of': [[x, n] for n, x in o]}
+    a_ = sorted(((len(v['w'][w]), x) for x, v in NOUN.items() if len(v['w'].get(w, ())) >= 2), reverse=True)[:30]
+    kept_top[w] = [[x, n] for n, x in a_]
 dump('extra.json', {'within': WITHIN, 'kept': kept_top, 'corpus': corpus_by_model, 'care_texts': {m: len(v) for m, v in tm.items()}})
 
 open(os.path.join(SITE, 'style.css'), 'a').write("""
@@ -66,7 +65,7 @@ function draw(){{
     var L=Object.keys(per).filter(function(m){{return per[m][1]>=40;}}).map(function(m){{return [m,per[m][0],per[m][1]];}}).sort(function(a,b){{return b[1]/b[2]-a[1]/a[2];}});
     var one=function(x){{return '<tr><td class=l><a href="'+link({{m:x[0]}})+'">'+esc(x[0])+'</a></td><td><div class=t><i style="width:'+pc(x[1],x[2]).toFixed(1)+'%"></i></div></td><td class=n>'+pc(x[1],x[2]).toFixed(0)+'% <span class=small>('+x[1]+' of '+x[2]+')</span></td></tr>';}};
     h+='<div><h2>Writers who use it most and least</h2><p class=small>Share of a writer\\'s beings that carry the word; writers with 40 beings or more.</p><table class=bars>'+L.slice(0,10).map(one).join('')+'<tr><td colspan=3 class=small>…</td></tr>'+L.slice(-5).map(one).join('')+'</table></div>';
-    var K=X.kept[st.w]; h+='<div><h2>What is kept</h2><p class=small>From the names alone, counted by texts. <a href="kept.html">All forms</a>.</p><p><b>X-'+st.w+':</b> '+(K.pre.map(function(x){{return esc(x[0])+' '+x[1];}}).join(', ')||'-')+'</p><p><b>'+st.w+' of X:</b> '+(K.of.map(function(x){{return esc(x[0])+' '+x[1];}}).join(', ')||'-')+'</p></div>';
+    var K=X.kept[st.w]; h+='<div><h2>What is kept</h2><p class=small>The nouns in its names that say what is kept, with the number of texts. <a href="kept.html">The whole table</a>.</p><p>'+(K.map(function(x){{return esc(x[0])+' '+x[1];}}).join(', ')||'-')+'</p></div>';
   }}
   if(st.m&&st.m.slice(-2)!=='/*'&&X.corpus[st.m]){{h+='<div><h2>How often it writes them</h2><p>'+X.care_texts[st.m]+' of its '+X.corpus[st.m]+' texts in the corpus ('+pc(X.care_texts[st.m],X.corpus[st.m]).toFixed(0)+'%) have a being with one of the twelve words.</p></div>';}}
   h+='</div>'; document.getElementById('body').innerHTML=h; reader(S);

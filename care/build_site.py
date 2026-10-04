@@ -228,31 +228,39 @@ for t, n in rdb.execute("select text_id, norm from labels"):
         if m.group(1): pre[(m.group(2), m.group(1))].add(t)
         if m.group(3): of[(m.group(2), m.group(3))].add(t)
 krows = [[w, 'X-' + w, x, len(v)] for (w, x), v in pre.items() if len(v) >= 2] + [[w, w + ' of X', x, len(v)] for (w, x), v in of.items() if len(v) >= 2]
-def aggregate(split):
-    """X (or each word of X) across all twelve care words and both forms; distinct texts"""
+KEPT = json.load(open(os.path.join(HERE, 'data/kept.json')))       # care name -> nouns that say what is kept (kept_ask.py)
+name_texts = collections.defaultdict(set)
+for t, n in rdb.execute("select text_id, norm from labels"):
+    if n in KEPT: name_texts[n].add(t)
+NOUN = collections.defaultdict(lambda: {'t': set(), 'w': collections.defaultdict(set), 'names': collections.Counter()})
+for n, nouns in KEPT.items():
+    ws = {m.group(1) for m in WORD.finditer(n)}
+    for x in set(nouns):
+        NOUN[x]['t'] |= name_texts[n]; NOUN[x]['names'][n] += len(name_texts[n])
+        for w in ws: NOUN[x]['w'][w] |= name_texts[n]
+nrows = [[x, len(v['t']), len(v['w']), '; '.join(k for k, _ in v['names'].most_common(3)), *[len(v['w'][w]) if w in v['w'] else '' for w in STEMS]] for x, v in NOUN.items() if len(v['t']) >= 2]
+n_names = len(KEPT); n_with = sum(1 for v in KEPT.values() if v)
+def aggregate():
+    """X as written (one or two words), across all twelve care words and both forms; distinct texts"""
     A = collections.defaultdict(lambda: {'pre': set(), 'of': set(), 'w': collections.defaultdict(set)})
     for form, d in (('pre', pre), ('of', of)):
-        for (w, x), v in d.items():
-            for k in (x.split() if split else [x]):
-                A[k][form] |= v; A[k]['w'][w] |= v
-    out = []
-    for k, v in A.items():
-        tot = len(v['pre'] | v['of'])
-        if tot >= 2: out.append([k, tot, len(v['w']), len(v['pre']), len(v['of']), *[len(v['w'][w]) if w in v['w'] else '' for w in STEMS]])
-    return out
-agg_cols = ("[{title:'X',type:'text'},{title:'texts',type:'num',tip:'distinct texts, all twelve words, both forms'},{title:'care words',type:'num',tip:'how many of the twelve it stands with'},"
-            "{title:'X-word',type:'num',tip:'texts with the hyphen form'},{title:'word of X',type:'num',tip:'texts with the of form'}," + ','.join("{title:'%s',type:'num'}" % w for w in STEMS) + "]")
+        for (w, x), v in d.items(): A[x][form] |= v; A[x]['w'][w] |= v
+    return [[k, len(v['pre'] | v['of']), len(v['w']), len(v['pre']), len(v['of']), *[len(v['w'][w]) if w in v['w'] else '' for w in STEMS]] for k, v in A.items() if len(v['pre'] | v['of']) >= 2]
+wcols = ','.join("{title:'%s',type:'num'}" % w for w in STEMS)
 page('kept.html', 'What is kept', f"""
-<p>Counted from the names alone, without a reader: the word joined to a care word by a hyphen (<i>moss-tenders</i>) and the one or two words after "of" (<i>keepers of the threshold</i>).
-Everything is counted by distinct texts, and rows seen in one text only are left out.</p>
-<p class=qtabs id=views><a href='#word' data-v=word>by word, across all forms</a><a href='#phrase' data-v=phrase>by whole phrase, across all forms</a><a href='#forms' data-v=forms>every form separately</a></p>
+<p>What the keepers keep, taken from their names: <i>moss-tenders</i>, <i>keepers of the threshold</i>, <i>boiler tenders</i>. Everything is counted by distinct texts, and rows seen in one text only are left out.</p>
+<p class=qtabs id=views><a href='#noun' data-v=noun>what is kept, across all words and forms</a><a href='#phrase' data-v=phrase>by phrase as written</a><a href='#forms' data-v=forms>every form separately</a></p>
 <p class=small id=note></p><div id=t></div>""",
-     "var V={word:{note:'Each word that stands in X, whichever of the twelve care words it is kept by and in either form: <i>water-keepers</i>, <i>tenders of the water</i> and <i>guardians of the deep water</i> all count under <b>water</b>. "
-     "A two-word X counts under both of its words, so <i>keepers of ancient knowledge</i> is under <b>ancient</b> and under <b>knowledge</b>. Nothing is removed: joining words such as <i>that</i> and <i>and</i> are in the table as what they are, and can be filtered out.',"
-     "cols:" + agg_cols + ",rows:" + json.dumps(aggregate(True)) + ",sort:[1,-1]},"
-     "phrase:{note:'X as written, one or two words, summed over the twelve care words and both forms.',cols:" + agg_cols + ",rows:" + json.dumps(aggregate(False)) + ",sort:[1,-1]},"
-     "forms:{note:'One row per care word, form and X.',cols:[{title:'word',type:'text'},{title:'form',type:'text'},{title:'X',type:'text'},{title:'texts',type:'num'}],rows:" + json.dumps(krows) + ",sort:[3,-1]}};"
-     "function show(v){if(!V[v])v='word';document.getElementById('t').innerHTML='';document.getElementById('note').innerHTML=V[v].note;"
+     "var V={noun:{note:" + json.dumps(
+         f"A small model (openai/gpt-6-luna) was given each of the {n_names:,} distinct care names and asked for the main noun of each thing kept, as written in the name, without the words that describe it: "
+         "<i>keepers of the ancient knowledge etched into the stone</i> gives <b>knowledge</b>; <i>self-appointed curators of moisture and light</i> gives <b>moisture</b> and <b>light</b>; <i>silent curators</i> gives nothing. "
+         f"A noun is accepted only if it stands in the name. {n_with:,} names say what is kept. Whichever of the twelve words keeps it and in whatever form (hyphen, of, or two words side by side), it is counted here once per text. "
+         "Singular and plural are not folded (<i>memory</i>, <i>memories</i>). The instruction is in <code>care/prompt_kept.md</code>.") +
+     ",cols:[{title:'kept',type:'text'},{title:'texts',type:'num',tip:'distinct texts, all twelve words, all forms'},{title:'care words',type:'num',tip:'how many of the twelve keep it'},{title:'as in',type:'text',tip:'the three most frequent names'}," + wcols + "],rows:" + json.dumps(nrows) + ",sort:[1,-1]},"
+     "phrase:{note:'By pattern, without a model: the word joined to a care word by a hyphen, and the one or two words after \"of\", as written. A two-word capture can stop before the noun (<i>keepers of the ancient ...</i>), which is why the first view asks a reader for the noun instead.',"
+     "cols:[{title:'X',type:'text'},{title:'texts',type:'num'},{title:'care words',type:'num'},{title:'X-word',type:'num',tip:'texts with the hyphen form'},{title:'word of X',type:'num',tip:'texts with the of form'}," + wcols + "],rows:" + json.dumps(aggregate()) + ",sort:[1,-1]},"
+     "forms:{note:'By pattern: one row per care word, form and X.',cols:[{title:'word',type:'text'},{title:'form',type:'text'},{title:'X',type:'text'},{title:'texts',type:'num'}],rows:" + json.dumps(krows) + ",sort:[3,-1]}};"
+     "function show(v){if(!V[v])v='noun';document.getElementById('t').innerHTML='';document.getElementById('note').innerHTML=V[v].note;"
      "Array.prototype.forEach.call(document.querySelectorAll('#views a'),function(a){a.className=a.dataset.v===v?'on':'';});"
      "makeTable(document.getElementById('t'),{key:v,pageSize:200,sort:V[v].sort,columns:V[v].cols,rows:V[v].rows});}"
      "window.onhashchange=function(){show(location.hash.slice(1));};show(location.hash.slice(1));")
