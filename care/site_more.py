@@ -70,7 +70,7 @@ function draw(){{
   [[0,'What they care for','cared for'],[1,'What they work against','worked against']].forEach(function(sd){{
     var c={{}}, nn=0; S.forEach(function(b){{var k=KT[b[0]]; if(k&&k[sd[0]].length){{nn++; k[sd[0]].forEach(function(x){{c[x]=(c[x]||0)+1;}});}}}});
     var L=Object.keys(c).map(function(x){{return [x,c[x]];}}).sort(function(a,b){{return b[1]-a[1];}}).slice(0,28);
-    h+='<div><h2>'+sd[1]+'</h2><p class=small>By the text: nouns from the sentences about its work, with the number of beings. '+nn.toLocaleString()+' of the '+n.toLocaleString()+' beings ('+pc(nn,n).toFixed(0)+'%) have something '+sd[2]+'. <a href="kept.html#'+(sd[0]?'against':'text')+'">The whole table</a>.</p><p>'+(L.map(function(x){{return esc(x[0])+' '+x[1];}}).join(', ')||'-')+'</p></div>';
+    h+='<div><h2>'+sd[1]+'</h2><p class=small>By the text: nouns from the sentences about its work, with the number of beings. '+nn.toLocaleString()+' of the '+n.toLocaleString()+' beings ('+pc(nn,n).toFixed(0)+'%) have something '+sd[2]+'. <a href="kept.html#'+(sd[0]?'against':'text')+'">The whole table</a>.</p><p>'+(L.map(function(x){{return '<a href="read.html?q=role&'+(sd[0]?'against':'for')+'='+encodeURIComponent(x[0])+(st.w?'&w='+st.w:'')+(st.m&&st.m.slice(-2)!=='/*'?'&m='+encodeURIComponent(st.m):'')+'">'+esc(x[0])+'</a> '+x[1];}}).join(', ')||'-')+'</p></div>';
   }});
   if(st.m&&st.m.slice(-2)!=='/*'&&X.corpus[st.m]){{h+='<div><h2>How often it writes them</h2><p>'+X.care_texts[st.m]+' of its '+X.corpus[st.m]+' texts in the corpus ('+pc(X.care_texts[st.m],X.corpus[st.m]).toFixed(0)+'%) have a being with one of the twelve words.</p></div>';}}
   h+='</div>'; document.getElementById('body').innerHTML=h; reader(S);
@@ -316,7 +316,7 @@ Guardian is the keeper's one neighbour in this, and takes the hidden half: secre
 <h3>By the text</h3>
 <p>A name says what a being is called. What it tends in the text can be something else, and a being called simply Keeper has nothing in the table above. So the sentences about each being's work were read for what it cares for.
 Here the words are much less apart: {', '.join(f'{x} leads for {n}' for x, n in lead.most_common(3))} of the twelve. The split between things and wholes is still visible further down each row.
-Memory itself is cared for by {pct(tshare('keeper', ['memory']))}% of keepers and by at most {pct(others_mem)}% under any other word ({others_mem_w}). Of the {len(mem_b):,} beings that care for memory, {len(mem_keep):,} ({pct(len(mem_keep) / len(mem_b))}%) are called keeper;
+Memory itself is cared for by {pct(tshare('keeper', ['memory']))}% of keepers and by at most {pct(others_mem)}% under any other word ({others_mem_w}). Of the <a href='read.html?q=role&for=memory'>{len(mem_b):,} beings that care for memory</a>, {len(mem_keep):,} ({pct(len(mem_keep) / len(mem_b))}%) are called keeper;
 keepers are {pct(n_keeper / n_beings)}% of all beings. With its kin (secrets, knowledge, history) the guardian comes close to the keeper again.</p>
 <table class=kv style='max-width:1250px'><tr><th>word</th><th>beings that care for something named</th><th>cared for most often, with the number of beings</th><th>memory itself</th><th>memory and its kin</th></tr>{f1c}</table>
 {quote('role', 7374, "The bone-keeper spends her dim-times reading it with her fingertips, the only literate part of her body, and she sings the history to the others through the floor")}
@@ -375,7 +375,7 @@ There is no comparison group: nothing here says whether builders or hunters in t
 <h2 id=candidates>Seen, not yet examined</h2>
 <p><b id=against>What keepers work against.</b> From the same reading of the role sentences: {pct(n_against / n_kt)}% of beings work against something named. Most of it is not an enemy: it is growth, debris, dust, silt, collapse.
 Only guardians have threats and intruders at the head of the list. Custodians and curators work against decay, chaos, entropy and change. The ten held off most often, each with the number of beings that work against it and, after the stroke, the number that care for the same thing in other texts:
-{', '.join(f'{x} {a} / {f}' for a, f, x in both_sides)}. Growth and moss are cared for far more often than they are held off; decay about as often; debris and collapse are almost never cared for.</p>
+{', '.join(f"<a href='read.html?q=role&against={x}'>{x} {a}</a> / <a href='read.html?q=role&for={x}'>{f}</a>" for a, f, x in both_sides)}. Each number opens the sentences. Growth and moss are cared for far more often than they are held off; decay about as often; debris and collapse are almost never cared for.</p>
 <table class=kv style='max-width:1150px'><tr><th>word</th><th>beings that work against something</th><th>against what, most often, with the number of beings</th></tr>{f_ag}</table>
 <ul>
 <li><b>Guardian gives way to keeper.</b> The tables above show it inside two families. It has not been checked for the other writers, nor against what else changed over the same span.</li>

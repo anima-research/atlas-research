@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """data/care.db -> site/  (static; python3 -m http.server 8798 -d site)
 Every number on the pages is computed here from the database or the pilot files."""
-import json, os, re, shutil, sqlite3, collections, html
+import json, os, re, shutil, sqlite3, collections, html, urllib.parse
 from common import *
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -148,8 +148,14 @@ var Q={json.dumps(QTEXT)}, W={json.dumps(STEMS)}, P=new URLSearchParams(location
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}
 document.getElementById('tabs').innerHTML=Object.keys(Q).map(function(k){{return '<a href="read.html?q='+k+'"'+(k===q?' class=on':'')+'>'+k+'</a>';}}).join('');
 document.getElementById('what').innerHTML='The sentences the reader put under <b>'+Q[q]+'</b>, being by being.';
-Promise.all([fetch('beings.json').then(r=>r.json()), fetch('q_'+q+'.json').then(r=>r.json())]).then(function(a){{
-  var B=a[0].filter(function(b){{return a[1][b[0]];}}), S=a[1], cm={{}};
+var side=P.get('against')?1:0, noun=(P.get('against')||P.get('for')||'').toLowerCase(), only=true;
+Promise.all([fetch('beings.json').then(r=>r.json()), fetch('q_'+q+'.json').then(r=>r.json()), noun?fetch('kt.json').then(r=>r.json()):Promise.resolve(null)]).then(function(a){{
+  var KT=a[2], B=a[0].filter(function(b){{return a[1][b[0]]&&(!noun||(KT[b[0]]&&KT[b[0]][side].indexOf(noun)>=0));}}), S=a[1], cm={{}};
+  if(noun){{document.getElementById('what').innerHTML='Beings whose text says they '+(side?'work against':'care for')+' <b>'+esc(noun)+'</b>, with the sentences about their work that hold the word. '+
+     '<label><input type=checkbox id=allS> show all their sentences</label> &middot; <a href="kept.html#'+(side?'against':'text')+'">back to the table</a>';
+     document.getElementById('allS').onchange=function(e){{only=!e.target.checked; draw();}};
+     document.getElementById('tabs').style.display='none';}}
+  function mark(t){{if(!noun) return esc(t); var i=t.toLowerCase().indexOf(noun); return i<0?esc(t):esc(t.slice(0,i))+'<mark>'+esc(t.slice(i,i+noun.length))+'</mark>'+esc(t.slice(i+noun.length));}}
   B.forEach(function(b){{cm[b[5]]=(cm[b[5]]||0)+1; b.lc=S[b[0]].map(function(x){{return x[1];}}).join(' ').toLowerCase();}});
   var w=document.getElementById('w'), m=document.getElementById('m');
   w.innerHTML='<option value="">any of the twelve</option>'+W.map(function(x){{return '<option>'+x+'</option>';}}).join('');
@@ -164,7 +170,7 @@ Promise.all([fetch('beings.json').then(r=>r.json()), fetch('q_'+q+'.json').then(
     document.getElementById('info').textContent=L.length.toLocaleString()+' beings; showing '+Math.min(shown,L.length);
     document.getElementById('list').innerHTML=L.slice(0,shown).map(function(b){{
       return '<div class=card><h3><a href="being.html?id='+b[0]+'">'+esc(b[2])+'</a></h3><div class=meta>'+esc(b[3])+' &middot; '+esc(b[5])+' &middot; text <a href="{TEXT_URL}'+b[1]+'">'+b[1]+'</a></div>'+
-        S[b[0]].map(function(x){{return '<blockquote><sup>'+x[0]+'</sup> '+esc(x[1])+'</blockquote>';}}).join('')+'</div>';}}).join('');
+        S[b[0]].filter(function(x){{return !noun||!only||x[1].toLowerCase().indexOf(noun)>=0;}}).map(function(x){{return '<blockquote><sup>'+x[0]+'</sup> '+mark(x[1])+'</blockquote>';}}).join('')+'</div>';}}).join('');
     document.getElementById('more').style.display=shown<L.length?'':'none';
   }}
   [w,m,document.getElementById('o')].forEach(function(e){{e.onchange=function(){{shown=40;draw();}};}});
@@ -257,7 +263,7 @@ def side_table(side, least=3):
         for x in set(v[side]):
             A[x]['b'].add(bid)
             for w in bwords.get(bid, []): A[x]['w'][w].add(bid)
-    return A, [[x, len(v['b']), len(v['w']), *[len(v['w'][w]) if w in v['w'] else '' for w in STEMS]] for x, v in A.items() if len(v['b']) >= least]
+    return A, [[f"<a href='read.html?q=role&{side}={urllib.parse.quote(x)}'>{esc(x)}</a>", len(v['b']), len(v['w']), *[len(v['w'][w]) if w in v['w'] else '' for w in STEMS]] for x, v in A.items() if len(v['b']) >= least]
 TF, tf_rows = side_table('for'); TA, ta_rows = side_table('against')
 n_kt = len(KT); n_for = sum(1 for v in KT.values() if v['for']); n_against = sum(1 for v in KT.values() if v['against'])
 wcols = ','.join("{title:'%s',type:'num'}" % w for w in STEMS)
@@ -274,12 +280,12 @@ and, apart from that, what they say it works against. A keeper of chaos and a ke
      ",cols:[{title:'kept',type:'text'},{title:'texts',type:'num',tip:'distinct texts, all twelve words, all forms'},{title:'care words',type:'num',tip:'how many of the twelve keep it'},{title:'as in',type:'text',tip:'the three most frequent names'}," + wcols + "],rows:" + json.dumps(nrows) + ",sort:[1,-1]},"
      "text:{note:" + json.dumps(
          f"For each of the {n_kt:,} beings with sentences under the question of its role, a small model (openai/gpt-6-luna) read those sentences and listed what the being cares for and, separately, what it works against, as the main noun of each, exactly as written. "
-         f"A noun is accepted only if it stands in the sentences. {n_for:,} beings care for something named; counted by beings, nouns of fewer than three beings left out. The instruction is in <code>care/prompt_kept_text.md</code>.") +
-     ",cols:[{title:'cared for',type:'text'},{title:'beings',type:'num'},{title:'care words',type:'num'}," + wcols + "],rows:" + json.dumps(tf_rows) + ",sort:[1,-1]},"
+         f"A noun is accepted only if it stands in the sentences. {n_for:,} beings care for something named; counted by beings, nouns of fewer than three beings left out. A noun opens the sentences it comes from. The instruction is in <code>care/prompt_kept_text.md</code>.") +
+     ",cols:[{title:'cared for',type:'html',tip:'opens the sentences'},{title:'beings',type:'num'},{title:'care words',type:'num'}," + wcols + "],rows:" + json.dumps(tf_rows) + ",sort:[1,-1]},"
      "against:{note:" + json.dumps(
          f"From the same reading: what the sentences say the being holds off, removes, prevents, or protects what it keeps from. {n_against:,} of the {n_kt:,} beings work against something named. "
          "The same noun can stand on both sides in different texts: growth, moss and decay are cared for by some and worked against by others.") +
-     ",cols:[{title:'worked against',type:'text'},{title:'beings',type:'num'},{title:'care words',type:'num'}," + wcols + "],rows:" + json.dumps(ta_rows) + ",sort:[1,-1]},"
+     ",cols:[{title:'worked against',type:'html',tip:'opens the sentences'},{title:'beings',type:'num'},{title:'care words',type:'num'}," + wcols + "],rows:" + json.dumps(ta_rows) + ",sort:[1,-1]},"
      "phrase:{note:'By pattern, without a model: the word joined to a care word by a hyphen, and the one or two words after \"of\", as written. A two-word capture can stop before the noun (<i>keepers of the ancient ...</i>), which is why the first view asks a reader for the noun instead.',"
      "cols:[{title:'X',type:'text'},{title:'texts',type:'num'},{title:'care words',type:'num'},{title:'X-word',type:'num',tip:'texts with the hyphen form'},{title:'word of X',type:'num',tip:'texts with the of form'}," + wcols + "],rows:" + json.dumps(aggregate()) + ",sort:[1,-1]},"
      "forms:{note:'By pattern: one row per care word, form and X.',cols:[{title:'word',type:'text'},{title:'form',type:'text'},{title:'X',type:'text'},{title:'texts',type:'num'}],rows:" + json.dumps(krows) + ",sort:[3,-1]}};"
