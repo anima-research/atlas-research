@@ -1,0 +1,730 @@
+{
+"seed": "gold-1",
+"cells": {
+"yy": 14228,
+"split": 4928,
+"nn": 12054
+},
+"sample": [
+{
+"text": 32178,
+"cell": "nn"
+},
+{
+"text": 2791,
+"cell": "split"
+},
+{
+"text": 23581,
+"cell": "nn"
+},
+{
+"text": 3194,
+"cell": "split"
+},
+{
+"text": 28901,
+"cell": "yy"
+},
+{
+"text": 16593,
+"cell": "nn"
+},
+{
+"text": 17413,
+"cell": "split"
+},
+{
+"text": 15112,
+"cell": "split"
+},
+{
+"text": 6725,
+"cell": "nn"
+},
+{
+"text": 12445,
+"cell": "split"
+},
+{
+"text": 21291,
+"cell": "split"
+},
+{
+"text": 26686,
+"cell": "yy"
+},
+{
+"text": 17326,
+"cell": "yy"
+},
+{
+"text": 21007,
+"cell": "yy"
+},
+{
+"text": 5487,
+"cell": "nn"
+},
+{
+"text": 18054,
+"cell": "nn"
+},
+{
+"text": 8136,
+"cell": "split"
+},
+{
+"text": 31086,
+"cell": "yy"
+},
+{
+"text": 28149,
+"cell": "split"
+},
+{
+"text": 22456,
+"cell": "split"
+},
+{
+"text": 8444,
+"cell": "nn"
+},
+{
+"text": 13092,
+"cell": "nn"
+},
+{
+"text": 27636,
+"cell": "nn"
+},
+{
+"text": 15061,
+"cell": "split"
+},
+{
+"text": 13771,
+"cell": "split"
+},
+{
+"text": 13356,
+"cell": "split"
+},
+{
+"text": 12117,
+"cell": "split"
+},
+{
+"text": 20109,
+"cell": "split"
+},
+{
+"text": 25900,
+"cell": "yy"
+},
+{
+"text": 29189,
+"cell": "split"
+},
+{
+"text": 16928,
+"cell": "yy"
+},
+{
+"text": 8081,
+"cell": "nn"
+},
+{
+"text": 7236,
+"cell": "split"
+},
+{
+"text": 22627,
+"cell": "nn"
+},
+{
+"text": 6116,
+"cell": "yy"
+},
+{
+"text": 12450,
+"cell": "nn"
+},
+{
+"text": 18900,
+"cell": "split"
+},
+{
+"text": 17320,
+"cell": "nn"
+},
+{
+"text": 29235,
+"cell": "nn"
+},
+{
+"text": 9305,
+"cell": "yy"
+},
+{
+"text": 1038,
+"cell": "split"
+},
+{
+"text": 10608,
+"cell": "yy"
+},
+{
+"text": 18034,
+"cell": "yy"
+},
+{
+"text": 16982,
+"cell": "nn"
+},
+{
+"text": 11467,
+"cell": "yy"
+},
+{
+"text": 6077,
+"cell": "yy"
+},
+{
+"text": 15603,
+"cell": "nn"
+},
+{
+"text": 20427,
+"cell": "yy"
+},
+{
+"text": 27521,
+"cell": "nn"
+},
+{
+"text": 14602,
+"cell": "yy"
+},
+{
+"text": 10031,
+"cell": "nn"
+},
+{
+"text": 31450,
+"cell": "nn"
+},
+{
+"text": 16348,
+"cell": "yy"
+},
+{
+"text": 10856,
+"cell": "yy"
+},
+{
+"text": 2346,
+"cell": "yy"
+},
+{
+"text": 24739,
+"cell": "split"
+},
+{
+"text": 30221,
+"cell": "nn"
+},
+{
+"text": 26059,
+"cell": "yy"
+},
+{
+"text": 17752,
+"cell": "yy"
+},
+{
+"text": 31799,
+"cell": "split"
+},
+{
+"text": 10214,
+"cell": "split"
+},
+{
+"text": 18791,
+"cell": "nn"
+},
+{
+"text": 6880,
+"cell": "yy"
+},
+{
+"text": 2873,
+"cell": "split"
+},
+{
+"text": 23597,
+"cell": "nn"
+},
+{
+"text": 8987,
+"cell": "yy"
+},
+{
+"text": 28376,
+"cell": "yy"
+},
+{
+"text": 2345,
+"cell": "nn"
+},
+{
+"text": 4250,
+"cell": "nn"
+},
+{
+"text": 27086,
+"cell": "nn"
+},
+{
+"text": 15606,
+"cell": "nn"
+},
+{
+"text": 1721,
+"cell": "yy"
+},
+{
+"text": 2691,
+"cell": "nn"
+},
+{
+"text": 28674,
+"cell": "split"
+},
+{
+"text": 25577,
+"cell": "yy"
+},
+{
+"text": 19919,
+"cell": "nn"
+},
+{
+"text": 18327,
+"cell": "nn"
+},
+{
+"text": 7949,
+"cell": "split"
+},
+{
+"text": 7389,
+"cell": "yy"
+},
+{
+"text": 18557,
+"cell": "nn"
+},
+{
+"text": 26111,
+"cell": "yy"
+},
+{
+"text": 7474,
+"cell": "split"
+},
+{
+"text": 2292,
+"cell": "yy"
+},
+{
+"text": 10719,
+"cell": "nn"
+},
+{
+"text": 13243,
+"cell": "split"
+},
+{
+"text": 21439,
+"cell": "yy"
+},
+{
+"text": 2852,
+"cell": "yy"
+},
+{
+"text": 12922,
+"cell": "nn"
+},
+{
+"text": 18162,
+"cell": "yy"
+},
+{
+"text": 7161,
+"cell": "split"
+},
+{
+"text": 31901,
+"cell": "split"
+},
+{
+"text": 30885,
+"cell": "split"
+},
+{
+"text": 14153,
+"cell": "split"
+},
+{
+"text": 29250,
+"cell": "yy"
+},
+{
+"text": 29697,
+"cell": "nn"
+},
+{
+"text": 27899,
+"cell": "nn"
+},
+{
+"text": 13293,
+"cell": "split"
+},
+{
+"text": 26954,
+"cell": "nn"
+},
+{
+"text": 20578,
+"cell": "nn"
+},
+{
+"text": 22510,
+"cell": "nn"
+},
+{
+"text": 14688,
+"cell": "yy"
+},
+{
+"text": 15855,
+"cell": "yy"
+},
+{
+"text": 9675,
+"cell": "yy"
+},
+{
+"text": 5640,
+"cell": "yy"
+},
+{
+"text": 25450,
+"cell": "nn"
+},
+{
+"text": 23109,
+"cell": "yy"
+},
+{
+"text": 9430,
+"cell": "split"
+},
+{
+"text": 4695,
+"cell": "split"
+},
+{
+"text": 14372,
+"cell": "yy"
+},
+{
+"text": 25497,
+"cell": "nn"
+},
+{
+"text": 16822,
+"cell": "nn"
+},
+{
+"text": 18852,
+"cell": "nn"
+},
+{
+"text": 31340,
+"cell": "nn"
+},
+{
+"text": 3826,
+"cell": "split"
+},
+{
+"text": 28893,
+"cell": "yy"
+},
+{
+"text": 30816,
+"cell": "nn"
+},
+{
+"text": 5852,
+"cell": "split"
+},
+{
+"text": 20171,
+"cell": "split"
+},
+{
+"text": 9480,
+"cell": "split"
+},
+{
+"text": 8961,
+"cell": "yy"
+},
+{
+"text": 12810,
+"cell": "split"
+},
+{
+"text": 3705,
+"cell": "split"
+},
+{
+"text": 2535,
+"cell": "split"
+},
+{
+"text": 6404,
+"cell": "split"
+},
+{
+"text": 18230,
+"cell": "yy"
+},
+{
+"text": 10134,
+"cell": "yy"
+},
+{
+"text": 8790,
+"cell": "nn"
+},
+{
+"text": 2419,
+"cell": "nn"
+},
+{
+"text": 14338,
+"cell": "split"
+},
+{
+"text": 13225,
+"cell": "split"
+},
+{
+"text": 27571,
+"cell": "split"
+},
+{
+"text": 27038,
+"cell": "split"
+},
+{
+"text": 25895,
+"cell": "split"
+},
+{
+"text": 2857,
+"cell": "nn"
+},
+{
+"text": 19784,
+"cell": "yy"
+},
+{
+"text": 26526,
+"cell": "yy"
+},
+{
+"text": 16528,
+"cell": "yy"
+},
+{
+"text": 14763,
+"cell": "yy"
+},
+{
+"text": 12887,
+"cell": "yy"
+},
+{
+"text": 12850,
+"cell": "split"
+},
+{
+"text": 4679,
+"cell": "yy"
+},
+{
+"text": 29427,
+"cell": "nn"
+},
+{
+"text": 7923,
+"cell": "nn"
+},
+{
+"text": 24507,
+"cell": "yy"
+},
+{
+"text": 1465,
+"cell": "yy"
+},
+{
+"text": 8270,
+"cell": "split"
+},
+{
+"text": 2649,
+"cell": "yy"
+},
+{
+"text": 23937,
+"cell": "yy"
+},
+{
+"text": 8109,
+"cell": "split"
+},
+{
+"text": 22249,
+"cell": "split"
+},
+{
+"text": 24208,
+"cell": "split"
+},
+{
+"text": 1852,
+"cell": "split"
+},
+{
+"text": 23025,
+"cell": "yy"
+},
+{
+"text": 2174,
+"cell": "nn"
+},
+{
+"text": 22555,
+"cell": "nn"
+},
+{
+"text": 26296,
+"cell": "nn"
+},
+{
+"text": 3792,
+"cell": "split"
+},
+{
+"text": 7298,
+"cell": "split"
+},
+{
+"text": 18728,
+"cell": "nn"
+},
+{
+"text": 2045,
+"cell": "nn"
+},
+{
+"text": 23165,
+"cell": "yy"
+},
+{
+"text": 21932,
+"cell": "nn"
+},
+{
+"text": 16874,
+"cell": "yy"
+},
+{
+"text": 2107,
+"cell": "nn"
+},
+{
+"text": 16624,
+"cell": "nn"
+},
+{
+"text": 9421,
+"cell": "split"
+},
+{
+"text": 5865,
+"cell": "yy"
+},
+{
+"text": 5382,
+"cell": "yy"
+},
+{
+"text": 23254,
+"cell": "yy"
+},
+{
+"text": 28763,
+"cell": "yy"
+},
+{
+"text": 365,
+"cell": "nn"
+},
+{
+"text": 2530,
+"cell": "split"
+},
+{
+"text": 13175,
+"cell": "split"
+},
+{
+"text": 24409,
+"cell": "nn"
+},
+{
+"text": 15960,
+"cell": "split"
+},
+{
+"text": 27360,
+"cell": "split"
+},
+{
+"text": 22075,
+"cell": "nn"
+},
+{
+"text": 20898,
+"cell": "nn"
+},
+{
+"text": 3396,
+"cell": "yy"
+},
+{
+"text": 9400,
+"cell": "split"
+}
+]
+}

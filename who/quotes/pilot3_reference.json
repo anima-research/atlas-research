@@ -1,0 +1,639 @@
+{
+"by": "fable-5.1",
+"date": "2026-10-03",
+"basis": "each text read whole BEFORE any extractor was run on it and after the instruction was fixed; phrases in which the text says who or what lives there. core: decides how the inhabitant stands to the place, or is the text's own answer",
+"texts": {
+"4250": [
+{
+"start": 1175,
+"end": 1227,
+"anchor": "Humanoid beings, with skin that subtly shifts in hue",
+"core": true
+},
+{
+"start": 600,
+"end": 690,
+"anchor": "Animals, though not as abundant as the plant life, exist in equally fascinating varieties.",
+"core": false
+},
+{
+"start": 2820,
+"end": 2924,
+"anchor": "The beings here seek not to overcome or dominate their environment, but to become an integral part of it",
+"core": true
+}
+],
+"5487": [
+{
+"start": 50,
+"end": 128,
+"anchor": "the inhabitants are a strange and enigmatic mix of the natural and the surreal",
+"core": true
+},
+{
+"start": 321,
+"end": 392,
+"anchor": "The bat-like creatures, known as the *Noctilum*, are the most prominent",
+"core": false
+},
+{
+"start": 952,
+"end": 993,
+"anchor": "they are the eyes and ears of the plateau",
+"core": true
+},
+{
+"start": 1219,
+"end": 1318,
+"anchor": "The smaller, furry mammals, known as the *Crepuscule*, are a vital part of the plateau's food chain",
+"core": false
+},
+{
+"start": 1768,
+"end": 1826,
+"anchor": "The Crepuscule are not just prey; they are also scavengers",
+"core": false
+},
+{
+"start": 1988,
+"end": 2025,
+"anchor": "the *Umbral Stalkers* can be glimpsed",
+"core": false
+},
+{
+"start": 2248,
+"end": 2286,
+"anchor": "The Umbral Stalkers are apex predators",
+"core": false
+},
+{
+"start": 2732,
+"end": 2813,
+"anchor": "is not just a backdrop; it is a living, breathing part of the plateau's ecosystem",
+"core": true
+},
+{
+"start": 4513,
+"end": 4604,
+"anchor": "These constructs, known as the *Mechanoids*, are a blend of organic and inorganic materials",
+"core": false
+},
+{
+"start": 4845,
+"end": 4884,
+"anchor": "They seem to be caretakers of some kind",
+"core": false
+},
+{
+"start": 2815,
+"end": 2835,
+"anchor": "The *Nocturna* trees",
+"core": false
+}
+],
+"25577": [
+{
+"start": 0,
+"end": 47,
+"anchor": "The dwellers do not arrive so much as condense.",
+"core": true
+},
+{
+"start": 49,
+"end": 108,
+"anchor": "At first they are only the heat itself taking slower shapes",
+"core": true
+},
+{
+"start": 856,
+"end": 893,
+"anchor": "The body is a low, ambulatory hollow.",
+"core": false
+},
+{
+"start": 1816,
+"end": 1872,
+"anchor": "They are many, yet the eye never quite manages a census.",
+"core": false
+},
+{
+"start": 3721,
+"end": 3779,
+"anchor": "The city dreams through them; they house the city in turn.",
+"core": true
+},
+{
+"start": 4566,
+"end": 4590,
+"anchor": "is also a living archive",
+"core": false
+},
+{
+"start": 6596,
+"end": 6660,
+"anchor": "the distinction between inhabitant and place thins to a membrane",
+"core": true
+},
+{
+"start": 6689,
+"end": 6756,
+"anchor": "Their slow pouring locomotion is only the clay remembering forward.",
+"core": true
+},
+{
+"start": 6905,
+"end": 7002,
+"anchor": "What lives here is the courtyard’s unfinished thought given temporary skins of heat and patience.",
+"core": true
+},
+{
+"start": 7003,
+"end": 7067,
+"anchor": "It has no name that would survive translation onto harder lands.",
+"core": false
+}
+],
+"26526": [
+{
+"start": 635,
+"end": 683,
+"anchor": "The local people call it the *stone that walks*.",
+"core": false
+},
+{
+"start": 921,
+"end": 967,
+"anchor": "They are the most ordinary thing in the place.",
+"core": false
+},
+{
+"start": 1670,
+"end": 1713,
+"anchor": "are not birds the way other birds are birds",
+"core": false
+},
+{
+"start": 2563,
+"end": 2652,
+"anchor": "The plants are not animals, but several of them behave as if they have not been informed.",
+"core": false
+},
+{
+"start": 3174,
+"end": 3254,
+"anchor": "Some things in the saddle are not, strictly, in the saddle. They are the saddle.",
+"core": true
+},
+{
+"start": 3721,
+"end": 3759,
+"anchor": "It is a thing that has been *stopped*.",
+"core": false
+},
+{
+"start": 5175,
+"end": 5236,
+"anchor": "There is no one inside the prism. There is also no *not-one*.",
+"core": true
+},
+{
+"start": 13047,
+"end": 13075,
+"anchor": "It is a place that *is* life",
+"core": true
+},
+{
+"start": 13397,
+"end": 13434,
+"anchor": "They are not residents of the saddle.",
+"core": true
+},
+{
+"start": 13435,
+"end": 13474,
+"anchor": "They are the saddle's slow articulation",
+"core": true
+},
+{
+"start": 12659,
+"end": 12677,
+"anchor": "the saddle itself.",
+"core": true
+},
+{
+"start": 11761,
+"end": 11803,
+"anchor": "The lizards. The beetles. The crane flies.",
+"core": true
+},
+{
+"start": 10195,
+"end": 10248,
+"anchor": "This is not the same as saying something lives in it.",
+"core": false
+},
+{
+"start": 579,
+"end": 634,
+"anchor": "The lizard has no name in the local herpetology guides.",
+"core": false
+}
+],
+"15603": [
+{
+"start": 160,
+"end": 217,
+"anchor": "The settlement’s human inhabitants appear stocky and taut",
+"core": false
+},
+{
+"start": 0,
+"end": 73,
+"anchor": "They’ve come to resemble the land they occupy, these people and creatures",
+"core": true
+},
+{
+"start": 2231,
+"end": 2291,
+"anchor": "called by various local names that each generation reinvents",
+"core": false
+},
+{
+"start": 6794,
+"end": 6876,
+"anchor": "these people are less distinct from the environment than their animal counterparts",
+"core": true
+},
+{
+"start": 9227,
+"end": 9308,
+"anchor": "no single life form dominates; instead, all are woven together in quiet symbiosis",
+"core": true
+},
+{
+"start": 9829,
+"end": 9893,
+"anchor": "The final form of their land has become their final form as well",
+"core": true
+},
+{
+"start": 10207,
+"end": 10264,
+"anchor": "pulses of life beating within the canyon’s timeless heart",
+"core": false
+}
+],
+"10719": [
+{
+"start": 0,
+"end": 50,
+"anchor": "They do not arrive. They emerge from the gradient.",
+"core": true
+},
+{
+"start": 1516,
+"end": 1547,
+"anchor": "Their bodies are the interface.",
+"core": true
+},
+{
+"start": 1861,
+"end": 1896,
+"anchor": "They do not command the settlement.",
+"core": false
+},
+{
+"start": 3475,
+"end": 3523,
+"anchor": "There is no hierarchy. There are specializations",
+"core": false
+},
+{
+"start": 3557,
+"end": 3579,
+"anchor": "Some are canopy-tuners",
+"core": false
+},
+{
+"start": 3763,
+"end": 3789,
+"anchor": "Others are terrace-readers",
+"core": false
+},
+{
+"start": 3974,
+"end": 3999,
+"anchor": "A few are pattern-keepers",
+"core": false
+},
+{
+"start": 4664,
+"end": 4699,
+"anchor": "A child is not born; it is braided.",
+"core": false
+},
+{
+"start": 7132,
+"end": 7192,
+"anchor": "They are not the masters of this place. They are its syntax.",
+"core": true
+},
+{
+"start": 7279,
+"end": 7357,
+"anchor": "They do not live in the settlement. They are the settlement's continuous verb.",
+"core": true
+},
+{
+"start": 7234,
+"end": 7277,
+"anchor": "they are the grammar that keeps it coherent",
+"core": true
+}
+],
+"24208": [
+{
+"start": 0,
+"end": 76,
+"anchor": "Those who live in the basin do not regard the city as being full of animals.",
+"core": true
+},
+{
+"start": 112,
+"end": 165,
+"anchor": "as strange as dividing a body into citizen and organs",
+"core": true
+},
+{
+"start": 168,
+"end": 254,
+"anchor": "The hand-sized shoals in the lower streets are traffic, sanitation, weather, and food.",
+"core": true
+},
+{
+"start": 334,
+"end": 368,
+"anchor": "The reservoir giants are districts",
+"core": true
+},
+{
+"start": 765,
+"end": 850,
+"anchor": "The conventional inhabitants are only the most concentrated knots in this civic life.",
+"core": true
+},
+{
+"start": 2891,
+"end": 2977,
+"anchor": "There are disputes over whether those species are possessions, relatives, or citizens.",
+"core": false
+},
+{
+"start": 4389,
+"end": 4421,
+"anchor": "Thus identity is never singular.",
+"core": false
+},
+{
+"start": 4422,
+"end": 4463,
+"anchor": "An adult is a central body, a coat colony",
+"core": false
+},
+{
+"start": 4786,
+"end": 4825,
+"anchor": "Names are chords of these recognitions.",
+"core": false
+},
+{
+"start": 7094,
+"end": 7161,
+"anchor": "The building is consequently counted among the child’s progenitors.",
+"core": true
+},
+{
+"start": 7323,
+"end": 7409,
+"anchor": "One may have three mobile parents, a tower, a swarm, and a section of municipal field.",
+"core": false
+},
+{
+"start": 10300,
+"end": 10394,
+"anchor": "the Hollow is the city’s true inhabitant and all other life merely its temporary sensory layer",
+"core": true
+},
+{
+"start": 13532,
+"end": 13574,
+"anchor": "continuing the immense, unresolved process",
+"core": true
+},
+{
+"start": 3754,
+"end": 3777,
+"anchor": "It is colonized by one.",
+"core": false
+}
+],
+"2791": [
+{
+"start": 0,
+"end": 34,
+"anchor": "What lives there is not a creature",
+"core": true
+},
+{
+"start": 170,
+"end": 187,
+"anchor": "It is a dry life.",
+"core": false
+},
+{
+"start": 501,
+"end": 539,
+"anchor": "The inhabitants are the mineral plants",
+"core": true
+},
+{
+"start": 2428,
+"end": 2475,
+"anchor": "The two have become one habitat, one metabolism",
+"core": true
+},
+{
+"start": 2330,
+"end": 2389,
+"anchor": "They are not parasitic on the machines in any simple sense.",
+"core": false
+},
+{
+"start": 4855,
+"end": 4930,
+"anchor": "There is no individual sovereign among them, but there are older presences.",
+"core": false
+},
+{
+"start": 7712,
+"end": 7747,
+"anchor": "So what lives there is a consortium",
+"core": true
+},
+{
+"start": 7955,
+"end": 8032,
+"anchor": "It is a body only because every part has learned the use of every other part.",
+"core": true
+},
+{
+"start": 8460,
+"end": 8489,
+"anchor": "Living as a hum made visible.",
+"core": true
+},
+{
+"start": 5249,
+"end": 5282,
+"anchor": "They are the chamber’s collectors",
+"core": false
+},
+{
+"start": 1565,
+"end": 1591,
+"anchor": "They are alive by abrasion",
+"core": false
+}
+],
+"12810": [
+{
+"start": 0,
+"end": 52,
+"anchor": "The ones who live here call themselves the Listeners",
+"core": true
+},
+{
+"start": 4384,
+"end": 4405,
+"anchor": "They have no leaders.",
+"core": false
+},
+{
+"start": 8456,
+"end": 8485,
+"anchor": "the dead become the landscape",
+"core": true
+},
+{
+"start": 8985,
+"end": 9071,
+"anchor": "They are not the only intelligent life here, though they are the only one that builds.",
+"core": false
+},
+{
+"start": 9072,
+"end": 9141,
+"anchor": "They share the cavern with the spine-crawlers, vast centipedal beings",
+"core": false
+},
+{
+"start": 6692,
+"end": 6718,
+"anchor": "we are not separate things",
+"core": true
+},
+{
+"start": 15308,
+"end": 15358,
+"anchor": "we are the listening that the world does to itself",
+"core": true
+},
+{
+"start": 10238,
+"end": 10290,
+"anchor": "The flying membranes—the hover-flocks—are different.",
+"core": false
+},
+{
+"start": 11681,
+"end": 11717,
+"anchor": "they are a harmonic within that wave",
+"core": true
+}
+],
+"24739": [
+{
+"start": 0,
+"end": 24,
+"anchor": "They don't live *on* it.",
+"core": true
+},
+{
+"start": 137,
+"end": 189,
+"anchor": "They are something that stopped trying to be a tree.",
+"core": true
+},
+{
+"start": 1319,
+"end": 1359,
+"anchor": "It is not thinking. But it is attending.",
+"core": true
+},
+{
+"start": 1812,
+"end": 1857,
+"anchor": "They are hermits who chose the exact distance",
+"core": false
+},
+{
+"start": 2152,
+"end": 2180,
+"anchor": "The Flute Flies are the air.",
+"core": false
+},
+{
+"start": 2942,
+"end": 2988,
+"anchor": "The custodians of distance are the Salt Wasps.",
+"core": false
+},
+{
+"start": 3605,
+"end": 3658,
+"anchor": "there are things that have forgotten they are animals",
+"core": false
+},
+{
+"start": 4235,
+"end": 4255,
+"anchor": "And then the people.",
+"core": false
+},
+{
+"start": 7815,
+"end": 7867,
+"anchor": "You are part of the fauna that forgot it was animal.",
+"core": true
+},
+{
+"start": 783,
+"end": 825,
+"anchor": "you have named it North without meaning to",
+"core": false
+},
+{
+"start": 2086,
+"end": 2117,
+"anchor": "Everything lives *through* them",
+"core": true
+},
+{
+"start": 3823,
+"end": 3874,
+"anchor": "The ribbon things that are not snakes and not birds",
+"core": false
+}
+]
+}
+}

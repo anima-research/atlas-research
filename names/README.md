@@ -6,9 +6,28 @@ model read for it (recall check 5, the thirty undetermined texts) and a third re
 hundred verdicts blind. Lari set the question, the rulings in the reading log, and the
 perimeter. Live site: https://atlas.lari-island.ai/research/names/
 
-Finding the names that models gave to the beings in the Atlas creature texts, with regular
-expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d site`;
-`deploy.sh` publishes it.
+Finding the names and roles that models gave to the beings in the Atlas creature texts,
+reproducibly. The site is static: `python3 -m http.server 8795 -d site`; `deploy.sh` publishes it.
+
+## Two instruments
+
+1. **Patterns** (2 October): regular expressions written by reading, each judged on a read sample
+   of its hits. Everything below this section, except where it says otherwise, describes this
+   instrument. Result: `data/names.db`.
+2. **Names and roles** (3 October, `roles/`, see `roles/README.md`): a small language model was
+   given, as numbered lines, the sentences in which each text says who or what lives there (the
+   quotes of the companion study `../who/quotes/`), then the headings and the sentences outside
+   the quotes in which a pattern had caught something, and asked to write out every name and
+   every role exactly as written. A label is kept only if it is found, as written, in its line.
+   Result: `data/roles.db`, 986,691 labels in 31,533 texts. Names and roles are not kept apart
+   and nothing is filtered.
+
+The second instrument is more complete: of the 929 pattern hits judged by eye to be names of
+beings, it holds 911; it also holds the roles said of a being that has another name ("its
+gardeners"), which the patterns were not written for. The site's main pages show the second
+instrument; the patterns, their rounds and verdicts are shown as method. The patterns still
+serve the second instrument in one way: they point to the lines outside the quotes. The numbers
+of the comparison are computed by `roles/check.py` into `roles/checks.json`.
 
 ## Files
 
@@ -26,7 +45,8 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
 | `recall_add.py` | append a recall check to `recall.jsonl`, stamping each name with its score at that moment | |
 | `retire.py` | copy a pattern's current version to `patterns_retired.py` before changing it | |
 | `show.py` | print texts with the current hits marked inline, for reading | |
-| `build_site.py` | `data/names.db` -> `site/` | |
+| `roles/` | the second instrument: prompts, scripts, the ten texts marked by hand, `checks.json` | yes |
+| `build_site.py` | `data/names.db` + `data/roles.db` + `roles/checks.json` (+ the who-quotes, for the download files) -> `site/` | |
 | `data/`, `site/` | derived; rebuilt by the commands below | no |
 
 ## A round
@@ -72,9 +92,11 @@ expressions, reproducibly. The site is static: `python3 -m http.server 8795 -d s
 
 The site answers one class of them directly: the share of each model's texts that contain any
 string of a set, counted by texts (`name.html?n=keeper|keepers`, with `&vs=tender|tenders` for a
-second set). Everything else is meant to be asked of the exported tables (site page Data export:
-`texts.csv`, `text_names.csv`, `names.csv`, `patterns.csv`, `models.csv`, each with its columns
-described in `export/README.md`). Singular and plural are not folded in the data; a lemma, if
+second set, and `&words=1` to count every label that holds the word, in any longer string).
+Everything else is meant to be asked of the exported tables (site page Data export:
+`labels.csv.gz` and `strings.csv.gz` for the names and roles; `texts.csv`, `text_names.csv`,
+`names.csv`, `patterns.csv`, `models.csv` for the patterns; each with its columns described in
+`export/README.md`). Singular and plural are not folded in the data; a lemma, if
 ever added, goes in a column of its own beside the string.
 
 ## Title only: the third state
@@ -129,8 +151,9 @@ others ("people call them", "outsiders refer to them") are rarer.
 
 ## Not done yet
 
-- Places and beings are not told apart.
-- Singular and plural are separate names.
+- Places and beings are not told apart by the patterns (the second instrument mostly leaves
+  place names out; see `roles/README.md`).
+- Singular and plural are separate names, in both instruments.
 - No model-specific exceptions.
 - The read-hits table on a pattern page also lists verdicts on hits the pattern no longer matches.
 - `as_known` has 4 hits in all and no precision.

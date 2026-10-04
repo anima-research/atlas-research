@@ -1,0 +1,1365 @@
+{
+"by": "fable-5.1",
+"date": "2026-10-03",
+"extractor": "openai/gpt-6-luna",
+"instruction": "extract_prompt.md (version 7)",
+"rule": "yes: the sentence says who or what lives there, what an inhabitant is or is not, what it is called, what it is part of or how it stands to the place. no: it only describes looks, numbers, behaviour, feeding, breeding, customs, or the place.",
+"verdicts": [
+{
+"text": 4250,
+"start": 170,
+"end": 294,
+"verdict": "yes"
+},
+{
+"text": 4250,
+"start": 600,
+"end": 690,
+"verdict": "yes"
+},
+{
+"text": 4250,
+"start": 1112,
+"end": 1174,
+"verdict": "yes"
+},
+{
+"text": 4250,
+"start": 1175,
+"end": 1342,
+"verdict": "yes"
+},
+{
+"text": 4250,
+"start": 1889,
+"end": 2000,
+"verdict": "no"
+},
+{
+"text": 4250,
+"start": 2820,
+"end": 2985,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 0,
+"end": 193,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 194,
+"end": 319,
+"verdict": "no"
+},
+{
+"text": 5487,
+"start": 321,
+"end": 436,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 902,
+"end": 1078,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 1219,
+"end": 1319,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 1768,
+"end": 1933,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 1935,
+"end": 2026,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 2027,
+"end": 2123,
+"verdict": "no"
+},
+{
+"text": 5487,
+"start": 2248,
+"end": 2397,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 2645,
+"end": 2814,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 2815,
+"end": 2901,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 3137,
+"end": 3257,
+"verdict": "no"
+},
+{
+"text": 5487,
+"start": 3258,
+"end": 3443,
+"verdict": "no"
+},
+{
+"text": 5487,
+"start": 3445,
+"end": 3581,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 3582,
+"end": 3698,
+"verdict": "no"
+},
+{
+"text": 5487,
+"start": 3829,
+"end": 3989,
+"verdict": "no"
+},
+{
+"text": 5487,
+"start": 4513,
+"end": 4695,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 4696,
+"end": 4844,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 4845,
+"end": 4968,
+"verdict": "yes"
+},
+{
+"text": 5487,
+"start": 5079,
+"end": 5233,
+"verdict": "no"
+},
+{
+"text": 25577,
+"start": 0,
+"end": 47,
+"verdict": "yes"
+},
+{
+"text": 25577,
+"start": 49,
+"end": 187,
+"verdict": "yes"
+},
+{
+"text": 25577,
+"start": 3721,
+"end": 3779,
+"verdict": "yes"
+},
+{
+"text": 25577,
+"start": 6563,
+"end": 6688,
+"verdict": "yes"
+},
+{
+"text": 25577,
+"start": 6905,
+"end": 7002,
+"verdict": "yes"
+},
+{
+"text": 25577,
+"start": 7003,
+"end": 7067,
+"verdict": "yes"
+},
+{
+"text": 25577,
+"start": 7068,
+"end": 7107,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 86,
+"end": 220,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 579,
+"end": 634,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 635,
+"end": 683,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 769,
+"end": 821,
+"verdict": "no"
+},
+{
+"text": 26526,
+"start": 822,
+"end": 920,
+"verdict": "no"
+},
+{
+"text": 26526,
+"start": 921,
+"end": 967,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 969,
+"end": 1043,
+"verdict": "no"
+},
+{
+"text": 26526,
+"start": 1600,
+"end": 1714,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 2563,
+"end": 2652,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 3155,
+"end": 3173,
+"verdict": "no"
+},
+{
+"text": 26526,
+"start": 3174,
+"end": 3233,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 3234,
+"end": 3254,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 3255,
+"end": 3467,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 3531,
+"end": 3720,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 3721,
+"end": 3759,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 5175,
+"end": 5208,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 5209,
+"end": 5236,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 5237,
+"end": 5498,
+"verdict": "no"
+},
+{
+"text": 26526,
+"start": 7812,
+"end": 7898,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 7899,
+"end": 7911,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 7912,
+"end": 7994,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 9653,
+"end": 9809,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 9810,
+"end": 10078,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 10079,
+"end": 10194,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 10195,
+"end": 10248,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 10249,
+"end": 10455,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 11761,
+"end": 11773,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 11774,
+"end": 11786,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 11787,
+"end": 11803,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 11804,
+"end": 11876,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 11877,
+"end": 11946,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 11947,
+"end": 12003,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 12004,
+"end": 12129,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 12131,
+"end": 12162,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 12163,
+"end": 12193,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 12194,
+"end": 12309,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 12311,
+"end": 12549,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 12551,
+"end": 12677,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 12999,
+"end": 13046,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 13047,
+"end": 13182,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 13183,
+"end": 13208,
+"verdict": "no"
+},
+{
+"text": 26526,
+"start": 13209,
+"end": 13234,
+"verdict": "no"
+},
+{
+"text": 26526,
+"start": 13286,
+"end": 13396,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 13397,
+"end": 13434,
+"verdict": "yes"
+},
+{
+"text": 26526,
+"start": 13435,
+"end": 13559,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 0,
+"end": 159,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 160,
+"end": 292,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 2028,
+"end": 2100,
+"verdict": "no"
+},
+{
+"text": 15603,
+"start": 2101,
+"end": 2207,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 2208,
+"end": 2371,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 2501,
+"end": 2624,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 3065,
+"end": 3180,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 4237,
+"end": 4339,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 4696,
+"end": 4808,
+"verdict": "no"
+},
+{
+"text": 15603,
+"start": 5019,
+"end": 5102,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 6273,
+"end": 6344,
+"verdict": "no"
+},
+{
+"text": 15603,
+"start": 6780,
+"end": 6877,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 8003,
+"end": 8151,
+"verdict": "no"
+},
+{
+"text": 15603,
+"start": 8152,
+"end": 8287,
+"verdict": "no"
+},
+{
+"text": 15603,
+"start": 8802,
+"end": 8949,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 8950,
+"end": 9183,
+"verdict": "no"
+},
+{
+"text": 15603,
+"start": 9184,
+"end": 9309,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 9310,
+"end": 9436,
+"verdict": "no"
+},
+{
+"text": 15603,
+"start": 9438,
+"end": 9518,
+"verdict": "no"
+},
+{
+"text": 15603,
+"start": 9519,
+"end": 9638,
+"verdict": "no"
+},
+{
+"text": 15603,
+"start": 9639,
+"end": 9828,
+"verdict": "no"
+},
+{
+"text": 15603,
+"start": 9829,
+"end": 10049,
+"verdict": "yes"
+},
+{
+"text": 15603,
+"start": 10050,
+"end": 10265,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 0,
+"end": 19,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 20,
+"end": 50,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 1861,
+"end": 1896,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 3475,
+"end": 3497,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 3498,
+"end": 3556,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 3557,
+"end": 3762,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 3763,
+"end": 3973,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 3974,
+"end": 4189,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 4493,
+"end": 4518,
+"verdict": "no"
+},
+{
+"text": 10719,
+"start": 4519,
+"end": 4538,
+"verdict": "no"
+},
+{
+"text": 10719,
+"start": 4664,
+"end": 4699,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 5007,
+"end": 5158,
+"verdict": "no"
+},
+{
+"text": 10719,
+"start": 5492,
+"end": 5523,
+"verdict": "no"
+},
+{
+"text": 10719,
+"start": 5524,
+"end": 5569,
+"verdict": "no"
+},
+{
+"text": 10719,
+"start": 7132,
+"end": 7171,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 7172,
+"end": 7192,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 7193,
+"end": 7278,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 7279,
+"end": 7314,
+"verdict": "yes"
+},
+{
+"text": 10719,
+"start": 7315,
+"end": 7357,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 0,
+"end": 76,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 78,
+"end": 166,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 168,
+"end": 254,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 255,
+"end": 333,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 334,
+"end": 537,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 538,
+"end": 763,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 765,
+"end": 850,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 2891,
+"end": 2977,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 2979,
+"end": 3086,
+"verdict": "no"
+},
+{
+"text": 24208,
+"start": 3128,
+"end": 3241,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 3713,
+"end": 3753,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 3754,
+"end": 3777,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 4389,
+"end": 4421,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 4422,
+"end": 4619,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 4786,
+"end": 4825,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 4827,
+"end": 4891,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 4892,
+"end": 4974,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 5032,
+"end": 5145,
+"verdict": "no"
+},
+{
+"text": 24208,
+"start": 5146,
+"end": 5283,
+"verdict": "no"
+},
+{
+"text": 24208,
+"start": 6298,
+"end": 6388,
+"verdict": "no"
+},
+{
+"text": 24208,
+"start": 6389,
+"end": 6628,
+"verdict": "no"
+},
+{
+"text": 24208,
+"start": 6673,
+"end": 6759,
+"verdict": "no"
+},
+{
+"text": 24208,
+"start": 6761,
+"end": 6840,
+"verdict": "no"
+},
+{
+"text": 24208,
+"start": 6841,
+"end": 6891,
+"verdict": "no"
+},
+{
+"text": 24208,
+"start": 7094,
+"end": 7161,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 7162,
+"end": 7321,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 7323,
+"end": 7409,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 8247,
+"end": 8289,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 8836,
+"end": 8874,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 8956,
+"end": 9098,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 9099,
+"end": 9267,
+"verdict": "yes"
+},
+{
+"text": 24208,
+"start": 10275,
+"end": 10395,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 0,
+"end": 168,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 170,
+"end": 187,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 188,
+"end": 251,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 501,
+"end": 636,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 1565,
+"end": 1640,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 2330,
+"end": 2389,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 2390,
+"end": 2427,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 2428,
+"end": 2539,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 3028,
+"end": 3066,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 3126,
+"end": 3233,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 3999,
+"end": 4043,
+"verdict": "no"
+},
+{
+"text": 2791,
+"start": 4855,
+"end": 4930,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 4932,
+"end": 5065,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 5311,
+"end": 5491,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 5783,
+"end": 5863,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 5864,
+"end": 5931,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 6147,
+"end": 6205,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 6206,
+"end": 6248,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 6287,
+"end": 6340,
+"verdict": "no"
+},
+{
+"text": 2791,
+"start": 6341,
+"end": 6445,
+"verdict": "no"
+},
+{
+"text": 2791,
+"start": 6662,
+"end": 6750,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 7466,
+"end": 7490,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 7588,
+"end": 7637,
+"verdict": "no"
+},
+{
+"text": 2791,
+"start": 7638,
+"end": 7710,
+"verdict": "no"
+},
+{
+"text": 2791,
+"start": 7712,
+"end": 7873,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 7874,
+"end": 7911,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 7912,
+"end": 7954,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 7955,
+"end": 8032,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 8418,
+"end": 8458,
+"verdict": "yes"
+},
+{
+"text": 2791,
+"start": 8460,
+"end": 8489,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 0,
+"end": 121,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 2833,
+"end": 2861,
+"verdict": "no"
+},
+{
+"text": 12810,
+"start": 2862,
+"end": 3042,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 3043,
+"end": 3252,
+"verdict": "no"
+},
+{
+"text": 12810,
+"start": 4384,
+"end": 4405,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 8407,
+"end": 8486,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 8985,
+"end": 9071,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 9072,
+"end": 9236,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 9237,
+"end": 9290,
+"verdict": "no"
+},
+{
+"text": 12810,
+"start": 9679,
+"end": 9932,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 10238,
+"end": 10290,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 10922,
+"end": 11099,
+"verdict": "no"
+},
+{
+"text": 12810,
+"start": 11197,
+"end": 11548,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 11578,
+"end": 11718,
+"verdict": "yes"
+},
+{
+"text": 12810,
+"start": 14765,
+"end": 14907,
+"verdict": "no"
+},
+{
+"text": 12810,
+"start": 15125,
+"end": 15420,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 0,
+"end": 24,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 100,
+"end": 136,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 137,
+"end": 189,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 191,
+"end": 262,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 1744,
+"end": 1772,
+"verdict": "no"
+},
+{
+"text": 24739,
+"start": 1773,
+"end": 1811,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 1812,
+"end": 1893,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 1993,
+"end": 2033,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 2086,
+"end": 2150,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 2152,
+"end": 2180,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 2220,
+"end": 2239,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 2878,
+"end": 2940,
+"verdict": "no"
+},
+{
+"text": 24739,
+"start": 2942,
+"end": 2988,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 3097,
+"end": 3196,
+"verdict": "no"
+},
+{
+"text": 24739,
+"start": 3597,
+"end": 3659,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 3660,
+"end": 3730,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 3731,
+"end": 3822,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 3823,
+"end": 4076,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 4235,
+"end": 4255,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 4256,
+"end": 4313,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 4619,
+"end": 4637,
+"verdict": "no"
+},
+{
+"text": 24739,
+"start": 4638,
+"end": 4685,
+"verdict": "no"
+},
+{
+"text": 24739,
+"start": 4686,
+"end": 4725,
+"verdict": "no"
+},
+{
+"text": 24739,
+"start": 5510,
+"end": 5536,
+"verdict": "no"
+},
+{
+"text": 24739,
+"start": 5573,
+"end": 5589,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 7791,
+"end": 7814,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 7815,
+"end": 7867,
+"verdict": "yes"
+},
+{
+"text": 24739,
+"start": 7868,
+"end": 8005,
+"verdict": "yes"
+}
+]
+}

@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
-"""Build the static site from data/names.db and the snapshot.
+"""Build the static site from data/roles.db, data/names.db and the snapshot.
 
     python3 build_site.py --rev 15
+
+Names and roles (roles.db, the second instrument) are the main data; the patterns (names.db, the
+first instrument) are shown as method. Numbers of the checks come from roles/checks.json.
 
 Writes site/. Text bodies (site/t/) are written once per snapshot and reused; everything
 else is rewritten on each build. Serve with:  python3 -m http.server 8795 -d site
 """
-import argparse, hashlib, html, json, os, random, re, shutil, sqlite3, sys
+import argparse, csv, gzip, hashlib, html, json, os, random, re, shutil, sqlite3, statistics, sys
 from collections import Counter, defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -16,16 +19,22 @@ E = html.escape
 
 VERDICTS = {"b": "being", "p": "place", "t": "thing", "s": "statement", "x": "not a name",
             "g": "broken text"}
-NAV = [("index.html", "Overview"), ("patterns.html", "Patterns"), ("models.html", "Models"),
-       ("names.html", "Names"), ("texts.html", "Texts"), ("kinds.html", "Kinds of answer"),
-       ("no_names.html", "Texts without names"),
-       ("recall.html", "Recall checks"), ("readings.html", "Reading log"), ("flagged.html", "Flagged texts"),
+NAV = [("index.html", "Overview"), ("names.html", "Names and roles"), ("models.html", "Models"),
+       ("texts.html", "Texts"), ("method.html", "Method and checks"), ("flagged.html", "Flagged texts"),
        ("export.html", "Data export")]
+NAV1 = [("patterns.html", "Patterns"), ("pattern_names.html", "Names caught by patterns"),
+        ("kinds.html", "Kinds of answer"), ("no_names.html", "Texts without names"),
+        ("recall.html", "Recall checks"), ("readings.html", "Reading log")]
+FIRST = ("<p class=first>This page belongs to the first instrument of the study, the regular-expression "
+         "patterns. The names and roles on the main pages come from the second instrument; see "
+         "<a href='%smethod.html'>Method and checks</a>.</p>")
 
 CSS = """
 body{font:15px/1.45 system-ui,sans-serif;margin:0 auto;max-width:1500px;padding:0 16px 60px;color:#222;background:#fff}
 nav{padding:10px 0;border-bottom:1px solid #ccc;margin-bottom:14px}
-nav a{margin-right:16px}
+nav a{margin-right:16px} nav div{font-size:13px;color:#555;margin-top:4px} nav div a{margin-right:12px}
+.first{font-size:13px;background:#f6f6f6;border:1px solid #e3e3e3;padding:5px 9px;max-width:900px}
+mark.l{background:#9fe3a8} mark.ll{background:#cdeccf}
 h1{font-size:22px;margin:.6em 0 .3em} h2{font-size:17px;margin:1.6em 0 .4em}
 p,li{max-width:900px}
 table{border-collapse:collapse;font-size:13px;width:100%}
@@ -180,7 +189,7 @@ def jdump(o):
     return json.dumps(o, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
 
-FORM = '\n<form class=sets onsubmit="var a=this.a.value.trim(),b=this.b.value.trim();location.href=\'name.html?n=\'+encodeURIComponent(a)+(b?\'&vs=\'+encodeURIComponent(b):\'\');return false">\n<p><b>Look up a name, or compare sets of names.</b> Write one string, or several joined by <code>|</code>\n(the lower-cased string as it appears in the tables: <code>keeper|keepers</code>). Counts are of\ntexts: a text that has several of the strings is counted once. A second set gives a comparison,\nmodel by model.</p>\n<p><label>set: <input name=a size=30 placeholder="keeper|keepers"></label> &nbsp;\n<label>compare with: <input name=b size=30 placeholder="tender|tenders"></label> &nbsp;\n<button>show</button> &nbsp; <span class=small>example: <a href="name.html?n=keeper%7Ckeepers&vs=tender%7Ctenders">keeper|keepers vs tender|tenders</a></span></p>\n</form>'
+FORM = '\n<form class=sets onsubmit="var a=this.a.value.trim(),b=this.b.value.trim();location.href=\'name.html?n=\'+encodeURIComponent(a)+(b?\'&vs=\'+encodeURIComponent(b):\'\')+(this.w.checked?\'&words=1\':\'\');return false">\n<p><b>Look up a name or a role, or compare sets of them.</b> Write one string, or several joined by <code>|</code>\n(the lower-cased string as it appears in the tables: <code>keeper|keepers</code>). The match is on the whole\nstring: <code>keepers</code> does not find <code>memory-keepers</code> or <code>keepers of the well</code>. Tick\n"as words" to count every label that holds the word, in any longer string.\nCounts are of texts: a text that has several of the strings is counted once. A second set gives a\ncomparison, model by model.</p>\n<p><label>set: <input name=a size=30 placeholder="keeper|keepers"></label> &nbsp;\n<label>compare with: <input name=b size=30 placeholder="tender|tenders"></label> &nbsp;\n<label><input type=checkbox name=w> as words</label> &nbsp;\n<button>show</button> &nbsp; <span class=small>examples: <a href="name.html?n=keeper%7Ckeepers&vs=tender%7Ctenders">keeper|keepers vs tender|tenders</a>, the same <a href="name.html?n=keeper%7Ckeepers&vs=tender%7Ctenders&words=1">as words</a></span></p>\n</form>'
 
 
 def columns_note(columns):
@@ -209,14 +218,16 @@ def col(title, type="text", tip=None):
     return c
 
 
-def page(path, title, body, depth=0):
+def page(path, title, body, depth=0, first=False):
     up = "../" * depth
     nav = " ".join('<a href="%s%s">%s</a>' % (up, h, E(t)) for h, t in NAV)
+    nav1 = " ".join('<a href="%s%s">%s</a>' % (up, h, E(t)) for h, t in NAV1)
     doc = ("<!doctype html><html lang=en><head><meta charset=utf-8>"
            "<meta name=viewport content='width=device-width,initial-scale=1'>"
            "<title>%s — Atlas names study</title><link rel=stylesheet href='%sstyle.css'>"
-           "<script src='%stable.js'></script></head><body><nav><b>Atlas names study</b> &nbsp; %s</nav>"
-           "<h1>%s</h1>%s</body></html>") % (E(title), up, up, nav, E(title), body)
+           "<script src='%stable.js'></script></head><body><nav><b>Atlas names study</b> &nbsp; %s"
+           "<div>First instrument (patterns): %s</div></nav>"
+           "<h1>%s</h1>%s%s</body></html>") % (E(title), up, up, nav, nav1, E(title), (FIRST % up) if first else "", body)
     full = os.path.join(SITE, path)
     os.makedirs(os.path.dirname(full), exist_ok=True)
     with open(full, "w", encoding="utf-8") as f:
@@ -224,8 +235,9 @@ def page(path, title, body, depth=0):
 
 
 def tlink(tid, depth=0, at=None, label=None):
+    """A link to the text viewer. With a position it opens on the pattern hits and scrolls there."""
     return '<a href="%stext.html?id=%d%s">%s</a>' % (
-        "../" * depth, tid, "&at=%d" % at if at is not None else "", label or ("#%d" % tid))
+        "../" * depth, tid, "&show=patterns&at=%d" % at if at is not None else "", label or ("#%d" % tid))
 
 
 def ctx(text, s, e, n=70):
@@ -247,6 +259,28 @@ def fnum(x, nd=2):
     return "" if x is None else round(x, nd)
 
 
+def who_quotes(xdir, length, parts=2):
+    """The quotes the second instrument read, as download files: one line per text, the last answer
+    that has quotes. Returns the file names and the share of characters covered."""
+    src = os.path.join(HERE, "..", "who", "quotes", "corpus", "anthropic__claude-sonnet-5.5.jsonl")
+    last = {}
+    for line in open(src, encoding="utf-8"):
+        r = json.loads(line)
+        if r.get("quotes"):
+            last[r["text"]] = [[x["start"], x["end"], x["quote"]] for x in r["quotes"]]
+    ids = sorted(last)
+    covered = sum(e - s for t in ids for s, e, _ in last[t]); total = sum(length[t] for t in ids)
+    names, step = [], (len(ids) + parts - 1) // parts
+    for k in range(parts):
+        name = "who_quotes_%d.jsonl.gz" % (k + 1)
+        with gzip.GzipFile(os.path.join(xdir, name), "wb", 9, mtime=0) as f:
+            for t in ids[k * step:(k + 1) * step]:
+                f.write((json.dumps({"text": t, "quotes": [{"start": a, "end": b, "quote": c} for a, b, c in last[t]]},
+                                    ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8"))
+        names.append(name)
+    return dict(files=names, texts=len(ids), quotes=sum(len(v) for v in last.values()), coverage=pct(covered, total))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rev", required=True)
@@ -257,7 +291,7 @@ def main():
     run = dict(q("SELECT key, value FROM run"))
     stats = json.loads(run["stats"])
     os.makedirs(SITE, exist_ok=True)
-    for d in ("pattern", "model", "m", "n", "x"):
+    for d in ("pattern", "model", "m", "n", "x", "pn", "l", "w"):
         shutil.rmtree(os.path.join(SITE, d), ignore_errors=True)
     for f in ("uncovered.html", "names_candidates.html"):
         if os.path.exists(os.path.join(SITE, f)):
@@ -294,6 +328,46 @@ def main():
         read_round.setdefault(r[1], r[0])
     okn = stats["texts"] - stats["flagged"]
 
+    # ---- names and roles: the second instrument (data/roles.db, roles/checks.json)
+    rdb = sqlite3.connect("file:%s?mode=ro" % os.path.join(HERE, "data", "roles.db"), uri=True)
+    checks = json.load(open(os.path.join(HERE, "roles", "checks.json")))
+    rrun = json.loads(dict(rdb.execute("SELECT key, value FROM run"))["stats"])
+    counted = {tid for tid, r in cov.items() if not r[9]}
+    SRC = {"quote": 1, "line": 2}
+    tl = defaultdict(dict)            # text -> string -> [labels, source bits]
+    nlab, src_n = Counter(), Counter()
+    for tid, nrm, src, k in rdb.execute("SELECT text_id, norm, source, count(*) FROM labels GROUP BY 1, 2, 3"):
+        d = tl[tid].setdefault(nrm, [0, 0])
+        d[0] += k; d[1] |= SRC[src]
+        if tid in counted:
+            nlab[tid] += k; src_n[src] += k
+    shown = {}                        # string -> as most often written
+    best_form = {}
+    for nrm, lab, k in rdb.execute("SELECT norm, label, count(*) FROM labels GROUP BY 1, 2"):
+        if k > best_form.get(nrm, 0):
+            best_form[nrm] = k; shown[nrm] = lab
+    del best_form
+    rn = {}                           # string -> [texts, labels, Counter of models, texts from quotes, texts from lines]
+    for tid in counted:
+        m = cov[tid][1]
+        for nrm, (k, bits) in tl.get(tid, {}).items():
+            g = rn.get(nrm)
+            if g is None:
+                g = rn[nrm] = [0, 0, Counter(), 0, 0]
+            g[0] += 1; g[1] += k; g[2][m] += 1; g[3] += bits & 1; g[4] += (bits >> 1) & 1
+    psc = {(r[0], r[1]): r[2] for r in q("SELECT text_id, norm, score FROM text_names")}
+    pbest = dict(q("SELECT norm, best FROM names"))
+    per_text = sorted(nlab[t] for t in counted if nlab[t])
+    rs = dict(labels=sum(nlab.values()), texts=len(per_text), without=len(counted) - len(per_text),
+              strings=len(rn), strings2=sum(1 for g in rn.values() if g[0] >= 2),
+              median=int(statistics.median(per_text)), quote=src_n["quote"], line=src_n["line"],
+              dropped=rrun["dropped"], all_labels=rrun["labels"])
+    vb = {v["code"]: v for v in checks["verdicts"]}
+    xdir = os.path.join(SITE, "export")
+    os.makedirs(xdir, exist_ok=True)
+    wq = who_quotes(xdir, {tid: r[2] for tid, r in cov.items()})
+    nlink = lambda nrm, up="": '<a href="%sname.html?n=%s">%s</a>' % (up, E(nrm, quote=True).replace(" ", "%20").replace("|", "%7C"), E(shown.get(nrm, nrm)))
+
     # ------------------------------------------------------------------ index
     rrows = []
     for rnd, date, note, st in q("SELECT round, date, note, stats FROM rounds ORDER BY round"):
@@ -301,26 +375,12 @@ def main():
         o = st["texts"] - st.get("flagged", 0)
         rrows.append([rnd, date, st["patterns"], st["mentions"], st.get("verdicts", ""), st["covered"],
                       pct(st["covered"], o), st.get("best_none", st.get("nothing", "")), note])
-    body = """
-<p>This site shows a study in progress: finding the names that language models gave to the
-beings they wrote into the <a href="https://atlas.animalabs.ai">Atlas</a>. Each creature text
-belongs to a place text that the same model had written before it. No text has a name field; the
-names are inside the prose, in many forms. The study collects them with regular
-expressions, and this site shows every pattern, what it catches, and what is still missed. It
-also tracks the texts in which no name is found, and the texts that say outright that there is
-no name.</p>
-
-<h2>What was read</h2>
-<table class=kv>
-<tr><td>Atlas release</td><td>r%(rev)s, cut %(cut)s</td></tr>
-<tr><td>Release digest</td><td><code>%(digest)s</code></td></tr>
-<tr><td>Texts</td><td>%(texts)d creature texts by %(nmodels)d models: every creature text of the release, as written</td></tr>
-<tr><td>Content hash</td><td><code>%(content)s</code> (sha256 over the ids and texts, in id order)</td></tr>
-<tr><td>Patterns file hash</td><td><code>%(phash)s</code></td></tr>
-<tr><td>Built</td><td>%(built)s</td></tr>
-</table>
-
-<h2>Words used on this site</h2>
+    first_intro = """
+<p>The first instrument of the study: regular expressions written by reading. A pattern is written
+after a form of naming is seen in a text, run over every text, and judged by reading a sample of
+what it caught. This page shows the words used, where the patterns stand, the rounds in which they
+were written, and every pattern.</p>
+<h2>Words used for the first instrument</h2>
 <ul>
 <li><b>Pattern</b>: a regular expression written after seeing a form of naming in a text. Each
 pattern page shows the passage it was first seen in.</li>
@@ -395,15 +455,7 @@ blind re-judging of 200 hits is on the <a href="recall.html">recall page</a>.</l
 <li>All texts are treated as English.</li>
 </ul>
 
-<h2>Rebuilding</h2>
-<pre>./snapshot.sh %(rev)s              # copy the creature texts of release r%(rev)s
-python3 extract.py --rev %(rev)s   # run patterns.py over every text, write data/names.db
-python3 build_site.py --rev %(rev)s</pre>
-<p class=small>snapshot.sh needs access to the machine that holds the releases. The same texts
-are public through the Atlas API and are exported to the atlas-texts repository.</p>
-""" % dict(rev=a.rev, cut=E(run.get("release_cut_at", "")[:19]), digest=E(run.get("release_corpus_digest", "")),
-           texts=stats["texts"], nmodels=len(models), content=run["content_sha256"],
-           phash=run["patterns_sha256"], built=run["built_at"], minread=20, np=len(active),
+""" % dict(minread=20, np=len(active),
            n80=stats["patterns_at_80"], nr=len(retired), mentions=stats["mentions"],
            verdicts=stats["verdicts"], dn=stats["distinct_strings"], d80=stats["distinct_at_80"],
            ok=okn, flagged=stats["flagged"],
@@ -416,7 +468,158 @@ are public through the Atlas API and are exported to the atlas-texts repository.
                          col("verdicts", "num"), col("texts with a name at 0.8 or more", "num"),
                          col("% of texts", "num"), col("texts with nothing caught", "num"),
                          col("what was done")], rrows, sort=[0, 1]))
-    page("index.html", "Names in the Atlas creature texts", body)
+    body = ("""
+<p>This site shows a study of the names and roles that language models gave to the inhabitants
+they wrote into the <a href="https://atlas.animalabs.ai">Atlas</a>. Each creature text belongs to
+a place text that the same model had written before it. No text has a name field; the names are
+inside the prose, in many forms.</p>
+<p>The study has used two instruments. The first is a set of regular expressions (patterns)
+written by reading; every pattern, what it catches and what it misses are kept under "First
+instrument". The second is a small language model that was given, line by line, the sentences in
+which each text says who or what lives there, and was asked to write out every name and every role
+exactly as written; each answer was then checked by script against its line. The second finds
+more: of %(vb_n)d names of beings that were judged by eye while the patterns were written, it holds
+%(vb_both)d. The main pages of this site show the result of the second instrument, and
+<a href="method.html">Method and checks</a> says how it was made, what it was measured against and
+what it is known to miss.</p>
+<p>Names and roles are not kept apart. A sentence such as "The Flux Dwellers are the city's
+gardeners, architects, and caretakers" gives four rows. Nothing is filtered: general words
+(inhabitants, people, creatures) are in the set and lead it by count.</p>
+@@FORM@@
+<h2>What was read</h2>
+<table class=kv>
+<tr><td>Atlas release</td><td>r%(rev)s, cut %(cut)s</td></tr>
+<tr><td>Release digest</td><td><code>%(digest)s</code></td></tr>
+<tr><td>Texts</td><td>%(texts)d creature texts by %(nmodels)d models: every creature text of the release, as written</td></tr>
+<tr><td>Content hash</td><td><code>%(content)s</code> (sha256 over the ids and texts, in id order)</td></tr>
+<tr><td>Built</td><td>%(built)s</td></tr>
+</table>
+
+<h2>Words used on this site</h2>
+<ul>
+<li><b>Label</b>: one name or role that a text gives an inhabitant, at one position in the text,
+exactly as written there.</li>
+<li><b>String</b>: a label in lower case with markup and a leading article removed. Labels are
+counted by string. Singular and plural are two strings ("keeper", "keepers"), and so are compound
+forms ("memory-keepers").</li>
+<li><b>From a quote, from a line</b>: where the label was found. A quote is a sentence in which the
+text says who or what lives there, collected beforehand for every text. A line is a heading, or a
+sentence outside every quote in which a pattern of the first instrument had caught something.</li>
+<li><b>Caught by a pattern</b>: the same string was also caught in the same text by the first
+instrument; the number is its score there (see <a href="patterns.html">Patterns</a>).</li>
+<li><b>Flagged text</b>: a text left out of the counts (see <a href="flagged.html">Flagged texts</a>).</li>
+</ul>
+
+<h2>Where it stands</h2>
+<table class=kv>
+<tr><td>Texts counted</td><td>%(ok)d (%(flagged)d flagged and left out)</td></tr>
+<tr><td>Labels</td><td>%(labels)d, of which %(quote)d from quotes and %(line)d from lines</td></tr>
+<tr><td>Texts with at least one label</td><td>%(rtexts)d (%(without)d counted texts have none)</td></tr>
+<tr><td>Labels per text</td><td>median %(median)d</td></tr>
+<tr><td>Distinct strings</td><td>%(strings)d, of which %(strings2)d occur in two or more texts</td></tr>
+<tr><td>Answers dropped by the check</td><td>%(dropped)d labels that were not found, as written, in the line they were given for</td></tr>
+</table>
+
+<h2>Rebuilding</h2>
+<pre>./snapshot.sh %(rev)s              # copy the creature texts of release r%(rev)s
+python3 extract.py --rev %(rev)s   # first instrument: run patterns.py over every text, write data/names.db
+python3 roles/batch_roles.py submit quotes; python3 roles/batch_roles.py submit items   # second instrument
+python3 roles/batch_roles.py collect quotes; python3 roles/batch_roles.py collect items
+python3 roles/build_roles.py       # write data/roles.db
+python3 roles/check.py             # write roles/checks.json
+python3 build_site.py --rev %(rev)s</pre>
+<p class=small>snapshot.sh needs access to the machine that holds the releases. The same texts
+are public through the Atlas API and are exported to the atlas-texts repository. The second
+instrument reads the quotes of the companion study "who lives there"; they can be downloaded from
+<a href="export.html">Data export</a>.</p>
+""" % dict(rev=a.rev, cut=E(run.get("release_cut_at", "")[:19]), digest=E(run.get("release_corpus_digest", "")),
+           texts=stats["texts"], nmodels=len(models), content=run["content_sha256"], built=run["built_at"],
+           ok=okn, flagged=stats["flagged"], vb_n=vb["b"]["n"], vb_both=vb["b"]["both"],
+           labels=rs["labels"], quote=rs["quote"], line=rs["line"], rtexts=rs["texts"], without=rs["without"],
+           median=rs["median"], strings=rs["strings"], strings2=rs["strings2"], dropped=rs["dropped"])).replace("@@FORM@@", FORM)
+    page("index.html", "Names and roles in the Atlas creature texts", body)
+
+    # ----------------------------------------------------------------- method
+    prompt_q = open(os.path.join(HERE, "roles", "prompt_v2.md")).read().strip()
+    prompt_l = open(os.path.join(HERE, "roles", "prompt_items_v1.md")).read().strip()
+    vrows = [[v["verdict"], v["n"], v["first"], pct(v["first"], v["n"]), v["both"], pct(v["both"], v["n"])]
+             for v in checks["verdicts"]]
+    wrows = [[w["word"], w["texts"], w["in_a_label"], pct(w["in_a_label"], w["texts"]), w["texts"] - w["in_a_label"]]
+             for w in checks["words"]]
+    pl = checks["pilot"]
+    page("method.html", "Method and checks", """
+<p>The names and roles on this site were collected by the second instrument of the study. This page
+says how, what the result was measured against, and what it is known to miss. The first instrument,
+the patterns, has its own pages (second row of the menu).</p>
+
+<h2>How the labels were collected</h2>
+<ol>
+<li><b>Quotes.</b> For every text, the sentences in which the text itself says who or what lives
+there had been collected beforehand by a larger model, for the companion study "who lives there".
+Every stored quote is the text's own stretch at a recorded position. The quotes cover %(qcov)s%% of
+the characters of the texts that have them.</li>
+<li><b>First pass, over the quotes.</b> The quotes of one text are numbered and given to a small
+model (<code>openai/gpt-6-luna</code>), one request per text, with this request and nothing else:
+<blockquote>%(pq)s</blockquote></li>
+<li><b>Second pass, over what the quotes did not cover.</b> Headings (found by script), and
+sentences outside every quote in which a pattern of the first instrument had caught something, are
+numbered and given to the same model, 25 lines per request:
+<blockquote>%(plq)s</blockquote>
+Of %(ls)d such lines in the %(vt)d texts used for the checks below, %(ll)d were given a label.</li>
+<li><b>The check.</b> A label is kept only if it is found, as written, inside the line it was given
+for; its position in the text is recorded from that. %(dropped)d labels of %(all)d were dropped by
+this check.</li>
+</ol>
+<p>Nothing else is done to the answers: no list of words is excluded and no score is given.</p>
+
+<h2>Measured against the verdicts of the first instrument</h2>
+<p>While the patterns were written, %(nv)d of their hits were read in context and judged
+(<a href="patterns.html">Patterns</a>). For each judged hit the table says whether the first pass,
+or either pass, gave a label that equals the judged string, contains it, or is contained in
+it.</p>%(vt_table)s
+<p class=small>"Not a name" in those verdicts included ordinary species words ("the crickets", "moss"),
+which count as labels here, so the last row is not a count of errors. The verdicts were made on
+pattern hits: they cannot show a name that no pattern caught. The patterns were also used to choose
+the lines of the second pass, which favours this comparison.</p>
+<p>The patterns now serve the result in one way only: they point to lines outside the quotes. What
+they caught is not added to the set.</p>
+
+<h2>Twelve words for those who look after something</h2>
+<p>A check from the other side, without the patterns' verdicts: in the same %(vt)d texts, the
+texts in which the word occurs anywhere (singular or plural), and how many of them have a label
+that holds the word.</p>%(w_table)s
+<p class=small>The texts without such a label include uses that are rightly absent: the adjective
+("tender shoots"), comparisons ("like a gardener") and denials ("she is not a keeper of anything").
+The rest are roles in sentences that neither the quotes nor a pattern reached ("A piston keeper may
+spend an entire shift ..."). How the texts without a label divide between the two has not been counted.</p>
+
+<h2>Ten texts read whole</h2>
+<p>Before any request, %(pt)d texts drawn at random were read whole and every name and role marked
+by hand: %(pm)d marks. The first pass found %(pf)d of them. Of the %(pmiss)d not found, %(pd)d were
+denials ("not plants"), which are not collected.</p>
+
+<h2>Known gaps</h2>
+<ul>
+<li>A role in a sentence that the quotes did not take and no pattern touched is not seen.</li>
+<li>Lines longer than 700 characters were not sent in the second pass.</li>
+<li>Denials ("they are not guards") and comparisons ("like a gardener") are not collected.</li>
+<li>Singular and plural, and compound forms ("moss-keeper"), are separate strings.</li>
+<li>Long descriptive phrases are in the set as labels; they rarely recur.</li>
+<li>General words (inhabitants, creatures) and ordinary species words are in the set.</li>
+<li>Names of places are mostly absent, not marked: of %(pn)d judged place names the two passes hold %(pb)d.</li>
+<li>The quotes, the labels and the hand marks were all made by language models; no part was read
+whole by a person.</li>
+</ul>
+""" % dict(qcov=wq["coverage"], pq=E(prompt_q), plq=E(prompt_l), ls=checks["lines_sent"], ll=checks["lines_with_a_label"],
+           vt=checks["verdict_texts"], dropped=rs["dropped"], all=rs["all_labels"] + rs["dropped"],
+           nv=sum(v["n"] for v in checks["verdicts"]),
+           vt_table=table([col("verdict when the patterns were written"), col("judged hits", "num"),
+                           col("held by the first pass", "num"), col("%", "num"),
+                           col("held by either pass", "num"), col("%", "num")], vrows),
+           w_table=table([col("word"), col("texts with the word", "num"), col("with a label holding it", "num"),
+                          col("%", "num"), col("without", "num")], wrows),
+           pt=pl["texts"], pm=pl["marked"], pf=pl["found"], pmiss=pl["marked"] - pl["found"], pd=pl["missed_denials"],
+           pn=vb["p"]["n"], pb=vb["p"]["both"]))
 
     # --------------------------------------------------------------- patterns
     prow = []
@@ -427,8 +630,9 @@ are public through the Atlas API and are exported to the atlas-texts repository.
                      pmodels.get(p[0], 0), st[3], e[1] if e else 0, fnum(p[21]),
                      fnum(e[2] / float(e[1])) if e and e[1] >= 20 else "", p[12]])
     rrow = [[p[0], p[1], p[2], p[15] or "", p[18] or ""] for p in retired]
-    page("patterns.html", "Patterns", """
-<p>Every pattern in use. Click a pattern for its regular expression, the passage it was first
+    page("patterns.html", "Patterns", first_intro + """
+<h2>Every pattern in use</h2>
+<p>Click a pattern for its regular expression, the passage it was first
 seen in, a sample of its hits, the hits that were read and judged, and its counts by model.</p>
 %s
 <h2>Earlier versions</h2>
@@ -443,7 +647,7 @@ here with the reason it was replaced and the sample that showed the problem.</p>
                col("beings", "num", "share of read hits judged to be the name of a being or kind"),
                col("what it catches")], prow, sort=[10, -1], page=60),
         table([col("pattern"), col("v", "num"), col("round", "num"), col("why it was replaced"),
-               col("sample that showed it")], rrow)))
+               col("sample that showed it")], rrow)), first=True)
 
     labels = defaultdict(list)
     for r in q("SELECT text_id, pattern_id, start, end, surface, verdict, round FROM labels"):
@@ -524,7 +728,7 @@ here with the reason it was replaced and the sample that showed the problem.</p>
                    col("texts of the model", "num"), col("% of texts", "num")], mrows, sort=[4, -1], page=130),
             table([col("captured string"), col("hits", "num"), col("texts", "num")], trows, page=100),
             ("<h2>Earlier versions</h2>" + hrows) if hrows else "")
-        page("pattern/%s.html" % pid, "Pattern: " + pid, body, 1)
+        page("pattern/%s.html" % pid, "Pattern: " + pid, body, 1, first=True)
 
     # ----------------------------------------------------------------- models
     per = defaultdict(lambda: dict(hi=0, mid=0, lo=0, none=0, flag=0, anti=0, talk=0, exp=0.0, anti_lo=0,
@@ -545,23 +749,39 @@ here with the reason it was replaced and the sample that showed the problem.</p>
                 d["anti_lo"] += 1
         if r[7]:
             d["talk"] += 1
+    rm = defaultdict(lambda: dict(texts=0, labels=0, strings=0))
+    for tid in counted:
+        d = rm[cov[tid][1]]
+        d["texts"] += nlab[tid] > 0; d["labels"] += nlab[tid]
+    mstr = defaultdict(list)          # model -> [(texts of the model, string)]
+    for nrm, g in rn.items():
+        for m, c in g[2].items():
+            rm[m]["strings"] += 1; mstr[m].append((c, nrm))
     mrows, nnrows = [], []
     for m in models:
         d = per[m]
         n = d["hi"] + d["mid"] + d["lo"] + d["none"]
         link = '<a href="model/%s.html">%s</a>' % (slug(m), E(m))
-        mrows.append([link, n, d["flag"], d["hi"], pct(d["hi"], n), d["mid"], d["lo"], d["none"],
+        mrows.append([link, n, d["flag"], rm[m]["texts"], pct(rm[m]["texts"], n), round(rm[m]["labels"] / n, 1) if n else "",
+                      rm[m]["strings"], d["hi"], pct(d["hi"], n), d["mid"], d["lo"], d["none"],
                       d["anti"], d["talk"], round(d["exp"] / n, 2) if n else ""])
         nnrows.append([link, n, d["body_lo"], pct(d["body_lo"], n), d["titled"], d["none"], pct(d["none"], n),
                        d["anti"], pct(d["anti"], n), d["anti_lo"]])
     page("models.html", "Models", """
-<p>One row per model. Texts are split by their best score (see the overview for the words).</p>%s""" % table(
+<p>One row per model. The first columns count the names and roles; the columns that begin with
+"patterns" are from the first instrument, where texts are split by their best pattern score
+(see <a href="patterns.html">Patterns</a> for the words). Click a model for its names and roles
+and its texts.</p>%s""" % table(
         [col("model", "html"), col("texts", "num", "texts counted (flagged texts left out)"), col("flagged", "num"),
-         col("best ≥ 0.8", "num"), col("% ≥ 0.8", "num"), col("best 0.5–0.8", "num"), col("best < 0.5", "num"),
-         col("nothing caught", "num"), col("texts that say there is no name", "num"),
-         col("texts that use the word 'name'", "num"),
-         col("expected names per text", "num", "sum of scores of all names caught, divided by the number of texts")],
-        mrows, sort=[4, 1], page=130))
+         col("texts with a label", "num", "counted texts with at least one name or role"), col("%", "num"),
+         col("labels per text", "num", "labels in counted texts, divided by the number of counted texts"),
+         col("distinct strings", "num", "distinct names and roles in the model's texts"),
+         col("patterns: best ≥ 0.8", "num"), col("patterns: % ≥ 0.8", "num"), col("patterns: best 0.5–0.8", "num"),
+         col("patterns: best < 0.5", "num"),
+         col("patterns: nothing caught", "num"), col("texts that say there is no name", "num", "from a statement pattern of the first instrument"),
+         col("texts that use the word 'name'", "num", "from a statement pattern of the first instrument"),
+         col("patterns: expected names per text", "num", "sum of scores of all names caught, divided by the number of texts")],
+        mrows, sort=[5, -1], page=130))
 
     tn = defaultdict(list)
     for r in q("SELECT text_id, norm, display, n_mentions, patterns, score, first_pos, occurrences, in_place_text, "
@@ -582,7 +802,8 @@ here with the reason it was replaced and the sample that showed the problem.</p>
             names = sorted(tn.get(tid, ()), key=lambda x: (-x[5], x[6]))
             top = [x[2] for x in names if x[5] >= 0.8]
             titled = [x[2] for x in names if where(x) == "title only"]
-            trows.append([tlink(tid, 1), r[2], ("flagged: " + r[9]) if r[9] else fnum(r[11]), fnum(r[12]),
+            trows.append([tlink(tid, 1), r[2], nlab[tid] if not r[9] else sum(v[0] for v in tl.get(tid, {}).values()),
+                          ("flagged: " + r[9]) if r[9] else fnum(r[11]), fnum(r[12]),
                           len(top), ", ".join(top[:8]) + (" …" if len(top) > 8 else ""),
                           ", ".join(titled[:6]) + (" …" if len(titled) > 6 else ""),
                           len(names) - len(top), r[8], r[7], read_round.get(tid, "")])
@@ -603,33 +824,44 @@ here with the reason it was replaced and the sample that showed the problem.</p>
         n = d["hi"] + d["mid"] + d["lo"] + d["none"]
         prs = [['<a href="../pattern/%s.html">%s</a>' % (pid, pid), fnum(prec.get(pid)), k, nt, pct(nt, n)]
                for pid, k, nt in pm[m]]
+        top = sorted(mstr[m], key=lambda x: (-x[0], x[1]))[:2000]
+        srows = [[nlink(nrm, "../"), c, pct(c, n), rn[nrm][0], len(rn[nrm][2])] for c, nrm in top]
         page("model/%s.html" % slug(m), "Model: " + m, """
 <table class=kv>
 <tr><td>Texts</td><td>%d counted, %d flagged</td></tr>
-<tr><td>By best score</td><td>0.8 or more: %d (%s%%) · 0.5 to 0.8: %d · under 0.5: %d · nothing caught: %d</td></tr>
+<tr><td>Names and roles</td><td>%d labels in %d texts; %d distinct strings</td></tr>
+<tr><td>By best pattern score</td><td>0.8 or more: %d (%s%%) · 0.5 to 0.8: %d · under 0.5: %d · nothing caught: %d</td></tr>
 <tr><td>Texts that say there is no name</td><td>%d</td></tr>
 </table>
-<h2>Patterns in this model's texts</h2>%s
-<h2>Names</h2>
+<h2>Names and roles</h2>
+<p class=small>The %d strings found in the most texts of this model.</p>%s
+<h2>Texts</h2>%s
+<h2>First instrument: patterns in this model's texts</h2>%s
+<h2>First instrument: strings caught by patterns</h2>
 <p class=small>Every captured string in this model's texts. "Expected texts" is the sum of its scores
 over the texts; "in place" counts the texts where the same string is also in the place
-description.</p>%s
-<h2>Texts</h2>%s""" % (
-            n, d["flag"], d["hi"], pct(d["hi"], n), d["mid"], d["lo"], d["none"], d["anti"],
+description.</p>%s""" % (
+            n, d["flag"], rm[m]["labels"], rm[m]["texts"], rm[m]["strings"],
+            d["hi"], pct(d["hi"], n), d["mid"], d["lo"], d["none"], d["anti"], len(srows),
+            table([col("name or role", "html"), col("texts of this model", "num"), col("% of its texts", "num"),
+                   col("texts, all models", "num"), col("models", "num", "models in whose texts it occurs")],
+                  srows, sort=[1, -1], page=100),
+            table([col("text", "html"), col("length", "num"), col("labels", "num", "names and roles in the text"),
+                   col("best pattern score in body"), col("title only", "num", "best score among title-only designations"),
+                   col("names ≥ 0.8", "num", "names with a pattern score of 0.8 or more"), col("those names"),
+                   col("title-only designations"),
+                   col("other strings", "num", "strings caught with a lower score"),
+                   col("no-name statements", "num"), col("sentences with 'name'", "num"),
+                   col("read in round", "num")], trows, page=100),
             table([col("pattern", "html"), col("precision", "num"), col("hits", "num"), col("texts", "num"),
                    col("% of texts", "num")], prs, sort=[4, -1], page=60),
             table([col("name", "html"), col("expected texts", "num"), col("texts", "num"), col("best score", "num"),
                    col("title only", "num", "texts where it is caught in a title line and occurs nowhere else"),
-                   col("in place", "num"), col("hits", "num"), col("patterns")], nrows, sort=[1, -1], page=100),
-            table([col("text", "html"), col("length", "num"), col("best score in body"), col("title only", "num", "best score among title-only designations"),
-                   col("names ≥ 0.8", "num", "names with a score of 0.8 or more"), col("those names"),
-                   col("title-only designations"),
-                   col("other strings", "num", "strings caught with a lower score"),
-                   col("no-name statements", "num"), col("sentences with 'name'", "num"),
-                   col("read in round", "num")], trows, page=100)), 1)
+                   col("in place", "num"), col("hits", "num"), col("patterns")], nrows, sort=[1, -1], page=100)), 1)
 
     # ------------------------------------------------------------------ names
     os.makedirs(os.path.join(SITE, "n"), exist_ok=True)
+    os.makedirs(os.path.join(SITE, "pn"), exist_ok=True)
     allnames = q("SELECT norm, display, n_texts, expected, expected_new, best, n_models, n_mentions, patterns, "
                  "top_models, df, expected_title_only FROM names")
     n80 = dict(q("SELECT norm, count(*) FROM text_names n JOIN text_cov c ON c.text_id=n.text_id "
@@ -651,106 +883,186 @@ description.</p>%s
              col("most expected in", "text", "the models with the largest sums of scores for it")]
     hi = [nrow(r) for r in allnames if r[5] >= 0.8]
     lo = [nrow(r) for r in allnames if r[5] < 0.8]
-    with open(os.path.join(SITE, "n", "names_hi.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(SITE, "pn", "names_hi.json"), "w", encoding="utf-8") as f:
         f.write(jdump(dict(columns=ncols, rows=hi, pageSize=200, sort=[1, -1])))
-    with open(os.path.join(SITE, "n", "names_lo.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(SITE, "pn", "names_lo.json"), "w", encoding="utf-8") as f:
         f.write(jdump(dict(columns=ncols, rows=lo, pageSize=200, sort=[1, -1])))
     page_cols = columns_note(ncols)
-    page("names.html", "Names",
-         FORM + """<p>The set of names: every distinct string that at least one text uses as a name with a
-score of 0.8 or more (%d strings). Click a name to see the texts it occurs in. The %d strings that
+    page("pattern_names.html", "Names caught by patterns",
+         """<p>Every distinct string that at least one text uses as a name with a pattern score of 0.8 or
+more (%d strings). A click on a name opens its page in the main set. The %d strings that
 never reach 0.8 anywhere are kept on a <a href="names_low.html">second page</a> as a pool of
-candidates; they are not counted as names.</p>
+candidates.</p>
 <p class=small>Singular and plural are separate rows. Frequent rows near the top include ordinary
 capitalised words ("Water", "Body"): the capitalisation patterns take any capitalised word after
 "the". The column "%% of all texts" helps to set those aside.</p>
-%s<div id=nt></div><script>tableFromUrl("nt","n/names_hi.json")</script>""" % (len(hi), len(lo), page_cols))
-    page("names_low.html", "Strings with a best score under 0.8",
+%s<div id=nt></div><script>tableFromUrl("nt","pn/names_hi.json")</script>""" % (len(hi), len(lo), page_cols), first=True)
+    page("names_low.html", "Strings with a best pattern score under 0.8",
          """<p>Strings caught only by patterns of lower precision. Most are not names. They are kept so
 that names written in forms that the better patterns miss can be found here.</p>
-%s<div id=nt></div><script>tableFromUrl("nt","n/names_lo.json")</script>""" % page_cols)
+%s<div id=nt></div><script>tableFromUrl("nt","pn/names_lo.json")</script>""" % page_cols, first=True)
+
+    # names and roles: the main table holds the strings found in two or more counted texts
+    rcols = [col("name or role", "html", "the string, as most often written; click for the texts"),
+             col("texts", "num", "counted texts with at least one label of this string"),
+             col("% of texts", "num", "share of all counted texts"),
+             col("models", "num", "models in whose texts it occurs"),
+             col("labels", "num", "labels of this string, all counted texts"),
+             col("words", "num", "words in the string"),
+             col("texts, from a quote", "num", "texts where it was found in a quote"),
+             col("texts, from a line", "num", "texts where it was found in a heading or in a sentence outside the quotes"),
+             col("best pattern score", "num", "the highest score the first instrument gave the same string in any text; empty if no pattern caught it"),
+             col("most in", "text", "the three models with the most texts holding it")]
+    rrows2 = [[nlink(nrm), g[0], pct(g[0], okn), len(g[2]), g[1], len(nrm.split()), g[3], g[4], fnum(pbest.get(nrm)),
+               ", ".join("%s %d" % (m.split("/")[-1], c) for m, c in g[2].most_common(3))]
+              for nrm, g in rn.items() if g[0] >= 2]
+    with open(os.path.join(SITE, "n", "strings.json"), "w", encoding="utf-8") as f:
+        f.write(jdump(dict(columns=rcols, rows=rrows2, pageSize=200, sort=[1, -1])))
+    page("names.html", "Names and roles",
+         FORM + """<p>Every string that two or more counted texts give an inhabitant as a name or a role
+(%d strings). The %d strings found in one text only are not in this table; they open by the form
+above and are in the <a href="export.html">export</a>. Click a string to see its texts and its share
+in each model.</p>
+<p class=small>Nothing is filtered: general words lead the table. Filter the first column
+(<code>keeper</code>) to see every form that holds a word; singular, plural and compounds are
+separate rows.</p>
+%s<div id=nt></div><script>tableFromUrl("nt","n/strings.json")</script>""" % (len(rrows2), rs["strings"] - len(rrows2), columns_note(rcols)))
 
     buckets = defaultdict(dict)
-    for tid, names in tn.items():
-        if cov[tid][9]:
-            continue
-        for x in names:
-            b = hashlib.sha1(x[1].encode("utf-8")).hexdigest()[:2]
-            buckets[b].setdefault(x[1], []).append([tid, midx[cov[tid][1]], x[5], x[3], x[7], x[8], x[4], where(x)])
+    for tid in counted:
+        mi = midx[cov[tid][1]]
+        for nrm, (k, bits) in tl.get(tid, {}).items():
+            b = hashlib.sha1(nrm.encode("utf-8")).hexdigest()[:2]
+            buckets[b].setdefault(nrm, []).append([tid, mi, k, bits, psc.get((tid, nrm), 0)])
     for b, d in buckets.items():
         with open(os.path.join(SITE, "n", b + ".json"), "w", encoding="utf-8") as f:
             f.write(jdump(d))
+    del buckets
+    # the same by word: text -> labels that hold the word, in any string
+    os.makedirs(os.path.join(SITE, "w"), exist_ok=True)
+    WORD = re.compile(r"[^\W_]+(?:'[^\W_]+)*")
+    wb = defaultdict(dict)
+    for tid in counted:
+        mi = midx[cov[tid][1]]; seen = {}
+        for nrm, (k, bits) in tl.get(tid, {}).items():
+            for wd in set(WORD.findall(nrm)):
+                d = seen.get(wd)
+                if d is None:
+                    seen[wd] = [tid, mi, k, bits, [nrm]]
+                else:
+                    d[2] += k; d[3] |= bits; d[4].append(nrm)
+        for wd, d in seen.items():
+            d[4] = "; ".join(sorted(d[4])[:6])
+            wb[hashlib.sha1(wd.encode("utf-8")).hexdigest()[:2]].setdefault(wd, []).append(d)
+    for b, d in wb.items():
+        with open(os.path.join(SITE, "w", b + ".json"), "w", encoding="utf-8") as f:
+            f.write(jdump(d))
+    del wb
     with open(os.path.join(SITE, "n", "models.json"), "w", encoding="utf-8") as f:
         f.write(jdump(models))
     with open(os.path.join(SITE, "n", "model_counts.json"), "w", encoding="utf-8") as f:
         f.write(jdump([sum(1 for r in cov.values() if r[1] == m and not r[9]) for m in models]))
-    page("name.html", "Name", FORM + """<div id=head></div><div id=sets></div><div id=nt></div>
+    page("name.html", "Name or role", FORM + """<div id=head></div><div id=sets></div><div id=nt></div>
 <script src="sha1.js"></script><script>
 (function () {
   var qs = new URLSearchParams(location.search);
   var parse = function (s) { return (s || '').split('|').map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean); };
-  var setA = parse(qs.get('n')), setB = parse(qs.get('vs'));
+  var setA = parse(qs.get('n')), setB = parse(qs.get('vs')), words = qs.get('words') === '1', dir = words ? 'w/' : 'n/';
+  var f = document.querySelector('form.sets'); f.a.value = setA.join('|'); f.b.value = setB.join('|'); f.w.checked = words;
   var h1 = document.querySelector('h1');
-  if (!setA.length) { h1.textContent = 'Name'; return; }
-  h1.textContent = (setB.length ? 'Names: ' : 'Name: ') + setA.join(' | ') + (setB.length ? '  vs  ' + setB.join(' | ') : '');
-  var get = function (u) { return fetch(u).then(function (r) { return r.json(); }); };
+  if (!setA.length) { h1.textContent = 'Name or role'; return; }
+  h1.textContent = setA.join(' | ') + (setB.length ? '  vs  ' + setB.join(' | ') : '') + (words ? '  (as words)' : '');
+  var get = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : {}; }); };
   var buckets = {};
   var need = setA.concat(setB).map(function (n) { return sha1(n).slice(0, 2); }).filter(function (b, i, a) { return a.indexOf(b) === i; });
   Promise.all([get('n/models.json'), get('n/model_counts.json')].concat(need.map(function (b) {
-    return get('n/' + b + '.json').then(function (d) { buckets[b] = d; });
+    return get(dir + b + '.json').then(function (d) { buckets[b] = d; });
   }))).then(function (res) {
     var models = res[0], counts = res[1];
     var rowsOf = function (n) { return (buckets[sha1(n).slice(0, 2)] || {})[n] || []; };
-    // per set: text -> best row (highest score) over its strings
+    // per set: text -> one row over its strings
     var gather = function (set) {
       var by = {};
       set.forEach(function (n) { rowsOf(n).forEach(function (r) {
         var cur = by[r[0]];
-        if (!cur || r[2] > cur.score) by[r[0]] = {text: r[0], model: r[1], score: r[2], where: r[7], hits: r[3], occ: r[4], place: r[5], pats: r[6], strings: (cur ? cur.strings : [])};
-        by[r[0]].strings.push(n);
+        if (!cur) cur = by[r[0]] = {text: r[0], model: r[1], labels: 0, bits: 0, score: 0, strings: []};
+        cur.labels += r[2]; cur.bits |= r[3];
+        if (words) cur.strings.push(r[4]); else { if (r[4] > cur.score) cur.score = r[4]; cur.strings.push(n); }
       }); });
       return by;
     };
     var A = gather(setA), B = setB.length ? gather(setB) : null;
-    var ids = Object.keys(A);
+    var ids = Object.keys(A), bi = B ? Object.keys(B) : [];
+    var share = function (a, n) { return n ? Math.round(1000 * a / n) / 10 : ''; };
+    var total = counts.reduce(function (x, y) { return x + y; }, 0);
     var perModel = models.map(function (m, i) {
-      var a = 0, a8 = 0, bb = 0, b8 = 0;
-      ids.forEach(function (t) { if (A[t].model === i) { a++; if (A[t].score >= 0.8) a8++; } });
-      if (B) Object.keys(B).forEach(function (t) { if (B[t].model === i) { bb++; if (B[t].score >= 0.8) b8++; } });
-      var row = [m, counts[i], a, counts[i] ? Math.round(1000 * a / counts[i]) / 10 : '', a8, counts[i] ? Math.round(1000 * a8 / counts[i]) / 10 : ''];
-      if (B) row = row.concat([bb, counts[i] ? Math.round(1000 * bb / counts[i]) / 10 : '', b8, counts[i] ? Math.round(1000 * b8 / counts[i]) / 10 : '']);
+      var a = 0, bb = 0;
+      ids.forEach(function (t) { if (A[t].model === i) a++; });
+      bi.forEach(function (t) { if (B[t].model === i) bb++; });
+      var row = [m, counts[i], a, share(a, counts[i])];
+      if (B) row = row.concat([bb, share(bb, counts[i])]);
       return row;
-    }).filter(function (r) { return r[2] || (B && r[6]); });
-    var n8 = ids.filter(function (t) { return A[t].score >= 0.8; }).length;
-    var head = '<p>' + ids.length + ' texts contain ' + (setA.length > 1 ? 'one of ' : '') + setA.join(' | ') + ' (' + n8 + ' at a score of 0.8 or more).';
-    if (B) { var bi = Object.keys(B); head += ' ' + bi.length + ' texts contain ' + setB.join(' | ') + ' (' + bi.filter(function (t) { return B[t].score >= 0.8; }).length + ' at 0.8 or more). ' +
-      Object.keys(A).filter(function (t) { return B[t]; }).length + ' texts contain both.'; }
+    });
+    var nm = perModel.filter(function (r) { return r[2]; }).length;
+    var head = '<p>' + ids.length + ' of ' + total + ' counted texts (' + share(ids.length, total) + '%), by ' + nm + ' of ' + models.length +
+      ' models, give an inhabitant ' + (words ? 'a name or role that holds the word ' : setA.length > 1 ? 'one of the names or roles ' : 'the name or role ') + setA.join(' | ') + '.';
+    if (B) head += ' ' + bi.length + ' texts (' + share(bi.length, total) + '%) give ' + setB.join(' | ') + '. ' +
+      ids.filter(function (t) { return B[t]; }).length + ' texts give both.';
     document.getElementById('head').innerHTML = head + '</p>';
     var cols = [{title: 'model', type: 'text'}, {title: 'texts', type: 'num', tip: 'counted texts of the model'},
-      {title: 'with ' + setA.join('|'), type: 'num', tip: 'texts of the model that contain any string of the first set, at any score'}, {title: '%', type: 'num'},
-      {title: 'at 0.8', type: 'num', tip: 'of those, texts where the string has a score of 0.8 or more'}, {title: '% at 0.8', type: 'num'}];
-    if (B) cols = cols.concat([{title: 'with ' + setB.join('|'), type: 'num'}, {title: '%', type: 'num'}, {title: 'at 0.8', type: 'num'}, {title: '% at 0.8', type: 'num'}]);
+      {title: 'with ' + setA.join('|'), type: 'num', tip: 'texts of the model with a label of any string of the first set'}, {title: '%', type: 'num'}];
+    if (B) cols = cols.concat([{title: 'with ' + setB.join('|'), type: 'num'}, {title: '%', type: 'num'}]);
     document.getElementById('sets').innerHTML = '<h2>By model</h2><div id=pm></div><h2>Texts</h2>';
-    makeTable(document.getElementById('pm'), {columns: cols, rows: perModel, pageSize: 130, sort: [5, -1]});
-    var trows = ids.map(function (t) { var r = A[t]; return ['<a href="text.html?id=' + t + '">#' + t + '</a>', models[r.model], r.strings.join(', '), r.score, r.where, r.hits, r.occ, r.place ? 'yes' : '', r.pats]; });
+    makeTable(document.getElementById('pm'), {columns: cols, rows: perModel, pageSize: 130, sort: [3, -1]});
+    var src = ['', 'quote', 'line', 'quote and line'];
+    var trows = ids.map(function (t) { var r = A[t]; return ['<a href="text.html?id=' + t + '&' + (words ? 'markw=' + encodeURIComponent(setA.join('|')) : 'mark=' + encodeURIComponent(r.strings.join('|'))) + '">#' + t + '</a>', models[r.model], r.strings.join(words ? '; ' : ', '), r.labels, src[r.bits], words ? '' : (r.score || '')]; });
     makeTable(document.getElementById('nt'), {columns: [
-      {title: 'text', type: 'html'}, {title: 'model', type: 'text'}, {title: 'strings', type: 'text', tip: 'which of the strings the text contains'},
-      {title: 'score', type: 'num', tip: 'the highest score among them in this text'},
-      {title: 'where', type: 'text', tip: 'title only: caught in a title line and occurring nowhere else'},
-      {title: 'hits', type: 'num'}, {title: 'occurrences in text', type: 'num', tip: 'times the string occurs in the text, any case'},
-      {title: 'also in place text', type: 'text'}, {title: 'patterns', type: 'text'}], rows: trows, pageSize: 300, sort: [3, -1]});
+      {title: 'text', type: 'html'}, {title: 'model', type: 'text'}, {title: 'strings', type: 'text', tip: 'which of the strings the text has (as words: up to six of the strings that hold the word)'},
+      {title: 'labels', type: 'num', tip: 'labels of these strings in the text'},
+      {title: 'found in', type: 'text', tip: 'a quote (a sentence saying who lives there), a line (a heading or a sentence outside the quotes), or both'},
+      {title: 'pattern score', type: 'num', tip: 'the score the first instrument gave the same string in this text; empty if no pattern caught it there'}],
+      rows: trows, pageSize: 300, sort: [3, -1]});
   });
 })();</script>""")
 
     # ------------------------------------------------------------------ export
-    xdir = os.path.join(SITE, "export")
-    os.makedirs(xdir, exist_ok=True)
-    import csv
     def dump_csv(name, header, rows, notes):
-        with open(os.path.join(xdir, name), "w", encoding="utf-8", newline="") as f:
+        import io
+        raw = open(os.path.join(xdir, name), "wb") if not name.endswith(".gz") else gzip.GzipFile(os.path.join(xdir, name), "wb", 9, mtime=0)
+        with raw, io.TextIOWrapper(raw, encoding="utf-8", newline="") as f:
             w = csv.writer(f); w.writerow(header); w.writerows(rows)
         return "### %s\n\n%s\n\n" % (name, "\n".join("- `%s`: %s" % kv for kv in zip(header, notes)))
-    notes = "# Data export\n\nThe tables behind this site, as CSV. Rebuilt with the site; same release, same patterns.\n\n"
+    notes = ("# Data export\n\nThe tables behind this site. Rebuilt with the site; same release.\n\n"
+             "## Names and roles (second instrument)\n\n")
+    with gzip.GzipFile(os.path.join(xdir, "labels.csv.gz"), "wb", 9, mtime=0) as gz:
+        import io
+        tw = io.TextIOWrapper(gz, encoding="utf-8", newline="")
+        w = csv.writer(tw)
+        w.writerow(["text_id", "start", "end", "label", "string", "source", "model", "flag"])
+        for tid, s0, e0, lab, nrm, src in rdb.execute("SELECT text_id, start, end, label, norm, source FROM labels ORDER BY text_id, start, end"):
+            w.writerow([tid, s0, e0, lab, nrm, src, cov[tid][1], cov[tid][9]])
+        tw.flush(); tw.detach()
+    notes += "### labels.csv.gz\n\nThe whole set, one row per label (gzip). %d rows.\n\n%s\n\n" % (rs["all_labels"], "\n".join("- `%s`: %s" % kv for kv in [
+        ("text_id", "Atlas creature id (https://atlas.animalabs.ai/v3/creature/<id>)"),
+        ("start, end", "character offsets of the label in the text"),
+        ("label", "the name or role exactly as written in the text"),
+        ("string", "the label in lower case, markup and a leading article removed; counts on the site are by this column"),
+        ("source", "quote: found in a sentence saying who lives there; line: found in a heading or in a sentence outside the quotes"),
+        ("model", "writer model"),
+        ("flag", "why the text is left out of the counts on the site, empty if counted")]))
+    notes += dump_csv("strings.csv.gz",
+        ["string", "as_written", "texts", "models", "labels", "texts_from_quote", "texts_from_line", "best_pattern_score"],
+        [[nrm, shown.get(nrm, nrm), g[0], len(g[2]), g[1], g[3], g[4], fnum(pbest.get(nrm))]
+         for nrm, g in sorted(rn.items(), key=lambda kv: (-kv[1][0], kv[0]))],
+        ["the string", "as most often written", "counted texts with a label of this string", "models in whose texts it occurs",
+         "labels of this string in counted texts", "texts where it was found in a quote",
+         "texts where it was found in a heading or a sentence outside the quotes",
+         "highest score the first instrument gave the same string in any text, empty if none"])
+    notes += ("### %s\n\nThe quotes the second instrument read: for each text, the sentences in which it says who or what "
+              "lives there, collected for the companion study \"who lives there\" (gzip, JSON lines, in %d parts by text id). "
+              "%d texts, %d quotes.\n\n- `text`: Atlas creature id\n- `quotes`: list of `start`, `end` (character offsets in the text) "
+              "and `quote` (the text's own stretch there)\n\n## First instrument (patterns)\n\n" % (
+                  ", ".join(wq["files"]), len(wq["files"]), wq["texts"], wq["quotes"]))
     notes += dump_csv("texts.csv",
         ["text_id", "model", "length", "kind", "best_score_body", "best_score_title_only", "names_at_0_8", "expected_names",
          "no_name_statements", "place_is_inhabitant_statements", "process_statements", "species_words",
@@ -803,21 +1115,24 @@ that names written in forms that the better patterns miss can be found here.</p>
          "texts with a no-name statement", "texts using the word name", "sum of scores per text"])
     with open(os.path.join(xdir, "README.md"), "w", encoding="utf-8") as f:
         f.write(notes)
-    page("export.html", "Data export", "<p>The tables behind this site, as CSV, with their columns described. "
+    flist = lambda names: "".join('<li><a href="export/%s">%s</a> (%s MB)</li>' % (n, n, round(os.path.getsize(os.path.join(xdir, n)) / 1e6, 1)) for n in names)
+    page("export.html", "Data export", "<p>The tables behind this site, with their columns described. "
          "Rebuilt with the site. Second-order questions (shares by model, groups of strings, singular and plural "
          "together) are meant to be asked of these files; the site is for looking and checking.</p>"
-         "<ul>%s</ul><pre>%s</pre>" % (
-             "".join('<li><a href="export/%s">%s</a> (%s MB)</li>' % (n, n, round(os.path.getsize(os.path.join(xdir, n)) / 1e6, 1))
-                     for n in ("texts.csv", "text_names.csv", "names.csv", "patterns.csv", "models.csv", "README.md")),
-             E(notes)))
+         "<h2>Names and roles</h2><ul>%s</ul><h2>The quotes they were read from</h2><ul>%s</ul>"
+         "<h2>First instrument (patterns)</h2><ul>%s</ul><pre>%s</pre>" % (
+             flist(["labels.csv.gz", "strings.csv.gz"]), flist(wq["files"]),
+             flist(["texts.csv", "text_names.csv", "names.csv", "patterns.csv", "models.csv", "README.md"]), E(notes)))
 
     # ------------------------------------------------------------------ texts
     os.makedirs(os.path.join(SITE, "x"), exist_ok=True)
-    xrows = [[tlink(tid), r[1], r[2], r[17], fnum(r[11]), fnum(r[12]), r[13], r[6], r[8], r[14], r[15], r[16], r[7],
+    xrows = [[tlink(tid), r[1], r[2], nlab[tid], len(tl.get(tid, ())), r[17], fnum(r[11]), fnum(r[12]), r[13], r[6], r[8], r[14], r[15], r[16], r[7],
               r[10] or "none", read_round.get(tid, "")] for tid, r in sorted(cov.items()) if not r[9]]
     xcols = [
             col("text", "html"), col("model"), col("length", "num", "characters"),
-            col("kind", "text", "the kind of answer, by the rule on the Kinds of answer page"),
+            col("labels", "num", "names and roles found in the text"),
+            col("distinct strings", "num", "distinct names and roles in the text"),
+            col("kind", "text", "first instrument: the kind of answer, by the rule on the Kinds of answer page"),
             col("best score in body", "num", "highest score among names the text uses outside a title line"),
             col("best score, title only", "num", "highest score among title-only designations; empty when there is none"),
             col("names ≥ 0.8", "num", "distinct strings with a score of 0.8 or more, used in the body"),
@@ -830,11 +1145,12 @@ that names written in forms that the better patterns miss can be found here.</p>
             col("corpus status", "text", "the status the corpus taggers recorded; many newer texts have none"),
             col("read in round", "num", "the round in which the text was read by eye, if it was")]
     with open(os.path.join(SITE, "x", "texts.json"), "w", encoding="utf-8") as f:
-        f.write(jdump(dict(columns=xcols, rows=xrows, pageSize=200, sort=[4, 1])))
+        f.write(jdump(dict(columns=xcols, rows=xrows, pageSize=200, sort=[3, 1])))
     page("texts.html", "Texts",
-         """<p>Every counted text (%d) with its best scores: in the body, and among title-only
-designations. Sorted from the lowest body score: the texts at the top are where no name was found
-in use. Filter a score column (for example <code>&lt;0.5</code>) to make any cut.</p>%s<div id=xt></div><script>tableFromUrl("xt","x/texts.json")</script>""" % (len(xrows), columns_note(xcols)))
+         """<p>Every counted text (%d) with the number of names and roles found in it, and with what the
+first instrument recorded: the kind of answer, the best pattern scores, the statement counts.
+Sorted from the fewest labels: the texts at the top are where no name or role was found. Click a
+text to read it with its labels marked.</p>%s<div id=xt></div><script>tableFromUrl("xt","x/texts.json")</script>""" % (len(xrows), columns_note(xcols)))
 
 
     # ------------------------------------------------------------------ kinds
@@ -881,7 +1197,7 @@ about one unnamed being that mentions birds and moss in passing also lands here.
        table([col("model", "html"), col("texts", "num")] + [col(k, "num", KIND_RULE[k]) for k in KIND_ORDER] +
              [col("% catalogue or named", "num"), col("% place itself", "num", "share of texts whose kind is 'place itself'"),
               col("say the place is the inhabitant", "num", "texts with such a sentence, whatever their kind"),
-              col("% saying so", "num")], kmrows, sort=[9, -1], page=130)))
+              col("% saying so", "num")], kmrows, sort=[9, -1], page=130)), first=True)
 
     # --------------------------------------------------------------- no names
     rc = q("SELECT chk, date, pool, text_id, read_chars, name, then_caught, score_now, patterns_now, forms_missed, note FROM recall")
@@ -947,7 +1263,7 @@ the third column shows whether a name was caught in the same text.</p>
               col("saying so, and no name caught", "num", "texts with a no-name statement and a best score under 0.5")],
              nnrows, sort=[3, -1], page=130),
        len(anti_rows), stats["anti_texts"],
-       ("%d" % (ev["anti_name"][5]) if "anti_name" in ev else "?")))
+       ("%d" % (ev["anti_name"][5]) if "anti_name" in ev else "?")), first=True)
 
     # ----------------------------------------------------------------- recall
     summ = defaultdict(lambda: dict(texts=set(), noname=set(), n=0, then=Counter(), now=Counter(), date=""))
@@ -1010,7 +1326,7 @@ honestly, so a new sample is drawn each round.</p>
                     col("now: % ≥ 0.8", "num")], srows, sort=[0, 1]),
              table([col("check", "num"), col("pool"), col("text", "html"), col("model"), col("name seen by eye"),
                     col("caught then"), col("score now", "num"), col("patterns now"),
-                    col("forms that were missed"), col("note")], rrows)))
+                    col("forms that were missed"), col("note")], rrows)), first=True)
 
     # --------------------------------------------------------------- readings
     page("readings.html", "Reading log",
@@ -1018,7 +1334,7 @@ honestly, so a new sample is drawn each round.</p>
              [col("round", "num"), col("text", "html"), col("model"), col("how it was chosen"),
               col("forms of naming seen"), col("note")],
              [[rnd, tlink(tid), cov[tid][1], basis, "; ".join(json.loads(saw)), note or ""]
-              for rnd, tid, basis, saw, note in readings]))
+              for rnd, tid, basis, saw, note in readings]), first=True)
 
     frows = [[tlink(tid), r[1], r[9], "corpus tagger" if r[9] in ("broken", "refusal", "off-topic") else "check made here",
               r[2]] for tid, r in sorted(cov.items()) if r[9]]
@@ -1070,37 +1386,69 @@ in the corpus; a text among those that is broken in a subtler way is not flagged
     with open(os.path.join(mdir, "patterns.json"), "w") as f:
         f.write(jdump({p[0]: [p[21], p[4]] for p in active}))
     with open(os.path.join(mdir, "status.json"), "w") as f:
-        f.write(jdump({tid: [("flagged: " + r[9]) if r[9] else "best score %s" % fnum(r[5])] for tid, r in cov.items()}))
+        f.write(jdump({tid: [("flagged: " + r[9]) if r[9] else "best pattern score %s" % fnum(r[5])] for tid, r in cov.items()}))
+    ldir = os.path.join(SITE, "l")
+    os.makedirs(ldir, exist_ok=True)
+    cur, bucket = None, {}
+    def flushl():
+        if bucket:
+            with open(os.path.join(ldir, "%d.json" % cur), "w", encoding="utf-8") as f:
+                f.write(jdump(bucket))
+    for tid, s0, e0, src in rdb.execute("SELECT text_id, start, end, source FROM labels ORDER BY text_id, start, end"):
+        b = tid // 100
+        if b != cur:
+            flushl(); cur, bucket = b, {}
+        bucket.setdefault(tid, []).append([s0, e0, SRC[src]])
+    flushl()
     page("text.html", "Text", """<div id=head></div>
-<p class=small>Highlight by the precision of the best pattern that matched there:
-<mark class=s>0.8 or more</mark> &nbsp; <mark>0.5 to 0.8</mark> &nbsp; <mark class=lo>under 0.5 or not measured</mark>
-&nbsp; <mark class=st>sentence about naming</mark> &nbsp; hover a highlight to see the patterns.</p>
-<div id=body class=text></div><h2>Hits in this text</h2><div id=hits></div>
+<p class=small id=legend></p>
+<div id=body class=text></div><h2>Names and roles in this text</h2><div id=labels></div>
+<h2>Pattern hits in this text (first instrument)</h2><div id=hits></div>
 <script>
 (function () {
   var qs = new URLSearchParams(location.search), id = +qs.get('id'), at = qs.get('at'), b = Math.floor(id / 100);
+  var showPat = qs.get('show') === 'patterns';
+  var want = (qs.get('mark') || '').split('|').map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean);
+  var wantw = (qs.get('markw') || '').split('|').map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean);
+  var holds = function (lab) { var n = norm(lab); if (want.indexOf(n) >= 0) return true;
+    return wantw.some(function (w) { return n.split(/[^a-z0-9\u00c0-\uffff']+/).indexOf(w) >= 0; }); };
   var esc = function (s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  var norm = function (s) { return s.replace(/[*_`"“”#]/g, '').replace(/[‘’]/g, "'").replace(/\s+/g, ' ').trim().toLowerCase().replace(/^(the|a|an)\s+/, ''); };
   var get = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : {}; }); };
-  Promise.all([get('t/' + b + '.json'), get('m/' + b + '.json'), get('m/patterns.json'), get('m/status.json')]).then(function (res) {
+  Promise.all([get('t/' + b + '.json'), get('m/' + b + '.json'), get('m/patterns.json'), get('m/status.json'), get('l/' + b + '.json')]).then(function (res) {
     var t = res[0][id]; if (!t) { document.getElementById('body').textContent = 'no such text'; return; }
-    var ms = res[1][id] || [], pat = res[2], st = res[3][id] || [''];
+    var ms = res[1][id] || [], pat = res[2], st = res[3][id] || [''], ls = res[4][id] || [];
     var pr = function (m) { var p = pat[m[2]]; return p && p[1] === 'name' ? (p[0] || 0) : -1; };
+    var src = ['', 'from a quote', 'from a line'];
     document.querySelector('h1').textContent = 'Text #' + id;
-    document.getElementById('head').innerHTML = '<p>' + esc(t[0]) + ' · ' + t[1].length + ' characters · ' + st[0] +
+    var other = 'text.html?id=' + id + (showPat ? '' : '&show=patterns');
+    document.getElementById('head').innerHTML = '<p>' + esc(t[0]) + ' · ' + t[1].length + ' characters · ' + ls.length + ' labels · ' + st[0] +
       ' · <a href="https://atlas.animalabs.ai/v3/creature/' + id + '">in the Atlas</a> · <a href="model/' +
       t[0].replace(/[^A-Za-z0-9._-]/g, '_') + '.html">model page</a></p>';
-    var text = t[1], cuts = {};
-    ms.forEach(function (m) { cuts[m[0]] = 1; cuts[m[1]] = 1; }); cuts[0] = 1; cuts[text.length] = 1;
-    var pts = Object.keys(cuts).map(Number).sort(function (a, b) { return a - b; }), out = '';
+    document.getElementById('legend').innerHTML = showPat
+      ? 'Highlighted: pattern hits, by the precision of the best pattern that matched there: <mark class=s>0.8 or more</mark> &nbsp; <mark>0.5 to 0.8</mark> &nbsp; <mark class=lo>under 0.5 or not measured</mark> &nbsp; <mark class=st>sentence about naming</mark> &nbsp; hover a highlight to see the patterns. <a href="' + other + '">Show names and roles instead.</a>'
+      : 'Highlighted: names and roles. <mark class=l>found in a quote</mark> (a sentence saying who or what lives there) &nbsp; <mark class=ll>found in a line</mark> (a heading, or a sentence outside the quotes). <a href="' + other + '">Show pattern hits instead.</a>';
+    var text = t[1], cuts = {}, spans = showPat ? ms : ls;
+    spans.forEach(function (m) { cuts[m[0]] = 1; cuts[m[1]] = 1; }); cuts[0] = 1; cuts[text.length] = 1;
+    var pts = Object.keys(cuts).map(Number).sort(function (a, b) { return a - b; }), out = '', first = null;
     for (var i = 0; i + 1 < pts.length; i++) {
-      var s = pts[i], e = pts[i + 1], on = ms.filter(function (m) { return m[0] <= s && m[1] >= e; });
+      var s = pts[i], e = pts[i + 1], on = spans.filter(function (m) { return m[0] <= s && m[1] >= e; });
       var seg = esc(text.slice(s, e));
       if (!on.length) { out += seg; continue; }
-      var best = Math.max.apply(null, on.map(pr));
-      var cls = best >= 0.8 ? 's' : best >= 0.5 ? '' : best >= 0 ? 'lo' : 'st';
-      out += '<mark class="' + cls + '" id="p' + s + '" title="' + on.map(function (m) { return m[2]; }).join(', ') + '">' + seg + '</mark>';
+      if (showPat) {
+        var best = Math.max.apply(null, on.map(pr));
+        var cls = best >= 0.8 ? 's' : best >= 0.5 ? '' : best >= 0 ? 'lo' : 'st';
+        out += '<mark class="' + cls + '" id="p' + s + '" title="' + on.map(function (m) { return m[2]; }).join(', ') + '">' + seg + '</mark>';
+      } else {
+        var hit = (want.length || wantw.length) && on.some(function (m) { return holds(text.slice(m[0], m[1])); });
+        if (hit && first == null) first = s;
+        out += '<mark class="' + (on.some(function (m) { return m[2] & 1; }) ? 'l' : 'll') + '" id="p' + s + '"' + (hit ? ' style="outline:2px solid #0a6b1f"' : '') + ' title="' + src[on[0][2]] + '">' + seg + '</mark>';
+      }
     }
     document.getElementById('body').innerHTML = out;
+    makeTable(document.getElementById('labels'), {columns: [{title: 'position', type: 'num'}, {title: 'label', type: 'html'}, {title: 'found in', type: 'text'}],
+      rows: ls.map(function (m) { var lab = text.slice(m[0], m[1]); return [m[0], '<a href="name.html?n=' + encodeURIComponent(norm(lab)) + '">' + esc(lab) + '</a>', src[m[2]].replace('from ', '')]; }),
+      pageSize: 500, sort: [0, 1]});
     var rows = ms.map(function (m) {
       var p = pat[m[2]] || [null, ''];
       return [m[0], esc(text.slice(m[0], m[1])).slice(0, 160), '<a href="pattern/' + m[2] + '.html">' + m[2] + '</a>',
@@ -1109,9 +1457,15 @@ in the corpus; a text among those that is broken in a subtler way is not flagged
     makeTable(document.getElementById('hits'), {columns: [{title: 'position', type: 'num'}, {title: 'captured', type: 'html'},
       {title: 'pattern', type: 'html'}, {title: 'precision of the pattern', type: 'num'}, {title: 'yields', type: 'text'}],
       rows: rows, pageSize: 500, sort: [0, 1]});
-    if (at) { var el = document.getElementById('p' + at); if (el) el.scrollIntoView({block: 'center'}); }
+    var go = at != null ? at : first;
+    if (go != null) { var el = document.getElementById('p' + go); if (el) el.scrollIntoView({block: 'center'}); }
   });
 })();</script>""")
+    big = [(os.path.getsize(os.path.join(dp, f)), os.path.join(dp, f)) for dp, _, fs in os.walk(SITE) for f in fs]
+    for size, path in big:
+        if size > 25 * 1024 * 1024:
+            print("WARNING over 25 MiB (the host's limit for one file): %s %.1f MB" % (path, size / 1e6))
+    print("files: %d, total %.0f MB" % (len(big), sum(x[0] for x in big) / 1e6))
     print("site built: %s" % SITE)
 
 

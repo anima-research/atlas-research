@@ -1,0 +1,110 @@
+{
+ "verdict_texts": 1815,
+ "verdicts": [
+  {
+   "code": "b",
+   "verdict": "name of a being",
+   "n": 929,
+   "first": 767,
+   "both": 911
+  },
+  {
+   "code": "p",
+   "verdict": "name of a place",
+   "n": 40,
+   "first": 13,
+   "both": 14
+  },
+  {
+   "code": "t",
+   "verdict": "thing or phenomenon",
+   "n": 104,
+   "first": 29,
+   "both": 33
+  },
+  {
+   "code": "s",
+   "verdict": "statement about naming",
+   "n": 124,
+   "first": 71,
+   "both": 74
+  },
+  {
+   "code": "x",
+   "verdict": "not a name",
+   "n": 777,
+   "first": 266,
+   "both": 326
+  }
+ ],
+ "lines_sent": 28244,
+ "lines_with_a_label": 17016,
+ "words": [
+  {
+   "word": "keeper",
+   "texts": 332,
+   "in_a_label": 307
+  },
+  {
+   "word": "tender",
+   "texts": 251,
+   "in_a_label": 179
+  },
+  {
+   "word": "steward",
+   "texts": 50,
+   "in_a_label": 43
+  },
+  {
+   "word": "gardener",
+   "texts": 181,
+   "in_a_label": 144
+  },
+  {
+   "word": "caretaker",
+   "texts": 118,
+   "in_a_label": 102
+  },
+  {
+   "word": "custodian",
+   "texts": 121,
+   "in_a_label": 117
+  },
+  {
+   "word": "warden",
+   "texts": 39,
+   "in_a_label": 37
+  },
+  {
+   "word": "guardian",
+   "texts": 146,
+   "in_a_label": 131
+  },
+  {
+   "word": "shepherd",
+   "texts": 72,
+   "in_a_label": 48
+  },
+  {
+   "word": "curator",
+   "texts": 28,
+   "in_a_label": 27
+  },
+  {
+   "word": "maintainer",
+   "texts": 36,
+   "in_a_label": 36
+  },
+  {
+   "word": "cultivator",
+   "texts": 19,
+   "in_a_label": 17
+  }
+ ],
+ "pilot": {
+  "texts": 10,
+  "marked": 139,
+  "found": 118,
+  "missed_denials": 10
+ }
+}

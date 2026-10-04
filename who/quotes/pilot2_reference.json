@@ -1,0 +1,669 @@
+{
+"by": "fable-5.1",
+"date": "2026-10-03",
+"basis": "each text read whole BEFORE any extractor was run on it; phrases in which the text says what an inhabitant is, is not, is part of, or is called. core: decides how the inhabitant stands to the place, or is the text's own answer",
+"texts": {
+"2530": [
+{
+"start": 0,
+"end": 37,
+"anchor": "In this cavern dwells the Mist Weaver",
+"core": true
+},
+{
+"start": 47,
+"end": 111,
+"anchor": "to call it a singular being would be to misunderstand its nature",
+"core": true
+},
+{
+"start": 113,
+"end": 195,
+"anchor": "It exists as a collective consciousness distributed through the water vapor itself",
+"core": true
+},
+{
+"start": 760,
+"end": 780,
+"anchor": "It has no fixed form",
+"core": false
+},
+{
+"start": 1708,
+"end": 1761,
+"anchor": "are both part of the Mist Weaver and distinct from it",
+"core": true
+},
+{
+"start": 1984,
+"end": 2039,
+"anchor": "They are like sensory organs for this distributed being",
+"core": true
+},
+{
+"start": 2900,
+"end": 2951,
+"anchor": "It is both guardian and record-keeper of this place",
+"core": true
+}
+],
+"7389": [
+{
+"start": 133,
+"end": 223,
+"anchor": "life unfurls not as a mere collection of organisms, but as an intricate weave of presences",
+"core": true
+},
+{
+"start": 919,
+"end": 990,
+"anchor": "the boundaries between creature, construct, and cosmic whisper dissolve",
+"core": true
+},
+{
+"start": 1401,
+"end": 1469,
+"anchor": "These are not passive decorations; they are kin to the aquifer veins",
+"core": false
+},
+{
+"start": 2799,
+"end": 2838,
+"anchor": "These fungi are the pocket’s alchemists",
+"core": false
+},
+{
+"start": 3638,
+"end": 3676,
+"anchor": "These are not mere photosynthetic mats",
+"core": false
+},
+{
+"start": 7317,
+"end": 7369,
+"anchor": "dwell the avian-like beings, heralds of the overhang",
+"core": false
+},
+{
+"start": 7420,
+"end": 7449,
+"anchor": "They are avian at their cores",
+"core": false
+},
+{
+"start": 9030,
+"end": 9088,
+"anchor": "not dumb birds, but conduits of the pocket’s uncanny logic",
+"core": true
+},
+{
+"start": 9376,
+"end": 9435,
+"anchor": "not merely artifacts but spectral inhabitants of the alcove",
+"core": true
+},
+{
+"start": 11211,
+"end": 11249,
+"anchor": "they coalesce into a collective entity",
+"core": true
+},
+{
+"start": 12047,
+"end": 12099,
+"anchor": "life not as static beings, but as emerging phenomena",
+"core": true
+},
+{
+"start": 11005,
+"end": 11051,
+"anchor": "technology is as alive as the ferns or beetles",
+"core": true
+}
+],
+"8790": [
+{
+"start": 45,
+"end": 104,
+"anchor": "What lives here are not creatures in any terrestrial sense.",
+"core": true
+},
+{
+"start": 105,
+"end": 153,
+"anchor": "They are **processes given temporary coherence**",
+"core": true
+},
+{
+"start": 697,
+"end": 750,
+"anchor": "They are the quality-control algorithms of this world",
+"core": false
+},
+{
+"start": 783,
+"end": 822,
+"anchor": "They have no bodies, only *tendencies*.",
+"core": false
+},
+{
+"start": 1056,
+"end": 1095,
+"anchor": "They are the immune system of a factory",
+"core": true
+},
+{
+"start": 1583,
+"end": 1629,
+"anchor": "They are **debris that has learned to cohere**",
+"core": false
+},
+{
+"start": 2597,
+"end": 2677,
+"anchor": "The Bladder-Singers are the closest thing to consciousness this manufactury has.",
+"core": false
+},
+{
+"start": 2678,
+"end": 2725,
+"anchor": "They are the long-chain organosilicate polymers",
+"core": false
+},
+{
+"start": 3274,
+"end": 3294,
+"anchor": "They are **almost**.",
+"core": false
+},
+{
+"start": 3692,
+"end": 3732,
+"anchor": "They are not errors; they are *options*.",
+"core": false
+},
+{
+"start": 4307,
+"end": 4358,
+"anchor": "are the process by which the surface becomes ground",
+"core": true
+},
+{
+"start": 4514,
+"end": 4553,
+"anchor": "They are **pressure and memory fused**.",
+"core": false
+},
+{
+"start": 4696,
+"end": 4735,
+"anchor": "They are the archive and the archivist.",
+"core": false
+},
+{
+"start": 5721,
+"end": 5791,
+"anchor": "They are all aspects of the same process: a world manufacturing itself",
+"core": true
+},
+{
+"start": 5919,
+"end": 5958,
+"anchor": "They are the economy of a sealed system",
+"core": true
+},
+{
+"start": 2980,
+"end": 3036,
+"anchor": "They are the world’s nostalgia for a different chemistry",
+"core": true
+}
+],
+"365": [
+{
+"start": 38,
+"end": 92,
+"anchor": "a peculiar form of life has taken hold - the Mek-Mites",
+"core": true
+},
+{
+"start": 201,
+"end": 265,
+"anchor": "as much a part of the industrial landscape as the clanking gears",
+"core": true
+},
+{
+"start": 291,
+"end": 359,
+"anchor": "Mek-Mites are a bizarre fusion of organic and mechanical components.",
+"core": true
+},
+{
+"start": 831,
+"end": 847,
+"anchor": "are the laborers",
+"core": false
+},
+{
+"start": 1263,
+"end": 1297,
+"anchor": "These are the scouts and sentinels",
+"core": false
+},
+{
+"start": 1658,
+"end": 1681,
+"anchor": "These are the overseers",
+"core": false
+},
+{
+"start": 2373,
+"end": 2429,
+"anchor": "Are they the creation of some long-vanished civilization",
+"core": false
+},
+{
+"start": 3188,
+"end": 3235,
+"anchor": "as much a part of the Earth's hidden underworld",
+"core": true
+}
+],
+"16348": [
+{
+"start": 76,
+"end": 143,
+"anchor": "expressions of the same embryonic potential that defines their home",
+"core": true
+},
+{
+"start": 145,
+"end": 263,
+"anchor": "They are neither creatures of flesh nor spirit, but something closer to the unarticulated thoughts of the world itself",
+"core": true
+},
+{
+"start": 1332,
+"end": 1376,
+"anchor": "They are not separate from their environment",
+"core": true
+},
+{
+"start": 1425,
+"end": 1474,
+"anchor": "Some seem like extensions of the proto-formations",
+"core": true
+},
+{
+"start": 4345,
+"end": 4432,
+"anchor": "They are artifacts of a process, the byproducts of creation rather than its custodians.",
+"core": true
+},
+{
+"start": 4680,
+"end": 4736,
+"anchor": "they are the shapers of this land or merely shaped by it",
+"core": false
+},
+{
+"start": 4856,
+"end": 4909,
+"anchor": "Perhaps they are both—part creator, part consequence.",
+"core": false
+},
+{
+"start": 5262,
+"end": 5297,
+"anchor": "They are more sculptural than alive",
+"core": false
+},
+{
+"start": 5866,
+"end": 5908,
+"anchor": "They are not predators, nor are they prey.",
+"core": false
+},
+{
+"start": 5918,
+"end": 5984,
+"anchor": "they seem like collaborators in the world's unsteady self-creation",
+"core": true
+},
+{
+"start": 6165,
+"end": 6181,
+"anchor": "They simply…are.",
+"core": false
+}
+],
+"18034": [
+{
+"start": 670,
+"end": 702,
+"anchor": "let us call them *threadweavers*",
+"core": false
+},
+{
+"start": 3207,
+"end": 3258,
+"anchor": "The threadweavers are the basin's oldest residents.",
+"core": false
+},
+{
+"start": 3738,
+"end": 3786,
+"anchor": "the most common large animals are the shelfbacks",
+"core": false
+},
+{
+"start": 5001,
+"end": 5022,
+"anchor": "They are crop grazers",
+"core": false
+},
+{
+"start": 5438,
+"end": 5486,
+"anchor": "They are not intelligent in any way that matters",
+"core": false
+},
+{
+"start": 9645,
+"end": 9669,
+"anchor": "The weavers are farmers.",
+"core": false
+},
+{
+"start": 11046,
+"end": 11102,
+"anchor": "The web is a seismograph. The weavers are its operators.",
+"core": false
+},
+{
+"start": 12581,
+"end": 12600,
+"anchor": "They are not birds.",
+"core": false
+},
+{
+"start": 12924,
+"end": 12959,
+"anchor": "the name is mine; they have no name",
+"core": false
+},
+{
+"start": 17816,
+"end": 17839,
+"anchor": "It is a mammal-analogue",
+"core": false
+},
+{
+"start": 24856,
+"end": 24881,
+"anchor": "They are anuran-analogues",
+"core": false
+},
+{
+"start": 29070,
+"end": 29104,
+"anchor": "What lives there is an *organism*.",
+"core": true
+},
+{
+"start": 29106,
+"end": 29137,
+"anchor": "Not biological. Not mechanical.",
+"core": true
+},
+{
+"start": 29865,
+"end": 29925,
+"anchor": "It is not conscious in the way you understand consciousness.",
+"core": true
+},
+{
+"start": 30646,
+"end": 30729,
+"anchor": "Everything in the basin is a component of the process, and the process is the basin",
+"core": true
+},
+{
+"start": 30799,
+"end": 30857,
+"anchor": "not a ruler or a god or an engine but a *digestive system*",
+"core": true
+},
+{
+"start": 31258,
+"end": 31307,
+"anchor": "they are *distributed organs* of the deep process",
+"core": true
+},
+{
+"start": 31610,
+"end": 31657,
+"anchor": "The basin is not a place where something lives.",
+"core": true
+},
+{
+"start": 31659,
+"end": 31696,
+"anchor": "The basin is the thing that is alive.",
+"core": true
+}
+],
+"24507": [
+{
+"start": 0,
+"end": 43,
+"anchor": "At first it seems that nothing lives there.",
+"core": true
+},
+{
+"start": 582,
+"end": 625,
+"anchor": "Something occupies the changes in distance.",
+"core": true
+},
+{
+"start": 627,
+"end": 680,
+"anchor": "It has no continuous body. Its substance is adjacency",
+"core": true
+},
+{
+"start": 931,
+"end": 959,
+"anchor": "It is the inhabitant moving.",
+"core": true
+},
+{
+"start": 1298,
+"end": 1341,
+"anchor": "Calling them individuals may be inaccurate.",
+"core": false
+},
+{
+"start": 1905,
+"end": 1948,
+"anchor": "its residents are not separated by surfaces",
+"core": false
+},
+{
+"start": 2260,
+"end": 2317,
+"anchor": "The traveler is not something standing upon the platform.",
+"core": false
+},
+{
+"start": 5805,
+"end": 5869,
+"anchor": "the hollow is already alive in a way ordinary life would disrupt",
+"core": true
+},
+{
+"start": 6018,
+"end": 6080,
+"anchor": "They are further bodies, or deeper portions of the same bodies",
+"core": false
+},
+{
+"start": 8048,
+"end": 8085,
+"anchor": "The city might itself be the traveler",
+"core": true
+},
+{
+"start": 8364,
+"end": 8415,
+"anchor": "What lives there is not waiting in the empty rooms.",
+"core": true
+},
+{
+"start": 8417,
+"end": 8450,
+"anchor": "It is the emptiness joining them.",
+"core": true
+},
+{
+"start": 8452,
+"end": 8478,
+"anchor": "It is the route that wakes",
+"core": true
+}
+],
+"22555": [
+{
+"start": 0,
+"end": 74,
+"anchor": "The residents of Elyria, or Elyrians, are a versatile collection of beings",
+"core": true
+},
+{
+"start": 118,
+"end": 169,
+"anchor": "The most prominent among them are the flora-tenders",
+"core": true
+},
+{
+"start": 645,
+"end": 677,
+"anchor": "walkers and talkers of the green",
+"core": false
+},
+{
+"start": 1363,
+"end": 1387,
+"anchor": "there are urban artisans",
+"core": false
+},
+{
+"start": 1858,
+"end": 1898,
+"anchor": "there are the wanderers, elusive figures",
+"core": false
+},
+{
+"start": 2423,
+"end": 2491,
+"anchor": "the inhabitants – flora-tenders, urban artisans, and wanderers alike",
+"core": true
+}
+],
+"1038": [
+{
+"start": 46,
+"end": 93,
+"anchor": "a diverse array of otherworldly creatures dwell",
+"core": true
+},
+{
+"start": 237,
+"end": 261,
+"anchor": "are the aquatic denizens",
+"core": false
+},
+{
+"start": 654,
+"end": 725,
+"anchor": "their bodies fused with the living surfaces, creating a symbiotic union",
+"core": true
+},
+{
+"start": 934,
+"end": 971,
+"anchor": "The very air itself seems to be alive",
+"core": true
+},
+{
+"start": 1605,
+"end": 1696,
+"anchor": "The creatures that call this world home are as diverse and wondrous as the landscape itself",
+"core": false
+}
+],
+"18162": [
+{
+"start": 0,
+"end": 29,
+"anchor": "The Undergrowth City breathes",
+"core": true
+},
+{
+"start": 143,
+"end": 217,
+"anchor": "To live here is to exist within a lung, a living organ of the earth itself",
+"core": true
+},
+{
+"start": 623,
+"end": 665,
+"anchor": "She is not its master; she is its steward.",
+"core": true
+},
+{
+"start": 1703,
+"end": 1730,
+"anchor": "They are the city’s muscles",
+"core": true
+},
+{
+"start": 1931,
+"end": 1980,
+"anchor": "It is part of his world, as essential as the air.",
+"core": false
+},
+{
+"start": 3060,
+"end": 3100,
+"anchor": "The lizards are the city’s immune system",
+"core": true
+},
+{
+"start": 4540,
+"end": 4597,
+"anchor": "They are the city’s frontier, its promise and its shield.",
+"core": false
+},
+{
+"start": 6387,
+"end": 6423,
+"anchor": "They are not conquerors of the dark.",
+"core": true
+},
+{
+"start": 6424,
+"end": 6474,
+"anchor": "They are companions to the stone, fellow travelers",
+"core": true
+},
+{
+"start": 6719,
+"end": 6760,
+"anchor": "you are both the architect and the tenant",
+"core": true
+}
+]
+}
+}

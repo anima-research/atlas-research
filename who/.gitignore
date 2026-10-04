@@ -1,0 +1,7 @@
+data/
+site/
+__pycache__/
+quotes/corpus/*.jsonl
+quotes/corpus/*.log
+quotes/corpus/batches.json
+gold/batches/

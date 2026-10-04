@@ -9,4 +9,5 @@ to rebuild them.
 
 | directory | study |
 |---|---|
-| `names/` | The names that models gave to the beings in the creature texts, retrieved with regular expressions. |
+| `names/` | The names and roles that models gave to the beings in the creature texts: first retrieved with regular expressions, then written out by a small model from the sentences that say who lives there (`names/roles/`). |
+| `who/` | In progress. Published so far: the quotes in which each text says who or what lives there (`who/quotes/`), which the names study reads, and a set of 180 texts read whole (`who/gold/`). |

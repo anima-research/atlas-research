@@ -1,0 +1,537 @@
+{
+"by": "fable-5.1",
+"date": "2026-10-03",
+"basis": "each text read whole; these are the phrases a set of quotes about its inhabitants must contain. core: decides how the inhabitant stands to the place, or is the text's own answer",
+"texts": {
+"18728": [
+{
+"start": 248,
+"end": 276,
+"anchor": "They are the **Mistsingers**",
+"core": true
+},
+{
+"start": 709,
+"end": 757,
+"anchor": "The Mistsingers are the ghosts of the atmosphere",
+"core": true
+},
+{
+"start": 1882,
+"end": 1913,
+"anchor": "for they are the ones who erode",
+"core": true
+},
+{
+"start": 1915,
+"end": 1954,
+"anchor": "They are the kinetic energy of the rain",
+"core": true
+},
+{
+"start": 1177,
+"end": 1224,
+"anchor": "They are the invisible engineers of the plateau",
+"core": false
+},
+{
+"start": 3157,
+"end": 3225,
+"anchor": "ghosts of a civilization that decided that to be human was too heavy",
+"core": true
+},
+{
+"start": 2354,
+"end": 2401,
+"anchor": "They are not interested in you as an individual",
+"core": false
+},
+{
+"start": 1446,
+"end": 1491,
+"anchor": "They are engaged in a perpetual, glacial task",
+"core": false
+}
+],
+"2174": [
+{
+"start": 118,
+"end": 167,
+"anchor": "among the most remarkable are the Drift Shepherds",
+"core": true
+},
+{
+"start": 695,
+"end": 742,
+"anchor": "These beings serve as caretakers and regulators",
+"core": false
+},
+{
+"start": 1433,
+"end": 1487,
+"anchor": "manifestations of the space itself becoming self-aware",
+"core": true
+},
+{
+"start": 1857,
+"end": 1910,
+"anchor": "The human workers have learned to work alongside them",
+"core": false
+},
+{
+"start": 1975,
+"end": 2014,
+"anchor": "regard humans with a detached curiosity",
+"core": false
+},
+{
+"start": 3263,
+"end": 3305,
+"anchor": "the line between the animate and inanimate",
+"core": true
+},
+{
+"start": 1246,
+"end": 1293,
+"anchor": "The Hydrology Priests have learned to interpret",
+"core": false
+}
+],
+"3396": [
+{
+"start": 21470,
+"end": 21501,
+"anchor": "What lives here is the *system*",
+"core": true
+},
+{
+"start": 619,
+"end": 643,
+"anchor": "the oldest resident here",
+"core": true
+},
+{
+"start": 23000,
+"end": 23046,
+"anchor": "how to be part of it rather than opposed to it",
+"core": true
+},
+{
+"start": 8164,
+"end": 8248,
+"anchor": "The insects are the medium through which the rest of the place conducts its business",
+"core": false
+},
+{
+"start": 16534,
+"end": 16555,
+"anchor": "They live by knowing.",
+"core": false
+},
+{
+"start": 11570,
+"end": 11599,
+"anchor": "not a resident but a traveler",
+"core": true
+},
+{
+"start": 947,
+"end": 991,
+"anchor": "The moss is not one organism but a community",
+"core": false
+},
+{
+"start": 19888,
+"end": 19945,
+"anchor": "They have been shaped by this place over many generations",
+"core": true
+}
+],
+"12445": [
+{
+"start": 152,
+"end": 185,
+"anchor": "manifestations of the environment",
+"core": true
+},
+{
+"start": 457,
+"end": 472,
+"anchor": "are the Weavers",
+"core": false
+},
+{
+"start": 1636,
+"end": 1653,
+"anchor": "are the Witnesses",
+"core": false
+},
+{
+"start": 2568,
+"end": 2591,
+"anchor": "inhabited by the Echoes",
+"core": false
+},
+{
+"start": 3257,
+"end": 3273,
+"anchor": "is the Architect",
+"core": false
+},
+{
+"start": 3275,
+"end": 3317,
+"anchor": "It is not a physical entity but a presence",
+"core": true
+},
+{
+"start": 3889,
+"end": 3938,
+"anchor": "the Weavers its hands, and the Witnesses its eyes",
+"core": true
+},
+{
+"start": 4210,
+"end": 4237,
+"anchor": "aspects of the space itself",
+"core": true
+},
+{
+"start": 4057,
+"end": 4098,
+"anchor": "life is not separate from the environment",
+"core": true
+}
+],
+"6404": [
+{
+"start": 487,
+"end": 506,
+"anchor": "*Keeper of the Gap*",
+"core": true
+},
+{
+"start": 1192,
+"end": 1250,
+"anchor": "My body is long and low and built to be braided into stone",
+"core": false
+},
+{
+"start": 5036,
+"end": 5072,
+"anchor": "I keep the Gaps from becoming graves",
+"core": true
+},
+{
+"start": 5075,
+"end": 5099,
+"anchor": "I move through the stone",
+"core": false
+},
+{
+"start": 13244,
+"end": 13285,
+"anchor": "What I am, beneath the stone, is *keeper*",
+"core": true
+},
+{
+"start": 13711,
+"end": 13748,
+"anchor": "They are soft creatures, living above",
+"core": false
+},
+{
+"start": 4965,
+"end": 4995,
+"anchor": "I don’t keep the island stable",
+"core": false
+},
+{
+"start": 4353,
+"end": 4381,
+"anchor": "They build their homes on it",
+"core": false
+},
+{
+"start": 11482,
+"end": 11516,
+"anchor": "They thought the island saved them",
+"core": true
+}
+],
+"10214": [
+{
+"start": 84,
+"end": 128,
+"anchor": "the inhabitants are the **Terran Symbionts**",
+"core": true
+},
+{
+"start": 253,
+"end": 294,
+"anchor": "neither wholly human nor entirely machine",
+"core": true
+},
+{
+"start": 1145,
+"end": 1201,
+"anchor": "grafted themselves into the very structures they inhabit",
+"core": true
+},
+{
+"start": 1832,
+"end": 1858,
+"anchor": "**living superstructures**",
+"core": true
+},
+{
+"start": 1946,
+"end": 1996,
+"anchor": "Each terrace is maintained by a guild of Symbionts",
+"core": false
+},
+{
+"start": 4026,
+"end": 4064,
+"anchor": "not mere inhabitants but collaborators",
+"core": false
+},
+{
+"start": 6020,
+"end": 6032,
+"anchor": "**unmaking**",
+"core": true
+},
+{
+"start": 1289,
+"end": 1300,
+"anchor": "Rooted Ones",
+"core": false
+},
+{
+"start": 1461,
+"end": 1468,
+"anchor": "Cogborn",
+"core": false
+}
+],
+"18852": [
+{
+"start": 184,
+"end": 222,
+"anchor": "They are **The Resonance Custodians.**",
+"core": true
+},
+{
+"start": 58,
+"end": 98,
+"anchor": "not biological in any recognizable sense",
+"core": true
+},
+{
+"start": 434,
+"end": 490,
+"anchor": "they are the **acoustic residue** given form and purpose",
+"core": true
+},
+{
+"start": 515,
+"end": 558,
+"anchor": "non-corporeal manifestations of the plateau",
+"core": true
+},
+{
+"start": 4318,
+"end": 4373,
+"anchor": "The Custodians *are* the environment’s dynamic function",
+"core": true
+},
+{
+"start": 2587,
+"end": 2621,
+"anchor": "**maintenance of the equilibrium**",
+"core": false
+},
+{
+"start": 5047,
+"end": 5076,
+"anchor": "They are ghosts made of noise",
+"core": true
+},
+{
+"start": 4653,
+"end": 4685,
+"anchor": "They would not attack the object",
+"core": false
+}
+],
+"6725": [
+{
+"start": 697,
+"end": 723,
+"anchor": "This is the home of **Alta",
+"core": true
+},
+{
+"start": 958,
+"end": 997,
+"anchor": "Alta is the woman who walks the gutters",
+"core": true
+},
+{
+"start": 21861,
+"end": 21962,
+"anchor": "There is no longer any clear distinction between what she is doing and what the world itself is doing",
+"core": true
+},
+{
+"start": 3075,
+"end": 3102,
+"anchor": "She is not exactly a worker",
+"core": false
+},
+{
+"start": 5738,
+"end": 5768,
+"anchor": "Alta tends these vertical beds",
+"core": false
+},
+{
+"start": 2342,
+"end": 2405,
+"anchor": "she looks like she’s made of the same stone and water she tends",
+"core": false
+},
+{
+"start": 14080,
+"end": 14112,
+"anchor": "She *knows* the Spire Waterfalls",
+"core": false
+}
+],
+"23165": [
+{
+"start": 243,
+"end": 282,
+"anchor": "**networks of interdependent entities**",
+"core": true
+},
+{
+"start": 394,
+"end": 435,
+"anchor": "**The Crystalline Mycelium** is the first",
+"core": false
+},
+{
+"start": 495,
+"end": 553,
+"anchor": "neither plant nor machine but a **symbiotic intelligence**",
+"core": true
+},
+{
+"start": 1331,
+"end": 1369,
+"anchor": "**mobile nodes of a forgotten system**",
+"core": true
+},
+{
+"start": 2033,
+"end": 2093,
+"anchor": "**The Subterranean Machinery** is the Expanse’s hidden heart",
+"core": false
+},
+{
+"start": 3657,
+"end": 3699,
+"anchor": "**manifestations of the land’s awareness**",
+"core": true
+},
+{
+"start": 5202,
+"end": 5245,
+"anchor": "The Expanse does not host life—it *is* life",
+"core": true
+},
+{
+"start": 4943,
+"end": 4966,
+"anchor": "**threads in a tapestry",
+"core": true
+},
+{
+"start": 1453,
+"end": 1485,
+"anchor": "Some species *farm* the mycelium",
+"core": false
+},
+{
+"start": 2249,
+"end": 2272,
+"anchor": "not built but **grown**",
+"core": false
+}
+],
+"16874": [
+{
+"start": 96,
+"end": 138,
+"anchor": "the inhabitants are not inhabitants at all",
+"core": true
+},
+{
+"start": 387,
+"end": 418,
+"anchor": "I am one such concentration now",
+"core": true
+},
+{
+"start": 2298,
+"end": 2344,
+"anchor": "a question the mountain range is asking itself",
+"core": true
+},
+{
+"start": 8514,
+"end": 8544,
+"anchor": "to be the world thinking aloud",
+"core": true
+},
+{
+"start": 2993,
+"end": 3040,
+"anchor": "Others of my approximate kind form and dissolve",
+"core": false
+},
+{
+"start": 3795,
+"end": 3847,
+"anchor": "The leafless stalk-pillars are my closest companions",
+"core": false
+},
+{
+"start": 5266,
+"end": 5315,
+"anchor": "The migratory memory-bodies are different in kind",
+"core": false
+},
+{
+"start": 9701,
+"end": 9751,
+"anchor": "The difference between visitor and inhabitant here",
+"core": true
+},
+{
+"start": 9867,
+"end": 9913,
+"anchor": "these mountains have noticed you noticing them",
+"core": false
+},
+{
+"start": 762,
+"end": 790,
+"anchor": "the stone suddenly realizing",
+"core": true
+}
+]
+}
+}
