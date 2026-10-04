@@ -99,8 +99,9 @@ In {per.get(0, 0)} texts the word is only mentioned and given to no inhabitant; 
 # ---------- beings ----------
 page('beings.html', 'Beings', """
 <p>One row per inhabitant that a care word is given to. The numbers in the last five columns are sentences under each question; filter with <code>&gt;0</code> to keep the beings whose text answers it.
-Click a name to open the being.</p><div id=t></div>""", f"""
+Click a name to open the being.</p><div id=t><span class=small>loading…</span></div>""", f"""
 fetch('beings.json').then(r=>r.json()).then(function(B){{
+  document.getElementById('t').innerHTML='';
   makeTable(document.getElementById('t'), {{pageSize:150, sort:[0,1], columns:[
     {{title:'#',type:'num'}},{{title:'called',type:'html',tip:'what the text calls it'}},{{title:'care names given to it',type:'text'}},
     {{title:'words',type:'text',tip:'which of the twelve words'}},{{title:'writer',type:'text'}},{{title:'text',type:'html'}},
@@ -133,7 +134,7 @@ page('read.html', 'Read', """
 <div class='qtabs' id=tabs></div><p id=what></p>
 <div class=controls>word <select id=w></select> writer <select id=m></select> contains <input id=s placeholder='text in the sentences'>
 order <select id=o><option value=r>shuffled</option><option value=m>by writer</option><option value=n>most sentences first</option></select>
-<button id=again>shuffle again</button></div><div class=tbl-info id=info></div><div id=list></div><button id=more>more</button>""", f"""
+<button id=again>shuffle again</button></div><div class=tbl-info id=info>loading the sentences…</div><div id=list></div><button id=more>more</button>""", f"""
 var Q={json.dumps(QTEXT)}, W={json.dumps(STEMS)}, P=new URLSearchParams(location.search), q=Q[P.get('q')]?P.get('q'):'cost', shown=40, seed=1;
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}
 document.getElementById('tabs').innerHTML=Object.keys(Q).map(function(k){{return '<a href="read.html?q='+k+'"'+(k===q?' class=on':'')+'>'+k+'</a>';}}).join('');
