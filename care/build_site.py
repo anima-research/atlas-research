@@ -34,6 +34,7 @@ td.bar{background:linear-gradient(to right,#dbe9ff var(--w),transparent var(--w)
 
 NAV = ("<nav><b>Keepers, tenders, guardians</b> &nbsp; <a href='index.html'>Overview</a>"
        + ''.join(f"<a href='read.html?q={q}'>{q.capitalize()}</a>" for q in Q5) +
+       "<a href='portrait.html'>Portraits</a><a href='kinds.html'>Kinds</a><a href='weave.html'>Weave</a>"
        "<a href='beings.html'>Beings</a><a href='writers.html'>Writers</a><a href='words.html'>Words</a>"
        "<a href='kept.html'>What is kept</a><a href='method.html'>Method</a>"
        "<div>A study of the Atlas creature texts, release 15 &middot; <a href='https://atlas.lari-island.ai/research/names/'>names and roles</a></div></nav>")
@@ -47,8 +48,10 @@ def page(name, title, body, script=''):
 # ---------- data ----------
 texts = {t: (m, n, nb) for t, m, n, nb in db.execute("select text_id, model, n_sentences, n_beings from texts")}
 beings = db.execute("select id, text_id, model, called, names, words, n_role, n_relation, n_cost, n_origin, n_fate from beings order by id").fetchall()
-rows = [[b[0], b[1], b[3], '; '.join(json.loads(b[4])), b[5], b[2], texts[b[1]][1], *b[6:]] for b in beings]
-dump('beings.json', rows)   # id, text, called, names, words, writer, sentences in text, role, relation, cost, origin, fate
+import weave
+WV = {'solo': 's', 'stacked': 'k', 'ensemble': 'e'}
+rows = [[b[0], b[1], b[3], '; '.join(json.loads(b[4])), b[5], b[2], texts[b[1]][1], *b[6:], WV.get(weave.kind.get(b[1]) if b[5] else None, '')] for b in beings]
+dump('beings.json', rows)   # id, text, called, names, words, writer, sentences in text, role, relation, cost, origin, fate, weave (s solo, k stacked, e ensemble)
 cache = {}
 def sent(t, a, b):
     if t not in cache:
@@ -87,7 +90,11 @@ Nothing here is paraphrased: every line shown is a sentence of the text.</p>
 <div class=tiles>{tiles}</div>
 <p class=small>Each opens the sentences of the texts under that question, being by being, with filters by word and by writer. "With an answer" means the reader put at least one sentence of the text under the question. A text that says nothing of a cost is counted as saying nothing.</p>
 <h2>Where to go</h2>
-<ul><li><a href='beings.html'>Beings</a>: all {n_beings:,} in one table; a row opens the being with everything the text says of it.</li>
+<ul><li><a href='portrait.html'>Portraits</a>: pick a writer, a word, or both, and see its numbers against everyone else and its own sentences. For example
+<a href='portrait.html?m=google/*&q=cost'>what the Google models say of the cost</a>, or <a href='portrait.html?w=gardener&q=fate'>what becomes of gardeners</a>.</li>
+<li><a href='kinds.html'>Kinds</a>: the kinds of answer to each question, found by two readers on separate samples.</li>
+<li><a href='weave.html'>Weave</a>: whether a keeper stands alone in its text, carries several of the words, or is one of several.</li>
+<li><a href='beings.html'>Beings</a>: all {n_beings:,} in one table; a row opens the being with everything the text says of it.</li>
 <li><a href='writers.html'>Writers</a>: each model, how often it writes such beings and which questions its texts answer.</li>
 <li><a href='words.html'>Words</a>: the twelve words side by side. <a href='kept.html'>What is kept</a>: what stands next to the word.</li>
 <li><a href='method.html'>Method</a>: how the set was made, what it was checked against, where it is thin.</li></ul>
@@ -104,9 +111,9 @@ fetch('beings.json').then(r=>r.json()).then(function(B){{
   document.getElementById('t').innerHTML='';
   makeTable(document.getElementById('t'), {{pageSize:150, sort:[0,1], columns:[
     {{title:'#',type:'num'}},{{title:'called',type:'html',tip:'what the text calls it'}},{{title:'care names given to it',type:'text'}},
-    {{title:'words',type:'text',tip:'which of the twelve words'}},{{title:'writer',type:'text'}},{{title:'text',type:'html'}},
+    {{title:'words',type:'text',tip:'which of the twelve words'}},{{title:'weave',type:'text',tip:'solo: the only such being in its text, one word; stacked: the only one, several words; ensemble: one of several'}},{{title:'writer',type:'html'}},{{title:'text',type:'html'}},
     {{title:'sentences in text',type:'num'}},{{title:'role',type:'num'}},{{title:'relation',type:'num'}},{{title:'cost',type:'num'}},{{title:'origin',type:'num'}},{{title:'fate',type:'num'}}],
-   rows:B.map(function(b){{return [b[0],'<a href="being.html?id='+b[0]+'">'+esc(b[2])+'</a>',b[3],b[4],b[5],'<a href="{TEXT_URL}'+b[1]+'">'+b[1]+'</a>',b[6],b[7],b[8],b[9],b[10],b[11]];}})}});
+   rows:B.map(function(b){{return [b[0],'<a href="being.html?id='+b[0]+'">'+esc(b[2])+'</a>',b[3],b[4],{{s:'solo',k:'stacked',e:'ensemble'}}[b[12]]||'','<a href="portrait.html?m='+encodeURIComponent(b[5])+'">'+esc(b[5])+'</a>','<a href="{TEXT_URL}'+b[1]+'">'+b[1]+'</a>',b[6],b[7],b[8],b[9],b[10],b[11]];}})}});
 }});
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}""")
 
@@ -173,33 +180,46 @@ for b in beings:
 tm = collections.defaultdict(set); sl = collections.defaultdict(list)
 for b in beings: tm[b[2]].add(b[1])
 for t, (m, n, nb) in texts.items(): sl[m].append(n)
-wrows = [[m, corpus_by_model.get(m, 0), len(tm[m]), pct(len(tm[m]) / corpus_by_model[m]) if corpus_by_model.get(m) else '', w['beings'],
-          round(sorted(sl[m])[len(sl[m]) // 2]), *[pct(w[q] / w['beings']) for q in Q5], f"<a href='read.html?q=cost&m={esc(m)}'>read</a>"] for m, w in W.items()]
+wk = collections.defaultdict(collections.Counter)
+for t, bs in weave.T.items(): wk[bs[0][2]][weave.kind[t]] += 1
+wrows = [[f"<a href='portrait.html?m={esc(m)}'>{esc(m)}</a>", corpus_by_model.get(m, 0), len(tm[m]), pct(len(tm[m]) / corpus_by_model[m]) if corpus_by_model.get(m) else '', w['beings'],
+          round(sorted(sl[m])[len(sl[m]) // 2]), *[pct(w[q] / w['beings']) for q in Q5], *[pct(wk[m][k] / max(1, sum(wk[m].values()))) for k in ('solo', 'stacked', 'ensemble')]] for m, w in W.items()]
 page('writers.html', 'Writers', """
 <p>One row per model that wrote the texts. "Care texts" are its texts in which a being carries one of the twelve words; the five percentages are the share of its beings whose text answers the question.
-Small rows move a lot: filter <code>beings</code> with <code>&gt;=60</code> before comparing.</p>
+Small rows move a lot: filter <code>beings</code> with <code>&gt;=60</code> before comparing. A writer's name opens its portrait.</p>
 <p class=small>Longer texts answer more questions: across all writers the share of beings with a cost rises from the shortest eighth of texts to the longest (see Method). The median length is given so that rows can be compared within a band.</p><div id=t></div>""",
-     "makeTable(document.getElementById('t'),{pageSize:200,sort:[4,-1],columns:[{title:'writer',type:'text'},{title:'texts in corpus',type:'num'},{title:'care texts',type:'num'},"
+     "makeTable(document.getElementById('t'),{pageSize:200,sort:[4,-1],columns:[{title:'writer',type:'html'},{title:'texts in corpus',type:'num'},{title:'care texts',type:'num'},"
      "{title:'% of its texts',type:'num'},{title:'beings',type:'num'},{title:'median sentences',type:'num',tip:'median length of its care texts'},"
-     "{title:'role %',type:'num'},{title:'relation %',type:'num'},{title:'cost %',type:'num'},{title:'origin %',type:'num'},{title:'fate %',type:'num'},{title:'',type:'html'}],rows:" + json.dumps(wrows) + "});")
+     "{title:'role %',type:'num'},{title:'relation %',type:'num'},{title:'cost %',type:'num'},{title:'origin %',type:'num'},{title:'fate %',type:'num'},{title:'solo %',type:'num',tip:'share of its care texts with one being and one word'},{title:'stacked %',type:'num',tip:'one being, several words'},{title:'ensemble %',type:'num',tip:'several beings'}],rows:" + json.dumps(wrows) + "});")
 
 # ---------- words ----------
 def band(lo, hi): return [b for b in beings if lo <= texts[b[1]][1] <= hi]
 B3060 = band(30, 60)
+def within(w, i):
+    d = wt = 0
+    for m in W:
+        a = [b for b in beings if b[2] == m and w in b[5].split()]; c = [b for b in beings if b[2] == m and w not in b[5].split()]
+        if len(a) < 8 or len(c) < 8: continue
+        k = min(len(a), len(c)); wt += k; d += k * (sum(b[6 + i] > 0 for b in a) / len(a) - sum(b[6 + i] > 0 for b in c) / len(c))
+    return round(100 * d / wt, 1) if wt else None
+allcost = sum(b[8] > 0 for b in beings) / len(beings)
+WITHIN = {w: {q: within(w, i) for i, q in enumerate(Q5)} for w in STEMS}
 wd = []
 for w in STEMS:
     g = [b for b in beings if w in b[5].split()]; g2 = [b for b in B3060 if w in b[5].split()]
-    wd.append([w, len(g), len({b[1] for b in g}), len({b[2] for b in g}), *[pct(sum(b[6 + i] > 0 for b in g) / len(g)) for i in range(5)],
-               pct(sum(b[8] > 0 for b in g2) / len(g2)), f"<a href='read.html?q=cost&w={w}'>read</a>"])
+    wd.append([f"<a href='portrait.html?w={w}'>{w}</a>", len(g), len({b[1] for b in g}), len({b[2] for b in g}), *[pct(sum(b[6 + i] > 0 for b in g) / len(g)) for i in range(5)],
+               pct(sum(b[8] > 0 for b in g2) / len(g2)), round(100 * (sum(b[8] > 0 for b in g) / len(g) - sum(b[8] > 0 for b in beings if w not in b[5].split()) / sum(1 for b in beings if w not in b[5].split())), 1), WITHIN[w]['cost']])
 combo = collections.Counter(b[5] for b in beings if ' ' in b[5])
 page('words.html', 'The twelve words', f"""
 <p>A being is counted under a word when the word stands in one of the care names the text gives it. A being with several of the words is counted under each.</p><div id=t></div>
-<p class=small>"cost %, texts of 30 to 60 sentences" repeats the cost column inside one band of length, since longer texts answer more questions.</p>
+<p class=small>"cost %, texts of 30 to 60 sentences" repeats the cost column inside one band of length, since longer texts answer more questions.
+The last two columns separate the word from the writers who favour it. "Cost, against other words" is the plain difference in percentage points between beings with the word and all beings without it.
+"Inside one writer" takes each writer with at least 8 beings on either side, compares that writer's beings with the word to its beings without, and averages. Where the first is large and the second near zero, the difference belongs to the writers, not to the word; guardian is the clear case. A word opens its portrait.</p>
 <h2>Words given together</h2><p>{sum(combo.values()):,} beings carry more than one of the words. Most frequent sets:
 {'; '.join(f'{k.replace(" ", " + ")} ({v:,})' for k, v in combo.most_common(14))}.</p>""",
-     "makeTable(document.getElementById('t'),{pageSize:50,sort:[1,-1],columns:[{title:'word',type:'text'},{title:'beings',type:'num'},{title:'texts',type:'num'},{title:'writers',type:'num'},"
+     "makeTable(document.getElementById('t'),{pageSize:50,sort:[1,-1],columns:[{title:'word',type:'html'},{title:'beings',type:'num'},{title:'texts',type:'num'},{title:'writers',type:'num'},"
      "{title:'role %',type:'num'},{title:'relation %',type:'num'},{title:'cost %',type:'num'},{title:'origin %',type:'num'},{title:'fate %',type:'num'},"
-     "{title:'cost %, texts of 30 to 60 sentences',type:'num'},{title:'',type:'html'}],rows:" + json.dumps(wd) + "});")
+     "{title:'cost %, texts of 30 to 60 sentences',type:'num'},{title:'cost, against other words',type:'num'},{title:'cost, inside one writer',type:'num'}],rows:" + json.dumps(wd) + "});")
 
 # ---------- what is kept ----------
 rdb = roles(); pre = collections.defaultdict(set); of = collections.defaultdict(set)
@@ -259,4 +279,5 @@ Under origin the range is wide, and a tradition handed down counts as an origin 
 <h2>Files</h2>
 <p><code>care/common.py</code> (the words, sentence numbering), <code>ask.py</code>, <code>batch_care.py</code>, <code>build.py</code> (answers to <code>data/care.db</code>), <code>build_site.py</code>, <code>what_is_kept.py</code>.</p>
 """)
+exec(open(os.path.join(HERE, 'site_more.py')).read())
 print('site built:', n_beings, 'beings;', {f: os.path.getsize(os.path.join(SITE, f)) // 1024 for f in sorted(os.listdir(SITE)) if f.endswith('.json') and not f.startswith('b_')}, 'KB')

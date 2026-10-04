@@ -2,3 +2,5 @@ __pycache__/
 data/
 out/
 site/
+reading/*_A.md
+reading/*_B.md

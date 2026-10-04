@@ -17,6 +17,11 @@ https://atlas.lari-island.ai/research/care/
 | `batch_care.py` | the same request for every care text through the Batch API |
 | `build.py` | the answers -> `data/care.db` |
 | `build_site.py` | `data/care.db` -> `site/`; every number on the pages is computed there |
+| `site_more.py` | run by `build_site.py`: the portrait page (a writer, a word, or both), the weave page, the kinds pages |
+| `weave.py` | whether a being stands alone in its text, carries several of the words, or is one of several |
+| `sample_reading.py` | draws the two samples of 300 beings per question that the readers read |
+| `reading/*_notes.md` | each reader's account of the kinds of answer it met in its sample (ten readers, two per question) |
+| `reading/*_merged.md` | the two accounts for each question set side by side; quotes checked against the samples |
 | `what_is_kept.py` | what stands next to a care word in the names, counted without a reader |
 | `pilot_ids.json`, `pilot_hand.json` | ten random care texts and their marking by hand, made before any request |
 | `pilot2_ids.json` | thirty more random texts, read through the chosen reader's cost and origin sentences |
@@ -42,5 +47,13 @@ question at all) a small model agreed on 42, two larger ones on 44 and 46; the s
 the cost in two texts of five that state one. The site's Method page carries the table, the
 check on thirty further texts, and the known thin places.
 
-To rebuild: `python3 build.py && python3 build_site.py`, then
+## Reading
+
+Kinds of answer were found by reading, not by coding the whole set. For each question two readers
+(models, given no kinds in advance) each read a different sample of 300 beings and wrote up what
+they met; a third pass compared the two accounts without forming kinds of its own. The site's
+Kinds pages show those comparisons. The samples (`reading/<question>_A.md`, `_B.md`) are rebuilt
+by `sample_reading.py`.
+
+To rebuild: `python3 build.py && python3 sample_reading.py && python3 build_site.py`, then
 `python3 -m http.server 8798 -d site`.
