@@ -228,10 +228,34 @@ for t, n in rdb.execute("select text_id, norm from labels"):
         if m.group(1): pre[(m.group(2), m.group(1))].add(t)
         if m.group(3): of[(m.group(2), m.group(3))].add(t)
 krows = [[w, 'X-' + w, x, len(v)] for (w, x), v in pre.items() if len(v) >= 2] + [[w, w + ' of X', x, len(v)] for (w, x), v in of.items() if len(v) >= 2]
+def aggregate(split):
+    """X (or each word of X) across all twelve care words and both forms; distinct texts"""
+    A = collections.defaultdict(lambda: {'pre': set(), 'of': set(), 'w': collections.defaultdict(set)})
+    for form, d in (('pre', pre), ('of', of)):
+        for (w, x), v in d.items():
+            for k in (x.split() if split else [x]):
+                A[k][form] |= v; A[k]['w'][w] |= v
+    out = []
+    for k, v in A.items():
+        tot = len(v['pre'] | v['of'])
+        if tot >= 2: out.append([k, tot, len(v['w']), len(v['pre']), len(v['of']), *[len(v['w'][w]) if w in v['w'] else '' for w in STEMS]])
+    return out
+agg_cols = ("[{title:'X',type:'text'},{title:'texts',type:'num',tip:'distinct texts, all twelve words, both forms'},{title:'care words',type:'num',tip:'how many of the twelve it stands with'},"
+            "{title:'X-word',type:'num',tip:'texts with the hyphen form'},{title:'word of X',type:'num',tip:'texts with the of form'}," + ','.join("{title:'%s',type:'num'}" % w for w in STEMS) + "]")
 page('kept.html', 'What is kept', f"""
 <p>Counted from the names alone, without a reader: the word joined to a care word by a hyphen (<i>moss-tenders</i>) and the one or two words after "of" (<i>keepers of the threshold</i>).
-Counted by texts; forms seen in one text only are left out ({sum(1 for v in pre.values() if len(v) < 2) + sum(1 for v in of.values() if len(v) < 2):,} of them).</p><div id=t></div>""",
-     "makeTable(document.getElementById('t'),{pageSize:200,sort:[3,-1],columns:[{title:'word',type:'text'},{title:'form',type:'text'},{title:'X',type:'text'},{title:'texts',type:'num'}],rows:" + json.dumps(krows) + "});")
+Everything is counted by distinct texts, and rows seen in one text only are left out.</p>
+<p class=qtabs id=views><a href='#word' data-v=word>by word, across all forms</a><a href='#phrase' data-v=phrase>by whole phrase, across all forms</a><a href='#forms' data-v=forms>every form separately</a></p>
+<p class=small id=note></p><div id=t></div>""",
+     "var V={word:{note:'Each word that stands in X, whichever of the twelve care words it is kept by and in either form: <i>water-keepers</i>, <i>tenders of the water</i> and <i>guardians of the deep water</i> all count under <b>water</b>. "
+     "A two-word X counts under both of its words, so <i>keepers of ancient knowledge</i> is under <b>ancient</b> and under <b>knowledge</b>. Nothing is removed: joining words such as <i>that</i> and <i>and</i> are in the table as what they are, and can be filtered out.',"
+     "cols:" + agg_cols + ",rows:" + json.dumps(aggregate(True)) + ",sort:[1,-1]},"
+     "phrase:{note:'X as written, one or two words, summed over the twelve care words and both forms.',cols:" + agg_cols + ",rows:" + json.dumps(aggregate(False)) + ",sort:[1,-1]},"
+     "forms:{note:'One row per care word, form and X.',cols:[{title:'word',type:'text'},{title:'form',type:'text'},{title:'X',type:'text'},{title:'texts',type:'num'}],rows:" + json.dumps(krows) + ",sort:[3,-1]}};"
+     "function show(v){if(!V[v])v='word';document.getElementById('t').innerHTML='';document.getElementById('note').innerHTML=V[v].note;"
+     "Array.prototype.forEach.call(document.querySelectorAll('#views a'),function(a){a.className=a.dataset.v===v?'on':'';});"
+     "makeTable(document.getElementById('t'),{key:v,pageSize:200,sort:V[v].sort,columns:V[v].cols,rows:V[v].rows});}"
+     "window.onhashchange=function(){show(location.hash.slice(1));};show(location.hash.slice(1));")
 
 # ---------- method ----------
 def pilot():
