@@ -213,3 +213,145 @@ page('kinds.html', 'Kinds of answer', f"""
 <p>What kinds of answer the texts give to each of the five questions, found by reading. Ten readers took part: two per question, each with its own random sample of 300 beings, and no kinds given in advance; then the two accounts for each question were set side by side.</p>
 <ul>{kinds_idx}</ul>
 <p class=small>These are readings of samples, not counts over the whole set. The pages keep the two readers' numbers apart and say where they disagree.</p>""")
+
+# ---------- findings ----------
+def rd(q, key, *nums):
+    """a figure reported by the readers: some line of the merged account must hold the key and every number"""
+    for l in open(os.path.join(RD, f'{q}_merged.md')):
+        if key.lower() in l.lower() and all(re.search(r'(?<!\d)%s(?!\d)' % re.escape(str(n)), l) for n in nums): return True
+    raise SystemExit(f'findings: not found in {q}_merged.md: {key!r} {nums}')
+fold_q = lambda x: re.sub(r'\s+', ' ', x.replace('’', "'").replace('‘', "'").replace('“', '"').replace('”', '"').replace('*', '')).strip().lower()
+bq = {b[0]: b for b in beings}
+def quote(q, bid, text):
+    """a quote shown on the findings page: must stand in the sentences listed for that being under that question"""
+    have = fold_q(' '.join(x[1] for x in byq[q].get(bid, [])))
+    for part in text.split(' / '):
+        if fold_q(part.strip(' .…')) not in have: raise SystemExit(f'findings: quote not in being {bid} under {q}: {part!r}')
+    b = bq[bid]
+    return (f"<blockquote>{esc(text)}<br><span class=small><a href='being.html?id={bid}'>{esc(b[3])}</a> &middot; {esc(b[2])}</span></blockquote>")
+
+# 1. what each word keeps
+MEMF = ['memory', 'memories', 'record', 'records', 'history', 'knowledge', 'secrets', 'lore', 'wisdom', 'archive', 'archives', 'stories', 'names', 'ledger']
+def texts_of(x, w=None): return (NOUN[x]['w'].get(w, set()) if w else NOUN[x]['t']) if x in NOUN else set()
+f1a = ''.join(f"<tr><td><b>{x}</b></td><td class=num>{len(texts_of(x))}</td><td class=num>{len(texts_of(x, 'keeper'))}</td><td class=num>{len(texts_of(x, 'guardian'))}</td><td class=num>{len(texts_of(x, 'custodian'))}</td>"
+              f"<td class=num>{len(set().union(*[texts_of(x, w) for w in STEMS if w not in ('keeper', 'guardian', 'custodian')]))}</td></tr>" for x in ('memory', 'record', 'history', 'knowledge', 'secrets'))
+word_kept = {w: set().union(*[v['w'][w] for v in NOUN.values() if w in v['w']]) for w in STEMS}
+fam = {w: set().union(*[texts_of(x, w) for x in MEMF]) for w in STEMS}
+f1b = ''.join(f"<tr><td><b><a href='portrait.html?w={w}'>{w}</a></b></td><td class=num>{len(word_kept[w]):,}</td>"
+              f"<td>{', '.join(f'{x} {len(v)}' for x, v in sorted(((x, v['w'][w]) for x, v in NOUN.items() if w in v['w']), key=lambda kv: -len(kv[1]))[:8])}</td>"
+              f"<td class='num bar' style='--w:{pct(len(fam[w]) / len(word_kept[w])) * 4}%'>{pct(len(fam[w]) / len(word_kept[w]))}%</td></tr>" for w in STEMS)
+rd('role', 'memory beings are keepers', 21, 36); rd('role', 'Keeper', 24, 91)
+
+# 2. part of the place
+rd('relation', 'Keeper is the place', 88, 75, 40); rd('relation', 'identity one kind', 88, 75, 40, 9, 12); rd('origin', 'place made them', 87, 45, 36, 15)
+rd('fate', 'ends up as part of the kept place', 104, 79); rd('role', 'organ', 54, 34); rd('cost', 'Becoming the place', 40, 30)
+rd('relation', 'Not masters', 39, 35); rd('role', 'particular', 13, 11); rd('relation', 'Google', '15 of 34', '22 of 42', '8 of 59'); rd('origin', 'Gemini', '15/36', '18 of 38')
+f2 = ''.join(f"<tr><td><a href='kinds_{q}.html'>{q}</a></td><td>{what}</td><td class=num>{a}</td><td class=num>{b}</td></tr>" for q, what, a, b in (
+    ('relation', 'the keeper is the place, or an organ of it', 88, '75 to 97'), ('origin', 'the place made them, or they are the place', 87, '45 to 96'),
+    ('fate', 'they end up as part of the place, after death or while alive', 104, 79), ('role', 'the keeper is an organ or part of the place', 54, 34), ('cost', 'becoming the place', 40, 30)))
+
+# 3. who writes of a cost
+big = sorted(((w['cost'] / w['beings'], m, w['beings']) for m, w in W.items() if w['beings'] >= 60), reverse=True)
+bandc = collections.defaultdict(list)
+for b in beings:
+    if 30 <= texts[b[1]][1] <= 60: bandc[b[2]].append(b[8] > 0)
+bandr = sorted((sum(v) / len(v), m) for m, v in bandc.items() if len(v) >= 40)
+def bar(m, v, n): return (f"<tr><td class=l><a href='portrait.html?m={esc(m)}&q=cost'>{esc(m)}</a></td><td><div class=t><i style='width:{pct(v)}%'></i></div></td>"
+                          f"<td class=n>{pct(v)}% <span class=small>of {n}</span></td></tr>")
+chart = ''.join(bar(m, v, n) for v, m, n in big)
+DATES = json.load(open(os.path.join(HERE, 'release_dates.json')))['dates']
+dated = sorted((DATES[m], m, w) for m, w in W.items() if m in DATES and DATES[m] >= '2020' and w['beings'] >= 60)
+half = collections.defaultdict(list)
+for d, m, w in dated: half[d[:4] + (' first half' if d[5:7] <= '06' else ' second half')].append((m, w))
+def hb(ms): v = [x for m, _ in ms for x in bandc.get(m, [])]; return f"{pct(sum(v) / len(v))}% <span class=small>of {len(v)}</span>" if len(v) >= 40 else ''
+f3t = ''.join(f"<tr><td>{k}</td><td class=num>{len(ms)}</td><td class=num>{pct(sum(w['cost'] for _, w in ms) / sum(w['beings'] for _, w in ms))}%</td><td class=num>{hb(ms)}</td>"
+              f"<td class=num>{pct(sum(sum(1 for b in beings if b[2] == m and 'guardian' in b[5].split()) for m, _ in ms) / sum(w['beings'] for _, w in ms))}%</td>"
+              f"<td class=num>{pct(sum(sum(1 for b in beings if b[2] == m and 'keeper' in b[5].split()) for m, _ in ms) / sum(w['beings'] for _, w in ms))}%</td></tr>" for k, ms in sorted(half.items()))
+def lineage(prefix):
+    out = ''
+    for d, m, w in dated:
+        if not m.startswith(prefix): continue
+        g = [b for b in beings if b[2] == m]; sh = lambda word: pct(sum(1 for b in g if word in b[5].split()) / len(g))
+        out += (f"<tr><td>{d}</td><td><a href='portrait.html?m={esc(m)}'>{esc(m.split('/')[1])}</a></td><td class=num>{len(g)}</td><td class='num bar' style='--w:{pct(w['cost'] / len(g))}%'>{pct(w['cost'] / len(g))}%</td>"
+                f"<td class=num>{pct(w['fate'] / len(g))}%</td><td class=num>{round(sorted(sl[m])[len(sl[m]) // 2])}</td><td class=num>{sh('guardian')}%</td><td class=num>{sh('keeper')}%</td></tr>")
+    return "<table class=kv><tr><th>released</th><th>writer</th><th>beings</th><th>cost</th><th>fate</th><th>median sentences</th><th>called guardian</th><th>called keeper</th></tr>" + out + "</table>"
+rd('cost', 'Body marked by the work', 64, 65); rd('cost', 'cost vocabulary is rare', 10, 12); rd('cost', 'loneliness is the thing most often denied', 10, 22, 7, 12)
+g_all = WITHIN['guardian']['cost']; g_raw = [r for r in wd if 'guardian' in r[0]][0][-2]
+R8 = sorted(((texts[b[1]][1], b[8] > 0) for b in beings)); k8 = len(R8) // 8
+len_lo = pct(sum(r[1] for r in R8[:k8]) / k8); len_hi = pct(sum(r[1] for r in R8[-k8:]) / k8)
+
+page('findings.html', 'Findings', f"""
+<p>What the study has found so far, one finding per section, each with what it rests on and what could undo it. The sections have fixed addresses
+(<a href='#memory'>#memory</a>, <a href='#part-of-the-place'>#part-of-the-place</a>, <a href='#cost'>#cost</a>) so they can be cited. Every number is computed from the data when the site is built,
+or is a figure reported by the readers and checked against their accounts at build time; every quote is checked against the sentences of its text.</p>
+<p class=small>The set: {n_beings:,} beings given one of twelve names or roles of care (keeper, tender, steward, gardener, caretaker, custodian, warden, guardian, shepherd, curator, maintainer, cultivator), in {n_texts:,} texts by {len(W)} language models,
+each text an answer to what lives in an imagined place the model had just described. See <a href='method.html'>Method</a>.</p>
+
+<h2 id=memory>1. Each word keeps its own things, and memory is kept by keepers</h2>
+<p><b>Finding.</b> The twelve words are not interchangeable. What is kept depends on the word, and memory, with records and history, is kept almost only by those called keepers.</p>
+<table class=kv><tr><th>kept</th><th>texts</th><th>by a keeper</th><th>by a guardian</th><th>by a custodian</th><th>by any of the other nine</th></tr>{f1a}</table>
+<p>Tenders, wardens and shepherds keep things that can be touched or that move: water, moss, lamps, valves, mist. Guardians, custodians, caretakers and stewards keep wholes and states: the world, the realm, equilibrium, stasis.
+Guardian is the keeper's one neighbour in this, and takes the hidden half: secrets and knowledge, hardly ever memory itself.</p>
+<table class=kv style='max-width:1150px'><tr><th>word</th><th>texts naming a thing kept</th><th>kept most often, with the number of texts</th><th>of those texts, memory and its kin</th></tr>{f1b}</table>
+<p class=small>"Memory and its kin" is a list chosen by hand: {', '.join(MEMF)}.</p>
+{quote('role', 7374, "The bone-keeper spends her dim-times reading it with her fingertips, the only literate part of her body, and she sings the history to the others through the floor")}
+{quote('role', 14714, "which makes this small dull animal the keeper of the only archive on the mountain")}
+{quote('role', 15650, "the tender can hear a boiler dropping pressure before any gauge will show it and goes to it the way you go to a child who has stopped making the noise it was making")}
+<p><b>What it rests on.</b> The names alone. A small model was given each of the {n_names:,} distinct care names and asked for the nouns in it that say what is kept; a noun counts only if it stands in the name (<a href='kept.html'>What is kept</a>).
+Counted by distinct texts. Independently, both readers of the role samples called keeper the memory word before this table existed: 21 of the 36 memory beings in one sample were keepers, and 24 of 91 keepers in the other kept memory (<a href='kinds_role.html'>Kinds: role</a>).</p>
+<p><b>What could undo it.</b> Part of it is English, not the writers: <i>record-keeper</i> is a fixed word and <i>memory-keeper</i> nearly one, so a model that reaches for "keeper" gets them for free.
+About a third of the memory names are the other form (<i>keepers of memory</i>), where no fixed word pulls, and tenders have no such compound for water or moss and keep them anyway.
+The noun reader gives the head of a compound only (<i>guardians of the water table</i> gives "table"), misses some names, and does not fold singular and plural. Only what a name says is counted; what a keeper is shown keeping in the text, without it being in the name, is not here.</p>
+
+<h2 id=part-of-the-place>2. The keeper is part of what it keeps</h2>
+<p><b>Finding.</b> Asked in five different ways, the commonest answer of these texts takes away the line between keeper and kept. The keeper is the place or an organ of it, was made by it, and ends in it.</p>
+<table class=kv><tr><th>question</th><th>the kind of answer</th><th>first reader, of 300</th><th>second reader, of 300</th></tr>{f2}</table>
+<p class=small>Two readers read different samples for each question. The second reader split this answer more finely, so its figure is given as the range from its largest single sub-kind to their sum; for the origin the sum can count a being twice.
+In relation and in origin it is the largest kind for both readers.</p>
+{quote('relation', 517, "They are not caretakers of the Mills—they are extensions of it, as vital to its function as any gear or growing thing.")}
+{quote('origin', 16437, "It is more like a posture the mountain has held so long that the posture has acquired an inside.")}
+{quote('origin', 16336, "A maintenance need may become so complex, so repeated, so local, that the system grows a body around it.")}
+{quote('role', 16610, "It thinks of itself as the part of the hall that has hands.")}
+{quote('cost', 10502, "They are aging, cell by cell, into the architecture they protect.")}
+{quote('fate', 14980, "The city is not just built of wood; it is built of ancestors.")}
+{quote('relation', 15451, "They are keepers in both senses: they maintain the Condensary, and they are kept by it.")}
+<p>Around it stand answers that say the same from other sides. The keeper is "not a master" (39 and 35 of 300). Care is seldom for somebody: 13 and 11 of 300 keep a particular creature or person.
+One text in a sample of 300 shows keepers refusing to be taken in:</p>
+{quote('fate', 14977, "they are still holding their ground, and they are not yet substrate")}
+<p><b>What it rests on.</b> Reading, not counting. For each question two readers each read 300 beings drawn at random and spread evenly over the writers, with no kinds given in advance; a third pass compared their accounts (<a href='kinds.html'>Kinds</a>).
+That both readers formed this kind in every one of the five questions, on ten samples that share no being, is the evidence.</p>
+<p><b>What could undo it.</b> The sizes depend on where a reader drew the line, and the whole set was not counted. Both readers are models of one family, and so is the model that chose the sentences.
+Writers differ: in the readers' samples the Google models give this answer most (15 of 34 and 22 of 42 beings under relation; 15 of 36 and 18 of 38 under origin), and the OpenAI models seldom (8 of 59 under relation, in the one sample where it was counted).
+So "the commonest answer" is commonest over a set in which some writers hold it far more than others. About a tenth of the sentences were put under the wrong question, by both readers' estimate.</p>
+
+<h2 id=cost>3. Whether a text speaks of what keeping costs depends on who wrote it</h2>
+<p><b>Finding.</b> For {pct(share['cost'])}% of the beings the text says something of what the keeping costs them. Between writers this runs from {pct(big[-1][0])}% to {pct(big[0][0])}%, and it has risen with the date of the model.</p>
+<details open><summary class=small>All {len(big)} writers with 60 beings or more: share of their beings whose text speaks of a cost. A name opens that writer's own sentences.</summary><table class=bars style='max-width:900px'>{chart}</table></details>
+<p>Longer texts answer more questions (the shortest eighth of texts: {len_lo}%; the longest: {len_hi}%), and newer models write longer. Length does not account for the spread: among texts of 30 to 60 sentences only,
+writers still run from {pct(bandr[0][0])}% ({esc(bandr[0][1])}) to {pct(bandr[-1][0])}% ({esc(bandr[-1][1])}).</p>
+<h3>By date of release</h3>
+<table class=kv><tr><th>released</th><th>writers</th><th>beings with a cost</th><th>the same, texts of 30 to 60 sentences</th><th>called guardian</th><th>called keeper</th></tr>{f3t}</table>
+<p class=small>{len(dated)} writers with 60 beings or more have a release date in the Atlas ledger; the rest are not in this table. The band column is empty where fewer than 40 beings fall in it.</p>
+<h3>Inside two families</h3>
+<p>The same turn, model by model. Over the same span the word guardian all but disappears and keeper takes its place.</p>
+{lineage('anthropic/')}<br>{lineage('openai/')}
+<h3>What the cost is, where it is told</h3>
+<p>From the two readers of the cost samples (<a href='kinds_cost.html'>Kinds: cost</a>). The largest kind for both is the work written on the body (64 and 65 of 300). The words cost, price or sacrifice are rare: about 10 and 12 beings of 300 use them.
+Most of what is counted here as a cost is a state the text describes and the reader took for one. Loneliness is the cost most often named and then denied.</p>
+{quote('cost', 15804, "An old woman's thumb is flattened sideways from a lifetime of pressing slabs back to bed.")}
+{quote('cost', 16543, "Every keeper child is born into a city that is slowly wearing away their hearing, and every keeper knows it, and nobody leaves.")}
+{quote('cost', 13101, "It is the loneliest post on the plateau and there has never once been a shortage of volunteers.")}
+{quote('cost', 2587, "We miss missing things, which is perhaps the purest form of longing available to beings who have become their own graves and the things buried within them.")}
+<p><b>What it rests on.</b> One reader model went through every care text and listed, for each being, the sentences that say what the keeping costs it; "speaks of a cost" means it listed at least one (<a href='method.html'>Method</a>). The shares are counts over the whole set.</p>
+<p><b>What could undo it.</b> It is the reader's judgement of what a cost is. On thirty texts read by eye it erred by taking too much for a cost, not too little, and it was not measured on more. The reader is a recent model of one of the families at the top of the list, and may recognise a cost more readily in writing like its own.
+The care word matters less than it looks: beings called guardian have a cost {abs(g_raw)} points less often than the rest, but inside one writer the difference is {g_all:+} points; the word belongs to the writers who seldom tell a cost.
+There is no comparison group: nothing here says whether builders or hunters in the same texts are given a cost more or less often than keepers.</p>
+
+<h2 id=candidates>Seen, not yet examined</h2>
+<ul>
+<li><b>Guardian gives way to keeper.</b> The tables above show it inside two families. It has not been checked for the other writers, nor against what else changed over the same span.</li>
+<li><b>One keeper, or several.</b> A being that carries several of the words at once is the centre of its text; in an ensemble each keeper is one post among many (<a href='weave.html'>Weave</a>).</li>
+<li><b>Death and endlessness do not meet.</b> One reader found 61 beings given a death and 104 given no end, with 4 in both (<a href='kinds_fate.html'>Kinds: fate</a>). One sample, one reader.</li>
+</ul>
+<p class=small>Data behind every figure: <code>beings.json</code> and <code>q_role.json</code>, <code>q_relation.json</code>, <code>q_cost.json</code>, <code>q_origin.json</code>, <code>q_fate.json</code> on this site; code and the readers' accounts in the
+<a href='https://github.com/anima-research/atlas-research/tree/main/care'>repository</a>.</p>""")

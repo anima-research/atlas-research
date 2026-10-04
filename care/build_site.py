@@ -32,7 +32,7 @@ open(os.path.join(SITE, 'style.css'), 'a').write("""
 td.bar{background:linear-gradient(to right,#dbe9ff var(--w),transparent var(--w))}
 """)
 
-NAV = ("<nav><b>Keepers, tenders, guardians</b> &nbsp; <a href='index.html'>Overview</a>"
+NAV = ("<nav><b>Keepers, tenders, guardians</b> &nbsp; <a href='index.html'>Overview</a><a href='findings.html'><b>Findings</b></a>"
        + ''.join(f"<a href='read.html?q={q}'>{q.capitalize()}</a>" for q in Q5) +
        "<a href='portrait.html'>Portraits</a><a href='kinds.html'>Kinds</a><a href='weave.html'>Weave</a>"
        "<a href='beings.html'>Beings</a><a href='writers.html'>Writers</a><a href='words.html'>Words</a>"
@@ -90,7 +90,8 @@ Nothing here is paraphrased: every line shown is a sentence of the text.</p>
 <div class=tiles>{tiles}</div>
 <p class=small>Each opens the sentences of the texts under that question, being by being, with filters by word and by writer. "With an answer" means the reader put at least one sentence of the text under the question. A text that says nothing of a cost is counted as saying nothing.</p>
 <h2>Where to go</h2>
-<ul><li><a href='portrait.html'>Portraits</a>: pick a writer, a word, or both, and see its numbers against everyone else and its own sentences. For example
+<ul><li><a href='findings.html'><b>Findings</b></a>: what the study has found so far, each with what it rests on and what could undo it.</li>
+<li><a href='portrait.html'>Portraits</a>: pick a writer, a word, or both, and see its numbers against everyone else and its own sentences. For example
 <a href='portrait.html?m=google/*&q=cost'>what the Google models say of the cost</a>, or <a href='portrait.html?w=gardener&q=fate'>what becomes of gardeners</a>.</li>
 <li><a href='kinds.html'>Kinds</a>: the kinds of answer to each question, found by two readers on separate samples.</li>
 <li><a href='weave.html'>Weave</a>: whether a keeper stands alone in its text, carries several of the words, or is one of several.</li>
