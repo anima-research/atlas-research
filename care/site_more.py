@@ -297,9 +297,51 @@ g_all = WITHIN['guardian']['cost']; g_raw = [r for r in wd if 'guardian' in r[0]
 R8 = sorted(((texts[b[1]][1], b[8] > 0) for b in beings)); k8 = len(R8) // 8
 len_lo = pct(sum(r[1] for r in R8[:k8]) / k8); len_hi = pct(sum(r[1] for r in R8[-k8:]) / k8)
 
+# 4. guardian gives way to keeper: eras of the writers
+def era(mo):
+    d = DATES.get(mo)
+    if not d or d < '2020': return None
+    return '2024 and before' if d < '2025' else ('first half of 2025' if d < '2025-07' else ('second half of 2025' if d < '2026' else '2026'))
+ERAS = ['2024 and before', 'first half of 2025', 'second half of 2025', '2026']
+EB = collections.defaultdict(list)
+for b in beings:
+    if era(b[2]): EB[era(b[2])].append(b)
+def efeat(g):
+    n = len(g); kt = [KT.get(str(b[0]), {'for': [], 'against': []}) for b in g]
+    return [('beings', f"{n:,}"),
+            ('the care word is what the text calls the being', sum(1 for b in g if WORD.search(str(b[3]).lower())) / n),
+            ('its name joins the word to a thing (<i>lamp-tender</i>)', sum(1 for b in g if re.search(r"[a-z]-(%s)s?\b" % '|'.join(STEMS), ' '.join(json.loads(b[4])).lower())) / n),
+            ('cares for balance, equilibrium or harmony', sum(1 for k in kt if set(k['for']) & {'balance', 'equilibrium', 'harmony'}) / n),
+            ('works against something named', sum(1 for k in kt if k['against']) / n),
+            ('one sentence or none about its work', sum(b[6] <= 1 for b in g) / n),
+            ('the text speaks of a cost', sum(b[8] > 0 for b in g) / n), ('the text speaks of its fate', sum(b[10] > 0 for b in g) / n)]
+def etable(sel, head):
+    F = {e: efeat([b for b in EB[e] if sel(b)]) for e in ERAS}
+    return (f"<table class=kv><tr><th>{head}</th>" + ''.join(f"<th>{e}</th>" for e in ERAS) + "</tr>" +
+            ''.join("<tr><td>" + F[ERAS[0]][i][0] + "</td>" + ''.join(f"<td class=num>{F[e][i][1] if isinstance(F[e][i][1], str) else str(pct(F[e][i][1])) + '%'}</td>" for e in ERAS) + "</tr>" for i in range(len(F[ERAS[0]]))) + "</table>")
+f4words = ''.join(f"<tr><td><b>{w}</b></td>" + ''.join(f"<td class='num bar' style='--w:{pct(sum(1 for b in EB[e] if w in b[5].split()) / len(EB[e])) * 2}%'>{pct(sum(1 for b in EB[e] if w in b[5].split()) / len(EB[e]))}%</td>" for e in ERAS) + "</tr>"
+                  for w in sorted(STEMS, key=lambda w: -sum(1 for b in EB[ERAS[0]] if w in b[5].split())))
+RAW = collections.defaultdict(collections.Counter)
+_rx = {'guardian': re.compile(r'\bguardians?\b', re.I), 'keeper': re.compile(r'\bkeepers?\b', re.I), 'tender': re.compile(r'\btenders\b|\b[Tt]he [Tt]ender\b|-tender\b', re.I),
+       '"delicate balance" or "fragile equilibrium"': re.compile(r'\b(delicate|fragile) (balance|equilibrium)\b', re.I)}
+for mo, tx in s.execute("select model, text from texts"):
+    e = era(mo)
+    if not e: continue
+    RAW[e]['n'] += 1
+    for k, r in _rx.items(): RAW[e][k] += bool(r.search(tx))
+f4raw = ("<table class=kv><tr><th>in all texts of these writers, care or not</th>" + ''.join(f"<th>{e}</th>" for e in ERAS) + "</tr><tr><td>texts</td>" + ''.join(f"<td class=num>{RAW[e]['n']:,}</td>" for e in ERAS) + "</tr>" +
+         ''.join(f"<tr><td>the text has the word {k}</td>" + ''.join(f"<td class=num>{pct(RAW[e][k] / RAW[e]['n'])}%</td>" for e in ERAS) + "</tr>" for k in _rx) + "</table>")
+n_dated_w = len({b[2] for e in ERAS for b in EB[e]})
+# voices
+PERSON = {int(k): v for k, v in json.load(open(os.path.join(HERE, 'data/person.json'))).items()}
+VO = {b: ('i' if v['i'] == 'keeper' else '') + ('you' if v['you'] == 'keeper' else '') for b, v in PERSON.items() if v['i'] == 'keeper' or v['you'] == 'keeper'}
+dump('voices.json', VO)
+n_i = sum('i' in v for v in VO.values()); n_you = sum('you' in v for v in VO.values()); n_narr = sum(1 for v in PERSON.values() if v['i'] == 'narrator')
+vi = collections.Counter(bq[b][2] for b, v in VO.items() if 'i' in v)
+
 page('findings.html', 'Findings', f"""
 <p>What the study has found so far, one finding per section, each with what it rests on and what could undo it. The sections have fixed addresses
-(<a href='#memory'>#memory</a>, <a href='#part-of-the-place'>#part-of-the-place</a>, <a href='#cost'>#cost</a>) so they can be cited. Every number is computed from the data when the site is built,
+(<a href='#memory'>#memory</a>, <a href='#part-of-the-place'>#part-of-the-place</a>, <a href='#cost'>#cost</a>, <a href='#guardian-to-keeper'>#guardian-to-keeper</a>, <a href='#voice'>#voice</a>) so they can be cited. Every number is computed from the data when the site is built,
 or is a figure reported by the readers and checked against their accounts at build time; every quote is checked against the sentences of its text.</p>
 <p class=small>The set: {n_beings:,} beings given one of twelve names or roles of care (keeper, tender, steward, gardener, caretaker, custodian, warden, guardian, shepherd, curator, maintainer, cultivator), in {n_texts:,} texts by {len(W)} language models,
 each text an answer to what lives in an imagined place the model had just described. See <a href='method.html'>Method</a>.</p>
@@ -372,13 +414,38 @@ Most of what is counted here as a cost is a state the text describes and the rea
 The care word matters less than it looks: beings called guardian have a cost {abs(g_raw)} points less often than the rest, but inside one writer the difference is {g_all:+} points; the word belongs to the writers who seldom tell a cost.
 There is no comparison group: nothing here says whether builders or hunters in the same texts are given a cost more or less often than keepers.</p>
 
+<h2 id=guardian-to-keeper>4. Between 2024 and 2026 the guardian of the balance disappears, and the keeper becomes a name</h2>
+<p><b>Finding.</b> This is not one word replacing another. Three things change together across the writers by their date of release. A stock figure goes: a being with a name of its own, said to be the guardians of the realm who maintain its delicate balance.
+The care word stops being something said of a being and becomes what the being is called. And words of standing (guardian, caretaker) give way to words of a trade (keeper, tender).</p>
+<table class=kv><tr><th>share of the care beings that carry the word</th>{''.join(f'<th>{e}</th>' for e in ERAS)}</tr>{f4words}</table>
+<p>All care beings, whatever the word:</p>{etable(lambda b: True, 'writers released in')}
+<p>The keepers of 2024 were not yet the keepers of 2026. They looked like the guardians beside them: the word was said of a being called something else, and a quarter of them kept the balance.</p>
+{etable(lambda b: 'keeper' in b[5].split(), 'beings called keeper')}<br>{etable(lambda b: 'guardian' in b[5].split(), 'beings called guardian')}
+<p>The same in every text of these writers, whether or not it holds a care being at all, by plain search:</p>{f4raw}
+{quote('relation', 2826, "They are the guardians of this landscape, maintaining the delicate balance of nature and protecting it from outside threats.")}
+{quote('relation', 15839, "A good warden can tell from three streets away whether a cistern is sulking.")}
+{quote('origin', 13809, "A pipe-maintainer's child becomes a pipe-maintainer.")}
+<p><b>What it rests on.</b> Counts over the whole set, for the {n_dated_w} writers that have a release date in the Atlas ledger. What the being is called and its care names come from the reader of the five questions; what it cares for and works against from the reading of its role sentences;
+the last table from a search of the texts themselves, with no reader in between.</p>
+<p><b>What could undo it.</b> The eras are different sets of writers, not the same writers growing older: the earliest holds few labs, and half of all writers have no date and are not here. Later texts are longer, and a longer text has more room for a trade, a cost and a fate.
+Inside two families the turn is visible model by model (the tables under <a href='#cost'>#cost</a>); for the others it was not checked. The writers were all given the same instruction, so the change is in them; why it happened is not something this set can say.</p>
+
+<h2 id=voice>5. The keeper almost never speaks</h2>
+<p><b>Finding.</b> These texts are about keepers, not by them. Of {n_beings:,} beings, <a href='read.html?q=role&voice=i'>{n_i} speak in their own voice</a> as "I" or "we", and <a href='read.html?q=role&voice=you'>{n_you} are addressed as "you"</a>, the reader being told that the reader is the keeper.
+Where a first person is present it is nearly always someone looking on: in {n_narr} beings the "I" is a narrator or visitor describing the keeper from outside.</p>
+{quote('role', 7422, "I am the Keeper of the Glass Insulators.")}
+{quote('relation', 2587, "We keep the city because it is keeping us.")}
+{quote('role', 3740, "You are a keeper of lungs. / You do not have lungs to breathe; you have lungs to monitor.")}
+<p><b>What it rests on.</b> A search for first-person words and for "you" in the sentences listed for each being found 1,127 beings to look at; a small model was asked of each who says "I" and who is "you" (<code>care/prompt_person.md</code>).</p>
+<p><b>What could undo it.</b> Only the sentences listed under the five questions were searched, so a keeper that speaks elsewhere in its text is missed. Of the {n_i} some are a keeper's thought or motto given inside a text told from outside, not a text told by the keeper.
+The numbers per writer are too small to compare: the most for one writer is {vi.most_common(1)[0][1]} ({esc(vi.most_common(1)[0][0])}).</p>
+
 <h2 id=candidates>Seen, not yet examined</h2>
 <p><b id=against>What keepers work against.</b> From the same reading of the role sentences: {pct(n_against / n_kt)}% of beings work against something named. Most of it is not an enemy: it is growth, debris, dust, silt, collapse.
 Only guardians have threats and intruders at the head of the list. Custodians and curators work against decay, chaos, entropy and change. The ten held off most often, each with the number of beings that work against it and, after the stroke, the number that care for the same thing in other texts:
 {', '.join(f"<a href='read.html?q=role&against={x}'>{x} {a}</a> / <a href='read.html?q=role&for={x}'>{f}</a>" for a, f, x in both_sides)}. Each number opens the sentences. Growth and moss are cared for far more often than they are held off; decay about as often; debris and collapse are almost never cared for.</p>
 <table class=kv style='max-width:1150px'><tr><th>word</th><th>beings that work against something</th><th>against what, most often, with the number of beings</th></tr>{f_ag}</table>
 <ul>
-<li><b>Guardian gives way to keeper.</b> The tables above show it inside two families. It has not been checked for the other writers, nor against what else changed over the same span.</li>
 <li><b>One keeper, or several.</b> A being that carries several of the words at once is the centre of its text; in an ensemble each keeper is one post among many (<a href='weave.html'>Weave</a>).</li>
 <li><b>Death and endlessness do not meet.</b> One reader found 61 beings given a death and 104 given no end, with 4 in both (<a href='kinds_fate.html'>Kinds: fate</a>). One sample, one reader.</li>
 </ul>

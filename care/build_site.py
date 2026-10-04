@@ -148,9 +148,10 @@ var Q={json.dumps(QTEXT)}, W={json.dumps(STEMS)}, P=new URLSearchParams(location
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}
 document.getElementById('tabs').innerHTML=Object.keys(Q).map(function(k){{return '<a href="read.html?q='+k+'"'+(k===q?' class=on':'')+'>'+k+'</a>';}}).join('');
 document.getElementById('what').innerHTML='The sentences the reader put under <b>'+Q[q]+'</b>, being by being.';
-var side=P.get('against')?1:0, noun=(P.get('against')||P.get('for')||'').toLowerCase(), only=true;
-Promise.all([fetch('beings.json').then(r=>r.json()), fetch('q_'+q+'.json').then(r=>r.json()), noun?fetch('kt.json').then(r=>r.json()):Promise.resolve(null)]).then(function(a){{
-  var KT=a[2], B=a[0].filter(function(b){{return a[1][b[0]]&&(!noun||(KT[b[0]]&&KT[b[0]][side].indexOf(noun)>=0));}}), S=a[1], cm={{}};
+var side=P.get('against')?1:0, noun=(P.get('against')||P.get('for')||'').toLowerCase(), only=true, voice=P.get('voice');
+Promise.all([fetch('beings.json').then(r=>r.json()), fetch('q_'+q+'.json').then(r=>r.json()), noun?fetch('kt.json').then(r=>r.json()):Promise.resolve(null), voice?fetch('voices.json').then(r=>r.json()):Promise.resolve(null)]).then(function(a){{
+  var KT=a[2], VO=a[3], B=a[0].filter(function(b){{return a[1][b[0]]&&(!noun||(KT[b[0]]&&KT[b[0]][side].indexOf(noun)>=0))&&(!voice||(VO[b[0]]||'').indexOf(voice)>=0);}}), S=a[1], cm={{}};
+  if(voice){{document.getElementById('what').innerHTML=(voice==='i'?'Beings that speak in their own voice, as "I" or "we".':'Beings the text addresses as "you": the reader is told that the reader is the keeper.')+' Shown: the sentences under <b>'+q+'</b>. <a href="findings.html#voice">Back</a>';}}
   if(noun){{document.getElementById('what').innerHTML='Beings whose text says they '+(side?'work against':'care for')+' <b>'+esc(noun)+'</b>, with the sentences about their work that hold the word. '+
      '<label><input type=checkbox id=allS> show all their sentences</label> &middot; <a href="kept.html#'+(side?'against':'text')+'">back to the table</a>';
      document.getElementById('allS').onchange=function(e){{only=!e.target.checked; draw();}};

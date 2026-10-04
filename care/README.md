@@ -26,6 +26,7 @@ https://atlas.lari-island.ai/research/care/
 | `kept_ask.py`, `prompt_kept.md` | what is kept: a small model gives, for each distinct care name, the nouns in it that say what is kept; a noun is accepted only if it stands in the name (`data/kept.json`) |
 | `kept_text.py`, `prompt_kept_text.md` | what is cared for and what is worked against, by the text: a small model reads the role sentences of each being; a noun is accepted only if it stands in them (`data/kept_text.json`). `prompt_kept_text_v1.md` is the first instruction, which did not separate the two sides and was dropped |
 | `pilot_kept_ids.json` | twenty random beings whose role sentences were marked by hand before that reading |
+| `person.py`, `prompt_person.md` | who says "I" and who is "you" in the sentences about a being; asked only where a search finds such words (`data/person.json`) |
 | `what_is_kept.py` | what stands next to a care word in the names, counted without a reader |
 | `pilot_ids.json`, `pilot_hand.json` | ten random care texts and their marking by hand, made before any request |
 | `pilot2_ids.json` | thirty more random texts, read through the chosen reader's cost and origin sentences |
