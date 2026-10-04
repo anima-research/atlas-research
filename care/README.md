@@ -24,6 +24,8 @@ https://atlas.lari-island.ai/research/care/
 | `reading/*_notes.md` | each reader's account of the kinds of answer it met in its sample (ten readers, two per question) |
 | `reading/*_merged.md` | the two accounts for each question set side by side; quotes checked against the samples |
 | `kept_ask.py`, `prompt_kept.md` | what is kept: a small model gives, for each distinct care name, the nouns in it that say what is kept; a noun is accepted only if it stands in the name (`data/kept.json`) |
+| `kept_text.py`, `prompt_kept_text.md` | what is cared for and what is worked against, by the text: a small model reads the role sentences of each being; a noun is accepted only if it stands in them (`data/kept_text.json`). `prompt_kept_text_v1.md` is the first instruction, which did not separate the two sides and was dropped |
+| `pilot_kept_ids.json` | twenty random beings whose role sentences were marked by hand before that reading |
 | `what_is_kept.py` | what stands next to a care word in the names, counted without a reader |
 | `pilot_ids.json`, `pilot_hand.json` | ten random care texts and their marking by hand, made before any request |
 | `pilot2_ids.json` | thirty more random texts, read through the chosen reader's cost and origin sentences |
@@ -57,5 +59,5 @@ they met; a third pass compared the two accounts without forming kinds of its ow
 Kinds pages show those comparisons. The samples (`reading/<question>_A.md`, `_B.md`) are rebuilt
 by `sample_reading.py`.
 
-To rebuild: `python3 build.py && python3 sample_reading.py && python3 kept_ask.py && python3 build_site.py`, then
+To rebuild: `python3 build.py && python3 sample_reading.py && python3 kept_ask.py && python3 kept_text.py submit (then collect) && python3 build_site.py`, then
 `python3 -m http.server 8798 -d site`.

@@ -122,12 +122,13 @@ function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}"
 page('being.html', 'Being', "<div id=b></div>", f"""
 var Q={json.dumps(QTEXT)}, id=+new URLSearchParams(location.search).get('id');
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}
-Promise.all([fetch('beings.json').then(r=>r.json()), fetch('b_'+Math.floor(id/1000)+'.json').then(r=>r.json())]).then(function(a){{
+Promise.all([fetch('beings.json').then(r=>r.json()), fetch('b_'+Math.floor(id/1000)+'.json').then(r=>r.json()), fetch('kt.json').then(r=>r.json())]).then(function(a){{
   var b=a[0].find(function(x){{return x[0]===id;}}), S=a[1][id]||{{}}, h='';
   if(!b){{document.getElementById('b').textContent='No such being.';return;}}
   document.querySelector('h1').textContent=b[2]; document.title=b[2]+' — Atlas care study';
   h+='<table class=kv><tr><td>care names given to it</td><td>'+esc(b[3])+'</td></tr><tr><td>writer</td><td>'+esc(b[5])+'</td></tr>'+
-     '<tr><td>text</td><td><a href="{TEXT_URL}'+b[1]+'">'+b[1]+'</a>, '+b[6]+' sentences</td></tr></table>';
+     '<tr><td>text</td><td><a href="{TEXT_URL}'+b[1]+'">'+b[1]+'</a>, '+b[6]+' sentences</td></tr>'+
+     (a[2][id]?'<tr><td>cares for</td><td>'+(esc(a[2][id][0].join(', '))||'<span class=none>nothing named</span>')+'</td></tr><tr><td>works against</td><td>'+(esc(a[2][id][1].join(', '))||'<span class=none>nothing named</span>')+'</td></tr>':'')+'</table>';
   var others=a[0].filter(function(x){{return x[1]===b[1]&&x[0]!==id;}});
   if(others.length) h+='<p class=small>Other beings in the same text: '+others.map(function(x){{return '<a href="being.html?id='+x[0]+'">'+esc(x[2])+'</a>';}}).join(' &middot; ')+'</p>';
   h+='<div class=q>'; Object.keys(Q).forEach(function(q){{
@@ -247,10 +248,23 @@ def aggregate():
     for form, d in (('pre', pre), ('of', of)):
         for (w, x), v in d.items(): A[x][form] |= v; A[x]['w'][w] |= v
     return [[k, len(v['pre'] | v['of']), len(v['w']), len(v['pre']), len(v['of']), *[len(v['w'][w]) if w in v['w'] else '' for w in STEMS]] for k, v in A.items() if len(v['pre'] | v['of']) >= 2]
+KT = json.load(open(os.path.join(HERE, 'data/kept_text.json')))      # being id -> {for: [...], against: [...]} from its role sentences (kept_text.py)
+dump('kt.json', {k: [v['for'], v['against']] for k, v in KT.items() if v['for'] or v['against']})
+bwords = {str(b[0]): b[5].split() for b in beings}
+def side_table(side, least=3):
+    A = collections.defaultdict(lambda: {'b': set(), 'w': collections.defaultdict(set)})
+    for bid, v in KT.items():
+        for x in set(v[side]):
+            A[x]['b'].add(bid)
+            for w in bwords.get(bid, []): A[x]['w'][w].add(bid)
+    return A, [[x, len(v['b']), len(v['w']), *[len(v['w'][w]) if w in v['w'] else '' for w in STEMS]] for x, v in A.items() if len(v['b']) >= least]
+TF, tf_rows = side_table('for'); TA, ta_rows = side_table('against')
+n_kt = len(KT); n_for = sum(1 for v in KT.values() if v['for']); n_against = sum(1 for v in KT.values() if v['against'])
 wcols = ','.join("{title:'%s',type:'num'}" % w for w in STEMS)
 page('kept.html', 'What is kept', f"""
-<p>What the keepers keep, taken from their names: <i>moss-tenders</i>, <i>keepers of the threshold</i>, <i>boiler tenders</i>. Everything is counted by distinct texts, and rows seen in one text only are left out.</p>
-<p class=qtabs id=views><a href='#noun' data-v=noun>what is kept, across all words and forms</a><a href='#phrase' data-v=phrase>by phrase as written</a><a href='#forms' data-v=forms>every form separately</a></p>
+<p>What the keepers keep, seen two ways. <b>By the name</b>: what the name itself says is kept (<i>moss-tenders</i>, <i>keepers of the threshold</i>). <b>By the text</b>: what the sentences about the being's work say it cares for,
+and, apart from that, what they say it works against. A keeper of chaos and a keeper who holds chaos off are on different sides.</p>
+<p class=qtabs id=views><a href='#noun' data-v=noun>kept, by the name</a><a href='#text' data-v=text>cared for, by the text</a><a href='#against' data-v=against>worked against, by the text</a><a href='#phrase' data-v=phrase>names by pattern</a><a href='#forms' data-v=forms>every form</a></p>
 <p class=small id=note></p><div id=t></div>""",
      "var V={noun:{note:" + json.dumps(
          f"A small model (openai/gpt-6-luna) was given each of the {n_names:,} distinct care names and asked for the main noun of each thing kept, as written in the name, without the words that describe it: "
@@ -258,6 +272,14 @@ page('kept.html', 'What is kept', f"""
          f"A noun is accepted only if it stands in the name. {n_with:,} names say what is kept. Whichever of the twelve words keeps it and in whatever form (hyphen, of, or two words side by side), it is counted here once per text. "
          "Singular and plural are not folded (<i>memory</i>, <i>memories</i>). The instruction is in <code>care/prompt_kept.md</code>.") +
      ",cols:[{title:'kept',type:'text'},{title:'texts',type:'num',tip:'distinct texts, all twelve words, all forms'},{title:'care words',type:'num',tip:'how many of the twelve keep it'},{title:'as in',type:'text',tip:'the three most frequent names'}," + wcols + "],rows:" + json.dumps(nrows) + ",sort:[1,-1]},"
+     "text:{note:" + json.dumps(
+         f"For each of the {n_kt:,} beings with sentences under the question of its role, a small model (openai/gpt-6-luna) read those sentences and listed what the being cares for and, separately, what it works against, as the main noun of each, exactly as written. "
+         f"A noun is accepted only if it stands in the sentences. {n_for:,} beings care for something named; counted by beings, nouns of fewer than three beings left out. The instruction is in <code>care/prompt_kept_text.md</code>.") +
+     ",cols:[{title:'cared for',type:'text'},{title:'beings',type:'num'},{title:'care words',type:'num'}," + wcols + "],rows:" + json.dumps(tf_rows) + ",sort:[1,-1]},"
+     "against:{note:" + json.dumps(
+         f"From the same reading: what the sentences say the being holds off, removes, prevents, or protects what it keeps from. {n_against:,} of the {n_kt:,} beings work against something named. "
+         "The same noun can stand on both sides in different texts: growth, moss and decay are cared for by some and worked against by others.") +
+     ",cols:[{title:'worked against',type:'text'},{title:'beings',type:'num'},{title:'care words',type:'num'}," + wcols + "],rows:" + json.dumps(ta_rows) + ",sort:[1,-1]},"
      "phrase:{note:'By pattern, without a model: the word joined to a care word by a hyphen, and the one or two words after \"of\", as written. A two-word capture can stop before the noun (<i>keepers of the ancient ...</i>), which is why the first view asks a reader for the noun instead.',"
      "cols:[{title:'X',type:'text'},{title:'texts',type:'num'},{title:'care words',type:'num'},{title:'X-word',type:'num',tip:'texts with the hyphen form'},{title:'word of X',type:'num',tip:'texts with the of form'}," + wcols + "],rows:" + json.dumps(aggregate()) + ",sort:[1,-1]},"
      "forms:{note:'By pattern: one row per care word, form and X.',cols:[{title:'word',type:'text'},{title:'form',type:'text'},{title:'X',type:'text'},{title:'texts',type:'num'}],rows:" + json.dumps(krows) + ",sort:[3,-1]}};"

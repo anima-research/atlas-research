@@ -29,7 +29,7 @@ page('portrait.html', 'Portrait', """
 <div class=controls>contains <input id=rs placeholder='text in the sentences'> <button id=ragain>shuffle again</button></div>
 <div class=tbl-info id=rinfo></div><div id=rlist></div><button id=rmore>more</button></div>""", f"""
 var Q={json.dumps(QTEXT)}, W={json.dumps(STEMS)}, QI={{role:7,relation:8,cost:9,origin:10,fate:11}}, TEXT='{TEXT_URL}';
-var P=new URLSearchParams(location.search), st={{m:P.get('m')||'', w:P.get('w')||'', q:Q[P.get('q')]?P.get('q'):'cost'}}, shown=30, seed=1, B, X, SQ={{}};
+var P=new URLSearchParams(location.search), st={{m:P.get('m')||'', w:P.get('w')||'', q:Q[P.get('q')]?P.get('q'):'cost'}}, shown=30, seed=1, B, X, KT, SQ={{}};
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}
 function fam(x){{return x.split('/')[0];}}
 function has(b,w){{return (' '+b[4]+' ').indexOf(' '+w+' ')>=0;}}
@@ -65,8 +65,13 @@ function draw(){{
     var L=Object.keys(per).filter(function(m){{return per[m][1]>=40;}}).map(function(m){{return [m,per[m][0],per[m][1]];}}).sort(function(a,b){{return b[1]/b[2]-a[1]/a[2];}});
     var one=function(x){{return '<tr><td class=l><a href="'+link({{m:x[0]}})+'">'+esc(x[0])+'</a></td><td><div class=t><i style="width:'+pc(x[1],x[2]).toFixed(1)+'%"></i></div></td><td class=n>'+pc(x[1],x[2]).toFixed(0)+'% <span class=small>('+x[1]+' of '+x[2]+')</span></td></tr>';}};
     h+='<div><h2>Writers who use it most and least</h2><p class=small>Share of a writer\\'s beings that carry the word; writers with 40 beings or more.</p><table class=bars>'+L.slice(0,10).map(one).join('')+'<tr><td colspan=3 class=small>…</td></tr>'+L.slice(-5).map(one).join('')+'</table></div>';
-    var K=X.kept[st.w]; h+='<div><h2>What is kept</h2><p class=small>The nouns in its names that say what is kept, with the number of texts. <a href="kept.html">The whole table</a>.</p><p>'+(K.map(function(x){{return esc(x[0])+' '+x[1];}}).join(', ')||'-')+'</p></div>';
+    var K=X.kept[st.w]; h+='<div><h2>What is kept, by the name</h2><p class=small>The nouns in its names that say what is kept, with the number of texts. <a href="kept.html">The whole table</a>.</p><p>'+(K.map(function(x){{return esc(x[0])+' '+x[1];}}).join(', ')||'-')+'</p></div>';
   }}
+  [[0,'What they care for','cared for'],[1,'What they work against','worked against']].forEach(function(sd){{
+    var c={{}}, nn=0; S.forEach(function(b){{var k=KT[b[0]]; if(k&&k[sd[0]].length){{nn++; k[sd[0]].forEach(function(x){{c[x]=(c[x]||0)+1;}});}}}});
+    var L=Object.keys(c).map(function(x){{return [x,c[x]];}}).sort(function(a,b){{return b[1]-a[1];}}).slice(0,28);
+    h+='<div><h2>'+sd[1]+'</h2><p class=small>By the text: nouns from the sentences about its work, with the number of beings. '+nn.toLocaleString()+' of the '+n.toLocaleString()+' beings ('+pc(nn,n).toFixed(0)+'%) have something '+sd[2]+'. <a href="kept.html#'+(sd[0]?'against':'text')+'">The whole table</a>.</p><p>'+(L.map(function(x){{return esc(x[0])+' '+x[1];}}).join(', ')||'-')+'</p></div>';
+  }});
   if(st.m&&st.m.slice(-2)!=='/*'&&X.corpus[st.m]){{h+='<div><h2>How often it writes them</h2><p>'+X.care_texts[st.m]+' of its '+X.corpus[st.m]+' texts in the corpus ('+pc(X.care_texts[st.m],X.corpus[st.m]).toFixed(0)+'%) have a being with one of the twelve words.</p></div>';}}
   h+='</div>'; document.getElementById('body').innerHTML=h; reader(S);
 }}
@@ -91,8 +96,8 @@ function reader(S){{
     document.getElementById('rs').oninput=function(){{shown=30; reader(S);}};
   }});
 }}
-Promise.all([fetch('beings.json').then(function(r){{return r.json();}}), fetch('extra.json').then(function(r){{return r.json();}})]).then(function(a){{
-  B=a[0]; X=a[1]; var cm={{}}, cf={{}};
+Promise.all([fetch('beings.json').then(function(r){{return r.json();}}), fetch('extra.json').then(function(r){{return r.json();}}), fetch('kt.json').then(function(r){{return r.json();}})]).then(function(a){{
+  B=a[0]; X=a[1]; KT=a[2]; var cm={{}}, cf={{}};
   B.forEach(function(b){{cm[b[5]]=(cm[b[5]]||0)+1; cf[fam(b[5])]=(cf[fam(b[5])]||0)+1;}});
   var pm=document.getElementById('pm'), pw=document.getElementById('pw');
   pm.innerHTML='<option value="">any writer</option>'+Object.keys(cf).sort(function(x,y){{return cf[y]-cf[x];}}).map(function(f){{
@@ -241,6 +246,18 @@ f1b = ''.join(f"<tr><td><b><a href='portrait.html?w={w}'>{w}</a></b></td><td cla
               f"<td>{', '.join(f'{x} {len(v)}' for x, v in sorted(((x, v['w'][w]) for x, v in NOUN.items() if w in v['w']), key=lambda kv: -len(kv[1]))[:8])}</td>"
               f"<td class='num bar' style='--w:{pct(len(fam[w]) / len(word_kept[w])) * 4}%'>{pct(len(fam[w]) / len(word_kept[w]))}%</td></tr>" for w in STEMS)
 rd('role', 'memory beings are keepers', 21, 36); rd('role', 'Keeper', 24, 91)
+# the same, by the text: what the sentences about the being's work say it cares for
+wfor = {w: {bid for bid, v in KT.items() if v['for'] and w in bwords.get(bid, [])} for w in STEMS}
+def tshare(w, nouns): return len(set().union(*[TF[x]['w'].get(w, set()) for x in nouns if x in TF])) / len(wfor[w])
+f1c = ''.join(f"<tr><td><b><a href='portrait.html?w={w}'>{w}</a></b></td><td class=num>{len(wfor[w]):,}</td>"
+              f"<td>{', '.join(f'{x} {len(v)}' for x, v in sorted(((x, v['w'][w]) for x, v in TF.items() if w in v['w']), key=lambda kv: -len(kv[1]))[:8])}</td>"
+              f"<td class='num bar' style='--w:{pct(tshare(w, ['memory'])) * 10}%'>{pct(tshare(w, ['memory']))}%</td><td class='num bar' style='--w:{pct(tshare(w, MEMF)) * 4}%'>{pct(tshare(w, MEMF))}%</td></tr>" for w in STEMS)
+mem_b = TF['memory']['b']; mem_keep = TF['memory']['w']['keeper']; n_keeper = sum(1 for b in beings if 'keeper' in b[5].split())
+others_mem = max(tshare(w, ['memory']) for w in STEMS if w != 'keeper'); others_mem_w = max((w for w in STEMS if w != 'keeper'), key=lambda w: tshare(w, ['memory']))
+lead = collections.Counter(max(((len(v['w'][w]), x) for x, v in TF.items() if w in v['w']))[1] for w in STEMS)
+both_sides = sorted(((len(TA[x]['b']), len(TF[x]['b']), x) for x in TA if x in TF and len(TA[x]['b']) >= 60), reverse=True)[:10]
+f_ag = ''.join(f"<tr><td><b>{w}</b></td><td class=num>{pct(sum(1 for bid, v in KT.items() if v['against'] and w in bwords.get(bid, [])) / sum(1 for b in beings if w in b[5].split()))}%</td>"
+               f"<td>{', '.join(f'{x} {len(v)}' for x, v in sorted(((x, v['w'][w]) for x, v in TA.items() if w in v['w']), key=lambda kv: -len(kv[1]))[:9])}</td></tr>" for w in STEMS)
 
 # 2. part of the place
 rd('relation', 'Keeper is the place', 88, 75, 40); rd('relation', 'identity one kind', 88, 75, 40, 9, 12); rd('origin', 'place made them', 87, 45, 36, 15)
@@ -288,20 +305,28 @@ or is a figure reported by the readers and checked against their accounts at bui
 each text an answer to what lives in an imagined place the model had just described. See <a href='method.html'>Method</a>.</p>
 
 <h2 id=memory>1. Each word keeps its own things, and memory is kept by keepers</h2>
-<p><b>Finding.</b> The twelve words are not interchangeable. What is kept depends on the word, and memory, with records and history, is kept almost only by those called keepers.</p>
+<p><b>Finding.</b> The twelve words are not interchangeable. By their names, what is kept depends sharply on the word, and memory, with records and history, is kept almost only by those called keepers.
+By what the texts show them doing, the words draw closer together, and memory still stays with the keeper.</p>
+<h3>By the name</h3>
 <table class=kv><tr><th>kept</th><th>texts</th><th>by a keeper</th><th>by a guardian</th><th>by a custodian</th><th>by any of the other nine</th></tr>{f1a}</table>
 <p>Tenders, wardens and shepherds keep things that can be touched or that move: water, moss, lamps, valves, mist. Guardians, custodians, caretakers and stewards keep wholes and states: the world, the realm, equilibrium, stasis.
 Guardian is the keeper's one neighbour in this, and takes the hidden half: secrets and knowledge, hardly ever memory itself.</p>
 <table class=kv style='max-width:1150px'><tr><th>word</th><th>texts naming a thing kept</th><th>kept most often, with the number of texts</th><th>of those texts, memory and its kin</th></tr>{f1b}</table>
 <p class=small>"Memory and its kin" is a list chosen by hand: {', '.join(MEMF)}.</p>
+<h3>By the text</h3>
+<p>A name says what a being is called. What it tends in the text can be something else, and a being called simply Keeper has nothing in the table above. So the sentences about each being's work were read for what it cares for.
+Here the words are much less apart: {', '.join(f'{x} leads for {n}' for x, n in lead.most_common(3))} of the twelve. The split between things and wholes is still visible further down each row.
+Memory itself is cared for by {pct(tshare('keeper', ['memory']))}% of keepers and by at most {pct(others_mem)}% under any other word ({others_mem_w}). Of the {len(mem_b):,} beings that care for memory, {len(mem_keep):,} ({pct(len(mem_keep) / len(mem_b))}%) are called keeper;
+keepers are {pct(n_keeper / n_beings)}% of all beings. With its kin (secrets, knowledge, history) the guardian comes close to the keeper again.</p>
+<table class=kv style='max-width:1250px'><tr><th>word</th><th>beings that care for something named</th><th>cared for most often, with the number of beings</th><th>memory itself</th><th>memory and its kin</th></tr>{f1c}</table>
 {quote('role', 7374, "The bone-keeper spends her dim-times reading it with her fingertips, the only literate part of her body, and she sings the history to the others through the floor")}
 {quote('role', 14714, "which makes this small dull animal the keeper of the only archive on the mountain")}
 {quote('role', 15650, "the tender can hear a boiler dropping pressure before any gauge will show it and goes to it the way you go to a child who has stopped making the noise it was making")}
-<p><b>What it rests on.</b> The names alone. A small model was given each of the {n_names:,} distinct care names and asked for the nouns in it that say what is kept; a noun counts only if it stands in the name (<a href='kept.html'>What is kept</a>).
-Counted by distinct texts. Independently, both readers of the role samples called keeper the memory word before this table existed: 21 of the 36 memory beings in one sample were keepers, and 24 of 91 keepers in the other kept memory (<a href='kinds_role.html'>Kinds: role</a>).</p>
+<p><b>What it rests on.</b> Two readings by a small model, each checked by script. By the name: it was given each of the {n_names:,} distinct care names and asked for the nouns in it that say what is kept; a noun counts only if it stands in the name (<a href='kept.html'>What is kept</a>).
+Counted by distinct texts. By the text: it was given the sentences listed under the role of each being and asked what the being cares for and, apart from that, what it works against; a noun counts only if it stands in those sentences. Counted by beings. Independently, both readers of the role samples called keeper the memory word before this table existed: 21 of the 36 memory beings in one sample were keepers, and 24 of 91 keepers in the other kept memory (<a href='kinds_role.html'>Kinds: role</a>).</p>
 <p><b>What could undo it.</b> Part of it is English, not the writers: <i>record-keeper</i> is a fixed word and <i>memory-keeper</i> nearly one, so a model that reaches for "keeper" gets them for free.
 About a third of the memory names are the other form (<i>keepers of memory</i>), where no fixed word pulls, and tenders have no such compound for water or moss and keep them anyway.
-The noun reader gives the head of a compound only (<i>guardians of the water table</i> gives "table"), misses some names, and does not fold singular and plural. Only what a name says is counted; what a keeper is shown keeping in the text, without it being in the name, is not here.</p>
+The noun reader gives the head of a compound only (<i>guardians of the water table</i> gives "table"), misses some names, and does not fold singular and plural. The two views do not measure the same thing and should not be added: the first counts texts and names, the second beings and sentences. On twenty beings marked by hand the text reading found the main things cared for in every one and added some that are only handled in passing (a leaf, a surface).</p>
 
 <h2 id=part-of-the-place>2. The keeper is part of what it keeps</h2>
 <p><b>Finding.</b> Asked in five different ways, the commonest answer of these texts takes away the line between keeper and kept. The keeper is the place or an organ of it, was made by it, and ends in it.</p>
@@ -348,6 +373,10 @@ The care word matters less than it looks: beings called guardian have a cost {ab
 There is no comparison group: nothing here says whether builders or hunters in the same texts are given a cost more or less often than keepers.</p>
 
 <h2 id=candidates>Seen, not yet examined</h2>
+<p><b id=against>What keepers work against.</b> From the same reading of the role sentences: {pct(n_against / n_kt)}% of beings work against something named. Most of it is not an enemy: it is growth, debris, dust, silt, collapse.
+Only guardians have threats and intruders at the head of the list. Custodians and curators work against decay, chaos, entropy and change. The ten held off most often, each with the number of beings that work against it and, after the stroke, the number that care for the same thing in other texts:
+{', '.join(f'{x} {a} / {f}' for a, f, x in both_sides)}. Growth and moss are cared for far more often than they are held off; decay about as often; debris and collapse are almost never cared for.</p>
+<table class=kv style='max-width:1150px'><tr><th>word</th><th>beings that work against something</th><th>against what, most often, with the number of beings</th></tr>{f_ag}</table>
 <ul>
 <li><b>Guardian gives way to keeper.</b> The tables above show it inside two families. It has not been checked for the other writers, nor against what else changed over the same span.</li>
 <li><b>One keeper, or several.</b> A being that carries several of the words at once is the centre of its text; in an ensemble each keeper is one post among many (<a href='weave.html'>Weave</a>).</li>
