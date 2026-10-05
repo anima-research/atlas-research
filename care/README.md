@@ -19,6 +19,7 @@ https://atlas.lari-island.ai/research/care/
 | `build_site.py` | `data/care.db` -> `site/`; every number on the pages is computed there |
 | `site_more.py` | run by `build_site.py`: the Findings page (each figure reported by a reader and each quote is checked at build time, and the build stops if one is not found), the portrait page (a writer, a word, or both), the weave page, the kinds pages |
 | `release_dates.json` | release dates of the writers, half copied from the Atlas model ledger and half looked up, each of the latter with its source (`dates_found.json` is the lookup as it came back); used for the tables by date on the Findings page |
+| `site_filters.py`, `js/` | the pages whose tables are recounted in the browser for a chosen writer (one model, or all models of a lab) and period of release: What is kept, Words, Weave; `js/common.js` holds the filter bar shared by them and by the reader and the beings table |
 | `weave.py` | whether a being stands alone in its text, carries several of the words, or is one of several |
 | `sample_reading.py` | draws the two samples of 300 beings per question that the readers read |
 | `reading/*_notes.md` | each reader's account of the kinds of answer it met in its sample (ten readers, two per question) |

@@ -42,7 +42,7 @@ NAV = ("<nav><b>Keepers, tenders, guardians</b> &nbsp; <a href='index.html'>Over
 def page(name, title, body, script=''):
     open(os.path.join(SITE, name), 'w').write(
         "<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'>"
-        f"<title>{esc(title)} — Atlas care study</title><link rel=stylesheet href='style.css'><script src='table.js'></script></head><body>{NAV}"
+        f"<title>{esc(title)} — Atlas care study</title><link rel=stylesheet href='style.css'><script src='table.js'></script><script src='config.js'></script><script src='common.js'></script></head><body>{NAV}"
         f"<h1>{esc(title)}</h1>{body}<script>{script}</script></body></html>")
 
 # ---------- data ----------
@@ -56,8 +56,8 @@ def era_key(mo):
 ERA_JS = "function eraOf(d){return !d?'':d<'2025'?'2024':d<'2025-07'?'2025a':d<'2026'?'2025b':'2026';} var ERAS=" + json.dumps(ERA_KEYS) + ";"
 import weave
 WV = {'solo': 's', 'stacked': 'k', 'ensemble': 'e'}
-rows = [[b[0], b[1], b[3], '; '.join(json.loads(b[4])), b[5], b[2], texts[b[1]][1], *b[6:], WV.get(weave.kind.get(b[1]) if b[5] else None, ''), DATES.get(b[2], '')] for b in beings]
-dump('beings.json', rows)   # id, text, called, names, words, writer, sentences in text, role, relation, cost, origin, fate, weave (s solo, k stacked, e ensemble), release date of the writer
+rows = [[b[0], b[1], b[3], '; '.join(json.loads(b[4])), b[5], b[2], texts[b[1]][1], *b[6:], WV.get(weave.kind.get(b[1]) if b[5] else None, ''), DATES.get(b[2], ''), round(weave.cover.get(b[0], 0) / texts[b[1]][1], 3)] for b in beings]
+dump('beings.json', rows)   # id, text, called, names, words, writer, sentences in text, role, relation, cost, origin, fate, weave (s solo, k stacked, e ensemble), release date of the writer, focus (share of the text's sentences listed for the being)
 cache = {}
 def sent(t, a, b):
     if t not in cache:
@@ -113,14 +113,16 @@ In {per.get(0, 0)} texts the word is only mentioned and given to no inhabitant; 
 # ---------- beings ----------
 page('beings.html', 'Beings', """
 <p>One row per inhabitant that a care word is given to. The numbers in the last five columns are sentences under each question; filter with <code>&gt;0</code> to keep the beings whose text answers it.
-Click a name to open the being.</p><div id=t><span class=small>loading…</span></div>""", f"""
+Click a name to open the being.</p><div id=bar></div><div id=t><span class=small>loading…</span></div>""", f"""
 fetch('beings.json').then(r=>r.json()).then(function(B){{
+ filterBar(document.getElementById('bar'), B, function(pred){{
   document.getElementById('t').innerHTML='';
   makeTable(document.getElementById('t'), {{pageSize:150, sort:[0,1], columns:[
     {{title:'#',type:'num'}},{{title:'called',type:'html',tip:'what the text calls it'}},{{title:'care names given to it',type:'text'}},
-    {{title:'words',type:'text',tip:'which of the twelve words'}},{{title:'weave',type:'text',tip:'solo: the only such being in its text, one word; stacked: the only one, several words; ensemble: one of several'}},{{title:'writer',type:'html'}},{{title:'released',type:'text',tip:'release date of the writer; filter with 2026 or 2025-0'}},{{title:'text',type:'html'}},
+    {{title:'words',type:'text',tip:'which of the twelve words'}},{{title:'weave',type:'text',tip:'solo: the only such being in its text, one word; stacked: the only one, several words; ensemble: one of several'}},{{title:'lab',type:'text'}},{{title:'writer',type:'html'}},{{title:'released',type:'text',tip:'release date of the writer'}},{{title:'text',type:'html'}},
     {{title:'sentences in text',type:'num'}},{{title:'role',type:'num'}},{{title:'relation',type:'num'}},{{title:'cost',type:'num'}},{{title:'origin',type:'num'}},{{title:'fate',type:'num'}}],
-   rows:B.map(function(b){{return [b[0],'<a href="being.html?id='+b[0]+'">'+esc(b[2])+'</a>',b[3],b[4],{{s:'solo',k:'stacked',e:'ensemble'}}[b[12]]||'','<a href="portrait.html?m='+encodeURIComponent(b[5])+'">'+esc(b[5])+'</a>',b[13],'<a href="{TEXT_URL}'+b[1]+'">'+b[1]+'</a>',b[6],b[7],b[8],b[9],b[10],b[11]];}})}});
+   rows:B.filter(pred).map(function(b){{return [b[0],'<a href="being.html?id='+b[0]+'">'+esc(b[2])+'</a>',b[3],b[4],{{s:'solo',k:'stacked',e:'ensemble'}}[b[12]]||'',b[5].split('/')[0],'<a href="portrait.html?m='+encodeURIComponent(b[5])+'">'+esc(b[5].split('/')[1])+'</a>',b[13],'<a href="{TEXT_URL}'+b[1]+'">'+b[1]+'</a>',b[6],b[7],b[8],b[9],b[10],b[11]];}})}});
+ }});
 }});
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}""")
 
@@ -151,7 +153,7 @@ page('read.html', 'Read', """
 order <select id=o><option value=r>shuffled</option><option value=m>by writer</option><option value=n>most sentences first</option></select>
 <button id=again>shuffle again</button></div><div class=tbl-info id=info>loading the sentences…</div><div id=list></div><button id=more>more</button>""", f"""
 var Q={json.dumps(QTEXT)}, W={json.dumps(STEMS)}, P=new URLSearchParams(location.search), q=Q[P.get('q')]?P.get('q'):'cost', shown=40, seed=1;
-{ERA_JS}
+var ERAS=CFG.eras;
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}
 document.getElementById('tabs').innerHTML=Object.keys(Q).map(function(k){{return '<a href="read.html?q='+k+'"'+(k===q?' class=on':'')+'>'+k+'</a>';}}).join('');
 document.getElementById('what').innerHTML='The sentences the reader put under <b>'+Q[q]+'</b>, being by being.';
@@ -169,13 +171,13 @@ Promise.all([fetch('beings.json').then(r=>r.json()), fetch('q_'+q+'.json').then(
   B.forEach(function(b){{cm[b[5]]=(cm[b[5]]||0)+1; b.lc=S[b[0]].map(function(x){{return x[1];}}).join(' ').toLowerCase();}});
   var w=document.getElementById('w'), m=document.getElementById('m');
   w.innerHTML='<option value="">any of the twelve</option>'+W.map(function(x){{return '<option>'+x+'</option>';}}).join('');
-  m.innerHTML='<option value="">any writer</option>'+Object.keys(cm).sort().map(function(x){{return '<option value="'+x+'">'+x+' ('+cm[x]+')</option>';}}).join('');
+  m.innerHTML=writerOptions(B);
   var e=document.getElementById('e'); e.innerHTML='<option value="">any time</option>'+ERAS.map(function(x){{return '<option value="'+x[0]+'">'+x[1]+'</option>';}}).join('');
   if(P.get('w')) w.value=P.get('w'); if(P.get('m')) m.value=P.get('m'); if(P.get('e')) e.value=P.get('e');
   function rnd(i){{var x=Math.sin(i*9301+seed*49297)*233280; return x-Math.floor(x);}}
   function draw(){{
-    var fw=w.value, fm=m.value, fe=e.value, fs=document.getElementById('s').value.trim().toLowerCase(), o=document.getElementById('o').value;
-    var L=B.filter(function(b){{return (!fw||(' '+b[4]+' ').indexOf(' '+fw+' ')>=0)&&(!fm||b[5]===fm)&&(!fe||eraOf(b[13])===fe)&&(!fs||b.lc.indexOf(fs)>=0);}});
+    var fw=w.value, fm=writerTest(m.value), fe=e.value, fs=document.getElementById('s').value.trim().toLowerCase(), o=document.getElementById('o').value;
+    var L=B.filter(function(b){{return (!fw||(' '+b[4]+' ').indexOf(' '+fw+' ')>=0)&&fm(b)&&(!fe||eraOf(b[13])===fe)&&(!fs||b.lc.indexOf(fs)>=0);}});
     if(o==='r') L.sort(function(x,y){{return rnd(x[0])-rnd(y[0]);}}); else if(o==='m') L.sort(function(x,y){{return x[5]<y[5]?-1:x[5]>y[5]?1:x[0]-y[0];}});
     else L.sort(function(x,y){{return S[y[0]].length-S[x[0]].length;}});
     document.getElementById('info').textContent=L.length.toLocaleString()+' beings; showing '+Math.min(shown,L.length);
@@ -201,13 +203,13 @@ for b in beings: tm[b[2]].add(b[1])
 for t, (m, n, nb) in texts.items(): sl[m].append(n)
 wk = collections.defaultdict(collections.Counter)
 for t, bs in weave.T.items(): wk[bs[0][2]][weave.kind[t]] += 1
-wrows = [[f"<a href='portrait.html?m={esc(m)}'>{esc(m)}</a>", corpus_by_model.get(m, 0), len(tm[m]), pct(len(tm[m]) / corpus_by_model[m]) if corpus_by_model.get(m) else '', w['beings'],
+wrows = [[m.split('/')[0], f"<a href='portrait.html?m={esc(m)}'>{esc(m.split('/')[1])}</a>", DATES.get(m, ''), corpus_by_model.get(m, 0), len(tm[m]), pct(len(tm[m]) / corpus_by_model[m]) if corpus_by_model.get(m) else '', w['beings'],
           round(sorted(sl[m])[len(sl[m]) // 2]), *[pct(w[q] / w['beings']) for q in Q5], *[pct(wk[m][k] / max(1, sum(wk[m].values()))) for k in ('solo', 'stacked', 'ensemble')]] for m, w in W.items()]
 page('writers.html', 'Writers', """
 <p>One row per model that wrote the texts. "Care texts" are its texts in which a being carries one of the twelve words; the five percentages are the share of its beings whose text answers the question.
-Small rows move a lot: filter <code>beings</code> with <code>&gt;=60</code> before comparing. A writer's name opens its portrait.</p>
+Small rows move a lot: filter <code>beings</code> with <code>&gt;=60</code> before comparing. A writer's name opens its portrait. Filter the <code>lab</code> column for one lab, or <code>released</code> with <code>2026</code> for a year.</p>
 <p class=small>Longer texts answer more questions: across all writers the share of beings with a cost rises from the shortest eighth of texts to the longest (see Method). The median length is given so that rows can be compared within a band.</p><div id=t></div>""",
-     "makeTable(document.getElementById('t'),{pageSize:200,sort:[4,-1],columns:[{title:'writer',type:'html'},{title:'texts in corpus',type:'num'},{title:'care texts',type:'num'},"
+     "makeTable(document.getElementById('t'),{pageSize:200,sort:[6,-1],columns:[{title:'lab',type:'text'},{title:'writer',type:'html'},{title:'released',type:'text',tip:'filter with 2026 or 2025-0'},{title:'texts in corpus',type:'num'},{title:'care texts',type:'num'},"
      "{title:'% of its texts',type:'num'},{title:'beings',type:'num'},{title:'median sentences',type:'num',tip:'median length of its care texts'},"
      "{title:'role %',type:'num'},{title:'relation %',type:'num'},{title:'cost %',type:'num'},{title:'origin %',type:'num'},{title:'fate %',type:'num'},{title:'solo %',type:'num',tip:'share of its care texts with one being and one word'},{title:'stacked %',type:'num',tip:'one being, several words'},{title:'ensemble %',type:'num',tip:'several beings'}],rows:" + json.dumps(wrows) + "});")
 
@@ -384,4 +386,5 @@ Under origin the range is wide, and a tradition handed down counts as an origin 
 <p><code>care/common.py</code> (the words, sentence numbering), <code>ask.py</code>, <code>batch_care.py</code>, <code>build.py</code> (answers to <code>data/care.db</code>), <code>build_site.py</code>, <code>what_is_kept.py</code>.</p>
 """)
 exec(open(os.path.join(HERE, 'site_more.py')).read())
+exec(open(os.path.join(HERE, 'site_filters.py')).read())
 print('site built:', n_beings, 'beings;', {f: os.path.getsize(os.path.join(SITE, f)) // 1024 for f in sorted(os.listdir(SITE)) if f.endswith('.json') and not f.startswith('b_')}, 'KB')

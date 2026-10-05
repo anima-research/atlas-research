@@ -30,8 +30,7 @@ page('portrait.html', 'Portrait', """
 <div class=tbl-info id=rinfo></div><div id=rlist></div><button id=rmore>more</button></div>""", f"""
 var Q={json.dumps(QTEXT)}, W={json.dumps(STEMS)}, QI={{role:7,relation:8,cost:9,origin:10,fate:11}}, TEXT='{TEXT_URL}';
 var P=new URLSearchParams(location.search), st={{m:P.get('m')||'', w:P.get('w')||'', e:P.get('e')||'', q:Q[P.get('q')]?P.get('q'):'cost'}}, shown=30, seed=1, B, X, KT, SQ={{}};
-{ERA_JS}
-function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}
+var ERAS=CFG.eras;
 function fam(x){{return x.split('/')[0];}}
 function has(b,w){{return (' '+b[4]+' ').indexOf(' '+w+' ')>=0;}}
 function inSel(b){{return (!st.e||eraOf(b[13])===st.e)&&(!st.w||has(b,st.w))&&(!st.m||(st.m.slice(-2)==='/*'?fam(b[5])===st.m.slice(0,-2):b[5]===st.m));}}
