@@ -163,7 +163,9 @@ Promise.all([fetch('beings.json').then(r=>r.json()), fetch('q_'+q+'.json').then(
      '<label><input type=checkbox id=allS> show all their sentences</label> &middot; <a href="kept.html#'+(side?'against':'text')+'">back to the table</a>';
      document.getElementById('allS').onchange=function(e){{only=!e.target.checked; draw();}};
      document.getElementById('tabs').style.display='none';}}
-  function mark(t){{if(!noun) return esc(t); var i=t.toLowerCase().indexOf(noun); return i<0?esc(t):esc(t.slice(0,i))+'<mark>'+esc(t.slice(i,i+noun.length))+'</mark>'+esc(t.slice(i+noun.length));}}
+  var forms=noun?[noun, noun.slice(-1)==='y'?noun.slice(0,-1)+'ies':noun+'s', noun+'es', noun.replace(/fe?$/,'ves')]:[];
+  function at(t){{var l=t.toLowerCase(); for(var k=0;k<forms.length;k++){{var i=l.indexOf(forms[k]); if(i>=0) return [i, k===1&&noun.slice(-1)==='y'?forms[k].length:noun.length];}} return null;}}
+  function mark(t){{if(!noun) return esc(t); var a=at(t); return !a?esc(t):esc(t.slice(0,a[0]))+'<mark>'+esc(t.slice(a[0],a[0]+a[1]))+'</mark>'+esc(t.slice(a[0]+a[1]));}}
   B.forEach(function(b){{cm[b[5]]=(cm[b[5]]||0)+1; b.lc=S[b[0]].map(function(x){{return x[1];}}).join(' ').toLowerCase();}});
   var w=document.getElementById('w'), m=document.getElementById('m');
   w.innerHTML='<option value="">any of the twelve</option>'+W.map(function(x){{return '<option>'+x+'</option>';}}).join('');
@@ -179,7 +181,7 @@ Promise.all([fetch('beings.json').then(r=>r.json()), fetch('q_'+q+'.json').then(
     document.getElementById('info').textContent=L.length.toLocaleString()+' beings; showing '+Math.min(shown,L.length);
     document.getElementById('list').innerHTML=L.slice(0,shown).map(function(b){{
       return '<div class=card><h3><a href="being.html?id='+b[0]+'">'+esc(b[2])+'</a></h3><div class=meta>'+esc(b[3])+' &middot; '+esc(b[5])+' &middot; text <a href="{TEXT_URL}'+b[1]+'">'+b[1]+'</a></div>'+
-        S[b[0]].filter(function(x){{return !noun||!only||x[1].toLowerCase().indexOf(noun)>=0;}}).map(function(x){{return '<blockquote><sup>'+x[0]+'</sup> '+mark(x[1])+'</blockquote>';}}).join('')+'</div>';}}).join('');
+        S[b[0]].filter(function(x){{return !noun||!only||at(x[1]);}}).map(function(x){{return '<blockquote><sup>'+x[0]+'</sup> '+mark(x[1])+'</blockquote>';}}).join('')+'</div>';}}).join('');
     document.getElementById('more').style.display=shown<L.length?'':'none';
   }}
   [w,m,e,document.getElementById('o')].forEach(function(e){{e.onchange=function(){{shown=40;draw();}};}});
@@ -246,6 +248,20 @@ for t, n in rdb.execute("select text_id, norm from labels"):
         if m.group(3): of[(m.group(2), m.group(3))].add(t)
 krows = [[w, 'X-' + w, x, len(v)] for (w, x), v in pre.items() if len(v) >= 2] + [[w, w + ' of X', x, len(v)] for (w, x), v in of.items() if len(v) >= 2]
 KEPT = json.load(open(os.path.join(HERE, 'data/kept.json')))       # care name -> nouns that say what is kept (kept_ask.py)
+KT = json.load(open(os.path.join(HERE, 'data/kept_text.json')))      # being id -> {for: [...], against: [...]} from its role sentences (kept_text.py)
+# singular and plural are folded into one row: a form in -s, -es, -ies or -ves goes to its base when the base is itself in the data
+_V = collections.Counter(x for v in KEPT.values() for x in v) + collections.Counter(x for v in KT.values() for side in ('for', 'against') for x in v[side])
+def _base(x):
+    if x.endswith('ies') and x[:-3] + 'y' in _V: return x[:-3] + 'y'
+    if x.endswith('ves') and x[:-3] + 'f' in _V: return x[:-3] + 'f'
+    if x.endswith('ves') and x[:-3] + 'fe' in _V: return x[:-3] + 'fe'
+    if x.endswith('es') and x[:-2] in _V and x[:-2].endswith(('s', 'x', 'z', 'ch', 'sh', 'o')): return x[:-2]
+    if x.endswith('s') and not x.endswith('ss') and x[:-1] in _V: return x[:-1]
+    return x
+FOLD = {x: _base(x) for x in _V}
+n_folded = sum(1 for x, b in FOLD.items() if x != b)
+KEPT = {n: sorted({FOLD.get(x, x) for x in v}) for n, v in KEPT.items()}
+KT = {k: {side: sorted({FOLD.get(x, x) for x in v[side]}) for side in ('for', 'against')} for k, v in KT.items()}
 name_texts = collections.defaultdict(set)
 for t, n in rdb.execute("select text_id, norm from labels"):
     if n in KEPT: name_texts[n].add(t)
@@ -263,7 +279,6 @@ def aggregate():
     for form, d in (('pre', pre), ('of', of)):
         for (w, x), v in d.items(): A[x][form] |= v; A[x]['w'][w] |= v
     return [[k, len(v['pre'] | v['of']), len(v['w']), len(v['pre']), len(v['of']), *[len(v['w'][w]) if w in v['w'] else '' for w in STEMS]] for k, v in A.items() if len(v['pre'] | v['of']) >= 2]
-KT = json.load(open(os.path.join(HERE, 'data/kept_text.json')))      # being id -> {for: [...], against: [...]} from its role sentences (kept_text.py)
 dump('kt.json', {k: [v['for'], v['against']] for k, v in KT.items() if v['for'] or v['against']})
 bwords = {str(b[0]): b[5].split() for b in beings}
 def side_table(side, least=3):
@@ -292,12 +307,13 @@ page('kept.html', 'What is kept', f"""
 <p>What the keepers keep, seen two ways. <b>By the name</b>: what the name itself says is kept (<i>moss-tenders</i>, <i>keepers of the threshold</i>). <b>By the text</b>: what the sentences about the being's work say it cares for,
 and, apart from that, what they say it works against. A keeper of chaos and a keeper who holds chaos off are on different sides.</p>
 <p class=qtabs id=views><a href='#noun' data-v=noun>kept, by the name</a><a href='#text' data-v=text>cared for, by the text</a><a href='#against' data-v=against>worked against, by the text</a><a href='#period' data-v=period>cared for, over time</a><a href='#againstperiod' data-v=againstperiod>worked against, over time</a><a href='#phrase' data-v=phrase>names by pattern</a><a href='#forms' data-v=forms>every form</a></p>
+<p class=small>Singular and plural are folded into one row by rule: a form in -s, -es, -ies or -ves is counted under its base (<i>channels</i> under <i>channel</i>, <i>memories</i> under <i>memory</i>, <i>leaves</i> under <i>leaf</i>) when the base itself occurs in the data; {n_folded:,} forms were folded.</p>
 <p class=small id=note></p><div id=t></div>""",
      "var V={noun:{note:" + json.dumps(
          f"A small model (openai/gpt-6-luna) was given each of the {n_names:,} distinct care names and asked for the main noun of each thing kept, as written in the name, without the words that describe it: "
          "<i>keepers of the ancient knowledge etched into the stone</i> gives <b>knowledge</b>; <i>self-appointed curators of moisture and light</i> gives <b>moisture</b> and <b>light</b>; <i>silent curators</i> gives nothing. "
          f"A noun is accepted only if it stands in the name. {n_with:,} names say what is kept. Whichever of the twelve words keeps it and in whatever form (hyphen, of, or two words side by side), it is counted here once per text. "
-         "Singular and plural are not folded (<i>memory</i>, <i>memories</i>). The instruction is in <code>care/prompt_kept.md</code>.") +
+         "Singular and plural are counted as one row. The instruction is in <code>care/prompt_kept.md</code>.") +
      ",cols:[{title:'kept',type:'text'},{title:'texts',type:'num',tip:'distinct texts, all twelve words, all forms'},{title:'care words',type:'num',tip:'how many of the twelve keep it'},{title:'as in',type:'text',tip:'the three most frequent names'}," + wcols + "],rows:" + json.dumps(nrows) + ",sort:[1,-1]},"
      "text:{note:" + json.dumps(
          f"For each of the {n_kt:,} beings with sentences under the question of its role, a small model (openai/gpt-6-luna) read those sentences and listed what the being cares for and, separately, what it works against, as the main noun of each, exactly as written. "

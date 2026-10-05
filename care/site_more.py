@@ -238,10 +238,10 @@ def quote(q, bid, text):
     return (f"<blockquote>{esc(text)}<br><span class=small><a href='being.html?id={bid}'>{esc(b[3])}</a> &middot; {esc(b[2])}</span></blockquote>")
 
 # 1. what each word keeps
-MEMF = ['memory', 'memories', 'record', 'records', 'history', 'knowledge', 'secrets', 'lore', 'wisdom', 'archive', 'archives', 'stories', 'names', 'ledger']
+MEMF = sorted({FOLD.get(x, x) for x in ['memory', 'memories', 'record', 'records', 'history', 'histories', 'knowledge', 'secret', 'secrets', 'lore', 'wisdom', 'archive', 'archives', 'story', 'stories', 'name', 'names', 'ledger', 'ledgers']})
 def texts_of(x, w=None): return (NOUN[x]['w'].get(w, set()) if w else NOUN[x]['t']) if x in NOUN else set()
 f1a = ''.join(f"<tr><td><b>{x}</b></td><td class=num>{len(texts_of(x))}</td><td class=num>{len(texts_of(x, 'keeper'))}</td><td class=num>{len(texts_of(x, 'guardian'))}</td><td class=num>{len(texts_of(x, 'custodian'))}</td>"
-              f"<td class=num>{len(set().union(*[texts_of(x, w) for w in STEMS if w not in ('keeper', 'guardian', 'custodian')]))}</td></tr>" for x in ('memory', 'record', 'history', 'knowledge', 'secrets'))
+              f"<td class=num>{len(set().union(*[texts_of(x, w) for w in STEMS if w not in ('keeper', 'guardian', 'custodian')]))}</td></tr>" for x in ('memory', 'record', 'history', 'knowledge', FOLD.get('secrets', 'secrets')))
 word_kept = {w: set().union(*[v['w'][w] for v in NOUN.values() if w in v['w']]) for w in STEMS}
 fam = {w: set().union(*[texts_of(x, w) for x in MEMF]) for w in STEMS}
 f1b = ''.join(f"<tr><td><b><a href='portrait.html?w={w}'>{w}</a></b></td><td class=num>{len(word_kept[w]):,}</td>"
@@ -369,7 +369,7 @@ keepers are {pct(n_keeper / n_beings)}% of all beings. With its kin (secrets, kn
 Counted by distinct texts. By the text: it was given the sentences listed under the role of each being and asked what the being cares for and, apart from that, what it works against; a noun counts only if it stands in those sentences. Counted by beings. Independently, both readers of the role samples called keeper the memory word before this table existed: 21 of the 36 memory beings in one sample were keepers, and 24 of 91 keepers in the other kept memory (<a href='kinds_role.html'>Kinds: role</a>).</p>
 <p><b>What could undo it.</b> Part of it is English, not the writers: <i>record-keeper</i> is a fixed word and <i>memory-keeper</i> nearly one, so a model that reaches for "keeper" gets them for free.
 About a third of the memory names are the other form (<i>keepers of memory</i>), where no fixed word pulls, and tenders have no such compound for water or moss and keep them anyway.
-The noun reader gives the head of a compound only (<i>guardians of the water table</i> gives "table"), misses some names, and does not fold singular and plural. The two views do not measure the same thing and should not be added: the first counts texts and names, the second beings and sentences. On twenty beings marked by hand the text reading found the main things cared for in every one and added some that are only handled in passing (a leaf, a surface).</p>
+The noun reader gives the head of a compound only (<i>guardians of the water table</i> gives "table"), and misses some names. Singular and plural are folded by rule, which can join two different words that differ by an s. The two views do not measure the same thing and should not be added: the first counts texts and names, the second beings and sentences. On twenty beings marked by hand the text reading found the main things cared for in every one and added some that are only handled in passing (a leaf, a surface).</p>
 
 <h2 id=part-of-the-place>2. The keeper is part of what it keeps</h2>
 <p><b>Finding.</b> Asked in five different ways, the commonest answer of these texts takes away the line between keeper and kept. The keeper is the place or an organ of it, was made by it, and ends in it.</p>
