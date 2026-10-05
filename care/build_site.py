@@ -48,10 +48,16 @@ def page(name, title, body, script=''):
 # ---------- data ----------
 texts = {t: (m, n, nb) for t, m, n, nb in db.execute("select text_id, model, n_sentences, n_beings from texts")}
 beings = db.execute("select id, text_id, model, called, names, words, n_role, n_relation, n_cost, n_origin, n_fate from beings order by id").fetchall()
+DATES = json.load(open(os.path.join(HERE, 'release_dates.json')))['dates']
+ERA_KEYS = [('2024', '2024 and before'), ('2025a', 'first half of 2025'), ('2025b', 'second half of 2025'), ('2026', '2026')]
+def era_key(mo):
+    d = DATES.get(mo)
+    return None if not d else ('2024' if d < '2025' else ('2025a' if d < '2025-07' else ('2025b' if d < '2026' else '2026')))
+ERA_JS = "function eraOf(d){return !d?'':d<'2025'?'2024':d<'2025-07'?'2025a':d<'2026'?'2025b':'2026';} var ERAS=" + json.dumps(ERA_KEYS) + ";"
 import weave
 WV = {'solo': 's', 'stacked': 'k', 'ensemble': 'e'}
-rows = [[b[0], b[1], b[3], '; '.join(json.loads(b[4])), b[5], b[2], texts[b[1]][1], *b[6:], WV.get(weave.kind.get(b[1]) if b[5] else None, '')] for b in beings]
-dump('beings.json', rows)   # id, text, called, names, words, writer, sentences in text, role, relation, cost, origin, fate, weave (s solo, k stacked, e ensemble)
+rows = [[b[0], b[1], b[3], '; '.join(json.loads(b[4])), b[5], b[2], texts[b[1]][1], *b[6:], WV.get(weave.kind.get(b[1]) if b[5] else None, ''), DATES.get(b[2], '')] for b in beings]
+dump('beings.json', rows)   # id, text, called, names, words, writer, sentences in text, role, relation, cost, origin, fate, weave (s solo, k stacked, e ensemble), release date of the writer
 cache = {}
 def sent(t, a, b):
     if t not in cache:
@@ -112,9 +118,9 @@ fetch('beings.json').then(r=>r.json()).then(function(B){{
   document.getElementById('t').innerHTML='';
   makeTable(document.getElementById('t'), {{pageSize:150, sort:[0,1], columns:[
     {{title:'#',type:'num'}},{{title:'called',type:'html',tip:'what the text calls it'}},{{title:'care names given to it',type:'text'}},
-    {{title:'words',type:'text',tip:'which of the twelve words'}},{{title:'weave',type:'text',tip:'solo: the only such being in its text, one word; stacked: the only one, several words; ensemble: one of several'}},{{title:'writer',type:'html'}},{{title:'text',type:'html'}},
+    {{title:'words',type:'text',tip:'which of the twelve words'}},{{title:'weave',type:'text',tip:'solo: the only such being in its text, one word; stacked: the only one, several words; ensemble: one of several'}},{{title:'writer',type:'html'}},{{title:'released',type:'text',tip:'release date of the writer; filter with 2026 or 2025-0'}},{{title:'text',type:'html'}},
     {{title:'sentences in text',type:'num'}},{{title:'role',type:'num'}},{{title:'relation',type:'num'}},{{title:'cost',type:'num'}},{{title:'origin',type:'num'}},{{title:'fate',type:'num'}}],
-   rows:B.map(function(b){{return [b[0],'<a href="being.html?id='+b[0]+'">'+esc(b[2])+'</a>',b[3],b[4],{{s:'solo',k:'stacked',e:'ensemble'}}[b[12]]||'','<a href="portrait.html?m='+encodeURIComponent(b[5])+'">'+esc(b[5])+'</a>','<a href="{TEXT_URL}'+b[1]+'">'+b[1]+'</a>',b[6],b[7],b[8],b[9],b[10],b[11]];}})}});
+   rows:B.map(function(b){{return [b[0],'<a href="being.html?id='+b[0]+'">'+esc(b[2])+'</a>',b[3],b[4],{{s:'solo',k:'stacked',e:'ensemble'}}[b[12]]||'','<a href="portrait.html?m='+encodeURIComponent(b[5])+'">'+esc(b[5])+'</a>',b[13],'<a href="{TEXT_URL}'+b[1]+'">'+b[1]+'</a>',b[6],b[7],b[8],b[9],b[10],b[11]];}})}});
 }});
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}""")
 
@@ -141,10 +147,11 @@ Promise.all([fetch('beings.json').then(r=>r.json()), fetch('b_'+Math.floor(id/10
 # ---------- read ----------
 page('read.html', 'Read', """
 <div class='qtabs' id=tabs></div><p id=what></p>
-<div class=controls>word <select id=w></select> writer <select id=m></select> contains <input id=s placeholder='text in the sentences'>
+<div class=controls>word <select id=w></select> writer <select id=m></select> released <select id=e></select> contains <input id=s placeholder='text in the sentences'>
 order <select id=o><option value=r>shuffled</option><option value=m>by writer</option><option value=n>most sentences first</option></select>
 <button id=again>shuffle again</button></div><div class=tbl-info id=info>loading the sentences…</div><div id=list></div><button id=more>more</button>""", f"""
 var Q={json.dumps(QTEXT)}, W={json.dumps(STEMS)}, P=new URLSearchParams(location.search), q=Q[P.get('q')]?P.get('q'):'cost', shown=40, seed=1;
+{ERA_JS}
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}
 document.getElementById('tabs').innerHTML=Object.keys(Q).map(function(k){{return '<a href="read.html?q='+k+'"'+(k===q?' class=on':'')+'>'+k+'</a>';}}).join('');
 document.getElementById('what').innerHTML='The sentences the reader put under <b>'+Q[q]+'</b>, being by being.';
@@ -161,11 +168,12 @@ Promise.all([fetch('beings.json').then(r=>r.json()), fetch('q_'+q+'.json').then(
   var w=document.getElementById('w'), m=document.getElementById('m');
   w.innerHTML='<option value="">any of the twelve</option>'+W.map(function(x){{return '<option>'+x+'</option>';}}).join('');
   m.innerHTML='<option value="">any writer</option>'+Object.keys(cm).sort().map(function(x){{return '<option value="'+x+'">'+x+' ('+cm[x]+')</option>';}}).join('');
-  if(P.get('w')) w.value=P.get('w'); if(P.get('m')) m.value=P.get('m');
+  var e=document.getElementById('e'); e.innerHTML='<option value="">any time</option>'+ERAS.map(function(x){{return '<option value="'+x[0]+'">'+x[1]+'</option>';}}).join('');
+  if(P.get('w')) w.value=P.get('w'); if(P.get('m')) m.value=P.get('m'); if(P.get('e')) e.value=P.get('e');
   function rnd(i){{var x=Math.sin(i*9301+seed*49297)*233280; return x-Math.floor(x);}}
   function draw(){{
-    var fw=w.value, fm=m.value, fs=document.getElementById('s').value.trim().toLowerCase(), o=document.getElementById('o').value;
-    var L=B.filter(function(b){{return (!fw||(' '+b[4]+' ').indexOf(' '+fw+' ')>=0)&&(!fm||b[5]===fm)&&(!fs||b.lc.indexOf(fs)>=0);}});
+    var fw=w.value, fm=m.value, fe=e.value, fs=document.getElementById('s').value.trim().toLowerCase(), o=document.getElementById('o').value;
+    var L=B.filter(function(b){{return (!fw||(' '+b[4]+' ').indexOf(' '+fw+' ')>=0)&&(!fm||b[5]===fm)&&(!fe||eraOf(b[13])===fe)&&(!fs||b.lc.indexOf(fs)>=0);}});
     if(o==='r') L.sort(function(x,y){{return rnd(x[0])-rnd(y[0]);}}); else if(o==='m') L.sort(function(x,y){{return x[5]<y[5]?-1:x[5]>y[5]?1:x[0]-y[0];}});
     else L.sort(function(x,y){{return S[y[0]].length-S[x[0]].length;}});
     document.getElementById('info').textContent=L.length.toLocaleString()+' beings; showing '+Math.min(shown,L.length);
@@ -174,7 +182,7 @@ Promise.all([fetch('beings.json').then(r=>r.json()), fetch('q_'+q+'.json').then(
         S[b[0]].filter(function(x){{return !noun||!only||x[1].toLowerCase().indexOf(noun)>=0;}}).map(function(x){{return '<blockquote><sup>'+x[0]+'</sup> '+mark(x[1])+'</blockquote>';}}).join('')+'</div>';}}).join('');
     document.getElementById('more').style.display=shown<L.length?'':'none';
   }}
-  [w,m,document.getElementById('o')].forEach(function(e){{e.onchange=function(){{shown=40;draw();}};}});
+  [w,m,e,document.getElementById('o')].forEach(function(e){{e.onchange=function(){{shown=40;draw();}};}});
   document.getElementById('s').oninput=function(){{shown=40;draw();}};
   document.getElementById('again').onclick=function(){{seed++;shown=40;draw();}};
   document.getElementById('more').onclick=function(){{shown+=80;draw();}};
@@ -266,12 +274,24 @@ def side_table(side, least=3):
             for w in bwords.get(bid, []): A[x]['w'][w].add(bid)
     return A, [[f"<a href='read.html?q=role&{side}={urllib.parse.quote(x)}'>{esc(x)}</a>", len(v['b']), len(v['w']), *[len(v['w'][w]) if w in v['w'] else '' for w in STEMS]] for x, v in A.items() if len(v['b']) >= least]
 TF, tf_rows = side_table('for'); TA, ta_rows = side_table('against')
+b_era = {str(b[0]): era_key(b[2]) for b in beings}
+era_n = collections.Counter(b_era[k] for k in KT if b_era.get(k))
+def era_table(A, side, least=25):
+    out = []
+    for x, v in A.items():
+        if len(v['b']) < least: continue
+        c = collections.Counter(b_era.get(k) for k in v['b']); sh = [round(100 * c[e] / era_n[e], 2) for e, _ in ERA_KEYS]
+        out.append([f"<a href='read.html?q=role&{side}={urllib.parse.quote(x)}'>{esc(x)}</a>", len(v['b']), *sh, round(sh[3] - sh[0], 2), round(sh[3] / sh[0], 1) if sh[0] else ''])
+    return out
+tfe_rows = era_table(TF, 'for'); tae_rows = era_table(TA, 'against')
+ecols = ("[{title:'@@',type:'html',tip:'opens the sentences'},{title:'beings',type:'num'}," + ','.join("{title:'%s, %%',type:'num',tip:'share of the beings by writers of that period'}" % lab for _, lab in ERA_KEYS) +
+         ",{title:'change, points',type:'num',tip:'2026 minus 2024 and before'},{title:'times',type:'num',tip:'2026 share divided by the share of 2024 and before'}]")
 n_kt = len(KT); n_for = sum(1 for v in KT.values() if v['for']); n_against = sum(1 for v in KT.values() if v['against'])
 wcols = ','.join("{title:'%s',type:'num'}" % w for w in STEMS)
 page('kept.html', 'What is kept', f"""
 <p>What the keepers keep, seen two ways. <b>By the name</b>: what the name itself says is kept (<i>moss-tenders</i>, <i>keepers of the threshold</i>). <b>By the text</b>: what the sentences about the being's work say it cares for,
 and, apart from that, what they say it works against. A keeper of chaos and a keeper who holds chaos off are on different sides.</p>
-<p class=qtabs id=views><a href='#noun' data-v=noun>kept, by the name</a><a href='#text' data-v=text>cared for, by the text</a><a href='#against' data-v=against>worked against, by the text</a><a href='#phrase' data-v=phrase>names by pattern</a><a href='#forms' data-v=forms>every form</a></p>
+<p class=qtabs id=views><a href='#noun' data-v=noun>kept, by the name</a><a href='#text' data-v=text>cared for, by the text</a><a href='#against' data-v=against>worked against, by the text</a><a href='#period' data-v=period>cared for, over time</a><a href='#againstperiod' data-v=againstperiod>worked against, over time</a><a href='#phrase' data-v=phrase>names by pattern</a><a href='#forms' data-v=forms>every form</a></p>
 <p class=small id=note></p><div id=t></div>""",
      "var V={noun:{note:" + json.dumps(
          f"A small model (openai/gpt-6-luna) was given each of the {n_names:,} distinct care names and asked for the main noun of each thing kept, as written in the name, without the words that describe it: "
@@ -287,6 +307,12 @@ and, apart from that, what they say it works against. A keeper of chaos and a ke
          f"From the same reading: what the sentences say the being holds off, removes, prevents, or protects what it keeps from. {n_against:,} of the {n_kt:,} beings work against something named. "
          "The same noun can stand on both sides in different texts: growth, moss and decay are cared for by some and worked against by others.") +
      ",cols:[{title:'worked against',type:'html',tip:'opens the sentences'},{title:'beings',type:'num'},{title:'care words',type:'num'}," + wcols + "],rows:" + json.dumps(ta_rows) + ",sort:[1,-1]},"
+     "period:{note:" + json.dumps(
+         "What is cared for, by the release date of the writer. Each cell is the share, in percent, of the beings written by models of that period that care for the thing ("
+         + ', '.join(f"{lab}: {era_n[e]:,} beings" for e, lab in ERA_KEYS) + "). Sort by <b>change</b> to see what came and what went; nouns of fewer than 25 beings are left out. "
+         "The periods are different sets of writers, and later texts are longer, so a rise of a few tenths of a point means little.") +
+     ",cols:" + ecols.replace('@@', 'cared for') + ",rows:" + json.dumps(tfe_rows) + ",sort:[6,1]},"
+     "againstperiod:{note:'What is worked against, by the release date of the writer; read as the table before.',cols:" + ecols.replace('@@', 'worked against') + ",rows:" + json.dumps(tae_rows) + ",sort:[6,-1]},"
      "phrase:{note:'By pattern, without a model: the word joined to a care word by a hyphen, and the one or two words after \"of\", as written. A two-word capture can stop before the noun (<i>keepers of the ancient ...</i>), which is why the first view asks a reader for the noun instead.',"
      "cols:[{title:'X',type:'text'},{title:'texts',type:'num'},{title:'care words',type:'num'},{title:'X-word',type:'num',tip:'texts with the hyphen form'},{title:'word of X',type:'num',tip:'texts with the of form'}," + wcols + "],rows:" + json.dumps(aggregate()) + ",sort:[1,-1]},"
      "forms:{note:'By pattern: one row per care word, form and X.',cols:[{title:'word',type:'text'},{title:'form',type:'text'},{title:'X',type:'text'},{title:'texts',type:'num'}],rows:" + json.dumps(krows) + ",sort:[3,-1]}};"

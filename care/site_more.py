@@ -22,36 +22,37 @@ table.mx td,table.mx th{text-align:right;padding:2px 5px;font-size:12px} table.m
 
 # ---------- portrait ----------
 page('portrait.html', 'Portrait', """
-<p class=small>Pick a writer, a word, or both. Blue is the selection; grey is every other being in the set. Counts are beings.</p>
-<div class=pick>writer <select id=pm></select> word <select id=pw></select> <span class=small id=psum>loading…</span></div>
+<p class=small>Pick a writer, a word, a period of release, or any of them together. Blue is the selection; grey is every other being in the set. Counts are beings.</p>
+<div class=pick>writer <select id=pm></select> word <select id=pw></select> released <select id=pe></select> <span class=small id=psum>loading…</span></div>
 <div id=body></div>
 <div id=reader style='display:none'><h2 id=rh></h2><div class='qtabs' id=rtabs></div>
 <div class=controls>contains <input id=rs placeholder='text in the sentences'> <button id=ragain>shuffle again</button></div>
 <div class=tbl-info id=rinfo></div><div id=rlist></div><button id=rmore>more</button></div>""", f"""
 var Q={json.dumps(QTEXT)}, W={json.dumps(STEMS)}, QI={{role:7,relation:8,cost:9,origin:10,fate:11}}, TEXT='{TEXT_URL}';
-var P=new URLSearchParams(location.search), st={{m:P.get('m')||'', w:P.get('w')||'', q:Q[P.get('q')]?P.get('q'):'cost'}}, shown=30, seed=1, B, X, KT, SQ={{}};
+var P=new URLSearchParams(location.search), st={{m:P.get('m')||'', w:P.get('w')||'', e:P.get('e')||'', q:Q[P.get('q')]?P.get('q'):'cost'}}, shown=30, seed=1, B, X, KT, SQ={{}};
+{ERA_JS}
 function esc(s){{return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}}
 function fam(x){{return x.split('/')[0];}}
 function has(b,w){{return (' '+b[4]+' ').indexOf(' '+w+' ')>=0;}}
-function inSel(b){{return (!st.w||has(b,st.w))&&(!st.m||(st.m.slice(-2)==='/*'?fam(b[5])===st.m.slice(0,-2):b[5]===st.m));}}
+function inSel(b){{return (!st.e||eraOf(b[13])===st.e)&&(!st.w||has(b,st.w))&&(!st.m||(st.m.slice(-2)==='/*'?fam(b[5])===st.m.slice(0,-2):b[5]===st.m));}}
 function pc(a,n){{return n?100*a/n:0;}}
 function row(label,a,na,r,nr,href){{var x=pc(a,na),y=pc(r,nr);
   return '<tr><td class=l>'+(href?'<a href="'+href+'">'+label+'</a>':label)+'</td><td><div class=t><i style="width:'+x.toFixed(1)+'%"></i></div><div class="t r"><i style="width:'+y.toFixed(1)+'%"></i></div></td>'+
          '<td class=n>'+x.toFixed(0)+'% <span class=small>('+a.toLocaleString()+')</span></td><td class=n><span class=small>'+y.toFixed(0)+'%</span></td></tr>';}}
-function link(o){{var u=new URLSearchParams(); var s=Object.assign({{}},st,o); if(s.m)u.set('m',s.m); if(s.w)u.set('w',s.w); u.set('q',s.q); return 'portrait.html?'+u.toString();}}
+function link(o){{var u=new URLSearchParams(); var s=Object.assign({{}},st,o); if(s.m)u.set('m',s.m); if(s.w)u.set('w',s.w); if(s.e)u.set('e',s.e); u.set('q',s.q); return 'portrait.html?'+u.toString();}}
 function draw(){{
   var S=B.filter(inSel), R=B.filter(function(b){{return !inSel(b);}}), n=S.length, nr=R.length, h='';
   history.replaceState(null,'',link({{}}));
-  var name=[st.m?(st.m.slice(-2)==='/*'?st.m.slice(0,-2)+', all models':st.m):'', st.w].filter(Boolean).join(' · ');
+  var name=[st.m?(st.m.slice(-2)==='/*'?st.m.slice(0,-2)+', all models':st.m):'', st.w, st.e?'released '+ERAS.filter(function(x){{return x[0]===st.e;}})[0][1]:''].filter(Boolean).join(' · ');
   document.querySelector('h1').textContent=name?('Portrait: '+name):'Portrait'; document.title=(name||'Portrait')+' — Atlas care study';
-  if(!st.m&&!st.w){{document.getElementById('psum').textContent=''; document.getElementById('body').innerHTML='<p>Nothing picked yet. For example: <a href="portrait.html?m=google/*&q=cost">what the Google models say of the cost</a>, <a href="portrait.html?m=anthropic/claude-sonnet-3&q=role">the roles of care in Claude Sonnet 3</a>, <a href="portrait.html?w=gardener&q=fate">what becomes of gardeners</a>.</p>'; document.getElementById('reader').style.display='none'; return;}}
+  if(!st.m&&!st.w&&!st.e){{document.getElementById('psum').textContent=''; document.getElementById('body').innerHTML='<p>Nothing picked yet. For example: <a href="portrait.html?m=google/*&q=cost">what the Google models say of the cost</a>, <a href="portrait.html?m=anthropic/claude-sonnet-3&q=role">the roles of care in Claude Sonnet 3</a>, <a href="portrait.html?w=gardener&q=fate">what becomes of gardeners</a>.</p>'; document.getElementById('reader').style.display='none'; return;}}
   var texts={{}}; S.forEach(function(b){{texts[b[1]]=1;}});
   document.getElementById('psum').textContent=n.toLocaleString()+' beings in '+Object.keys(texts).length.toLocaleString()+' texts';
   if(!n){{document.getElementById('body').innerHTML='<p class=none>No being in the set matches.</p>'; document.getElementById('reader').style.display='none'; return;}}
   h+='<div class=legend><b style="background:#1a4fb0"></b>the selection<b style="background:#b9b9b9"></b>all other beings</div><div class=cols>';
   h+='<div><h2>Which questions its texts answer</h2><table class=bars>'+Object.keys(Q).map(function(q){{var i=QI[q];
       return row('<b>'+q+'</b> <span class=small>'+Q[q]+'</span>', S.filter(function(b){{return b[i]>0;}}).length, n, R.filter(function(b){{return b[i]>0;}}).length, nr, link({{q:q}})+'#reader');}}).join('')+'</table>';
-  if(st.w&&!st.m){{var wi=X.within[st.w]; h+='<p class=small>Inside one writer, beings called '+st.w+' differ from that writer\\'s other beings by: '+['cost','origin','fate'].map(function(q){{return q+' '+(wi[q]>0?'+':'')+wi[q];}}).join(', ')+' points. Where this is near zero and the bars above differ, the difference belongs to the writers who favour the word.</p>';}}
+  if(st.w&&!st.m&&!st.e){{var wi=X.within[st.w]; h+='<p class=small>Inside one writer, beings called '+st.w+' differ from that writer\\'s other beings by: '+['cost','origin','fate'].map(function(q){{return q+' '+(wi[q]>0?'+':'')+wi[q];}}).join(', ')+' points. Where this is near zero and the bars above differ, the difference belongs to the writers who favour the word.</p>';}}
   var len=S.map(function(b){{return b[6];}}).sort(function(a,b){{return a-b;}}), lr=R.map(function(b){{return b[6];}}).sort(function(a,b){{return a-b;}});
   h+='<p class=small>Median length of the text: '+len[Math.floor(n/2)]+' sentences (others: '+(nr?lr[Math.floor(nr/2)]:'-')+'). Longer texts answer more questions.</p></div>';
   h+='<div><h2>How the roles are woven</h2><table class=bars>'+[['s','solo','the only such being in its text, one word'],['k','stacked','the only one, several words on it'],['e','ensemble','one of several in its text']].map(function(k){{
@@ -60,7 +61,7 @@ function draw(){{
   h+='<div><h2>'+(st.w?'Words given to the same being':'Its words')+'</h2><table class=bars>'+W.filter(function(w){{return w!==st.w;}}).map(function(w){{
       return [w,S.filter(function(b){{return has(b,w);}}).length,R.filter(function(b){{return has(b,w);}}).length];}}).sort(function(a,b){{return b[1]-a[1];}}).map(function(x){{
       return row(x[0],x[1],n,x[2],nr,st.w?null:link({{w:x[0]}}));}}).join('')+'</table></div>';
-  if(st.w&&!st.m){{
+  if(st.w&&!st.m&&!st.e){{
     var per={{}}; B.forEach(function(b){{var p=per[b[5]]||(per[b[5]]=[0,0]); p[1]++; if(has(b,st.w))p[0]++;}});
     var L=Object.keys(per).filter(function(m){{return per[m][1]>=40;}}).map(function(m){{return [m,per[m][0],per[m][1]];}}).sort(function(a,b){{return b[1]/b[2]-a[1]/a[2];}});
     var one=function(x){{return '<tr><td class=l><a href="'+link({{m:x[0]}})+'">'+esc(x[0])+'</a></td><td><div class=t><i style="width:'+pc(x[1],x[2]).toFixed(1)+'%"></i></div></td><td class=n>'+pc(x[1],x[2]).toFixed(0)+'% <span class=small>('+x[1]+' of '+x[2]+')</span></td></tr>';}};
@@ -70,7 +71,7 @@ function draw(){{
   [[0,'What they care for','cared for'],[1,'What they work against','worked against']].forEach(function(sd){{
     var c={{}}, nn=0; S.forEach(function(b){{var k=KT[b[0]]; if(k&&k[sd[0]].length){{nn++; k[sd[0]].forEach(function(x){{c[x]=(c[x]||0)+1;}});}}}});
     var L=Object.keys(c).map(function(x){{return [x,c[x]];}}).sort(function(a,b){{return b[1]-a[1];}}).slice(0,28);
-    h+='<div><h2>'+sd[1]+'</h2><p class=small>By the text: nouns from the sentences about its work, with the number of beings. '+nn.toLocaleString()+' of the '+n.toLocaleString()+' beings ('+pc(nn,n).toFixed(0)+'%) have something '+sd[2]+'. <a href="kept.html#'+(sd[0]?'against':'text')+'">The whole table</a>.</p><p>'+(L.map(function(x){{return '<a href="read.html?q=role&'+(sd[0]?'against':'for')+'='+encodeURIComponent(x[0])+(st.w?'&w='+st.w:'')+(st.m&&st.m.slice(-2)!=='/*'?'&m='+encodeURIComponent(st.m):'')+'">'+esc(x[0])+'</a> '+x[1];}}).join(', ')||'-')+'</p></div>';
+    h+='<div><h2>'+sd[1]+'</h2><p class=small>By the text: nouns from the sentences about its work, with the number of beings. '+nn.toLocaleString()+' of the '+n.toLocaleString()+' beings ('+pc(nn,n).toFixed(0)+'%) have something '+sd[2]+'. <a href="kept.html#'+(sd[0]?'against':'text')+'">The whole table</a>.</p><p>'+(L.map(function(x){{return '<a href="read.html?q=role&'+(sd[0]?'against':'for')+'='+encodeURIComponent(x[0])+(st.w?'&w='+st.w:'')+(st.e?'&e='+st.e:'')+(st.m&&st.m.slice(-2)!=='/*'?'&m='+encodeURIComponent(st.m):'')+'">'+esc(x[0])+'</a> '+x[1];}}).join(', ')||'-')+'</p></div>';
   }});
   if(st.m&&st.m.slice(-2)!=='/*'&&X.corpus[st.m]){{h+='<div><h2>How often it writes them</h2><p>'+X.care_texts[st.m]+' of its '+X.corpus[st.m]+' texts in the corpus ('+pc(X.care_texts[st.m],X.corpus[st.m]).toFixed(0)+'%) have a being with one of the twelve words.</p></div>';}}
   h+='</div>'; document.getElementById('body').innerHTML=h; reader(S);
@@ -104,6 +105,7 @@ Promise.all([fetch('beings.json').then(function(r){{return r.json();}}), fetch('
     var ms=Object.keys(cm).filter(function(m){{return fam(m)===f;}}).sort();
     return '<optgroup label="'+f+'">'+(ms.length>1?'<option value="'+f+'/*">'+f+', all models ('+cf[f]+')</option>':'')+ms.map(function(m){{return '<option value="'+m+'">'+m+' ('+cm[m]+')</option>';}}).join('')+'</optgroup>';}}).join('');
   pw.innerHTML='<option value="">any of the twelve</option>'+W.map(function(w){{return '<option>'+w+'</option>';}}).join('');
+  var pe=document.getElementById('pe'); pe.innerHTML='<option value="">any time</option>'+ERAS.map(function(x){{return '<option value="'+x[0]+'">'+x[1]+'</option>';}}).join(''); pe.value=st.e; pe.onchange=function(){{st.e=pe.value; shown=30; draw();}};
   pm.value=st.m; pw.value=st.w; pm.onchange=function(){{st.m=pm.value; shown=30; draw();}}; pw.onchange=function(){{st.w=pw.value; shown=30; draw();}};
   draw();
 }});""")
@@ -276,7 +278,6 @@ bandr = sorted((sum(v) / len(v), m) for m, v in bandc.items() if len(v) >= 40)
 def bar(m, v, n): return (f"<tr><td class=l><a href='portrait.html?m={esc(m)}&q=cost'>{esc(m)}</a></td><td><div class=t><i style='width:{pct(v)}%'></i></div></td>"
                           f"<td class=n>{pct(v)}% <span class=small>of {n}</span></td></tr>")
 chart = ''.join(bar(m, v, n) for v, m, n in big)
-DATES = json.load(open(os.path.join(HERE, 'release_dates.json')))['dates']
 dated = sorted((DATES[m], m, w) for m, w in W.items() if m in DATES and DATES[m] >= '2020' and w['beings'] >= 60)
 half = collections.defaultdict(list)
 for d, m, w in dated: half[d[:4] + (' first half' if d[5:7] <= '06' else ' second half')].append((m, w))
@@ -422,6 +423,11 @@ The care word stops being something said of a being and becomes what the being i
 <p>The keepers of 2024 were not yet the keepers of 2026. They looked like the guardians beside them: the word was said of a being called something else, and a quarter of them kept the balance.</p>
 {etable(lambda b: 'keeper' in b[5].split(), 'beings called keeper')}<br>{etable(lambda b: 'guardian' in b[5].split(), 'beings called guardian')}
 <p>The same in every text of these writers, whether or not it holds a care being at all, by plain search:</p>{f4raw}
+<p>What the beings care for changed with it. Share of each period's beings that care for the thing, in percent, for the things that fell and rose most between the first period and the last (<a href='kept.html#period'>the whole table</a>):</p>
+<table class=kv><tr><th>cared for</th>{''.join(f'<th>{lab}</th>' for _, lab in ERA_KEYS)}<th>change, points</th></tr>
+{''.join('<tr><td>' + r[0] + '</td>' + ''.join(f'<td class=num>{x}</td>' for x in r[2:7]) + '</tr>' for r in sorted(tfe_rows, key=lambda r: r[6])[:10])}
+<tr><td colspan=6 class=small>…</td></tr>
+{''.join('<tr><td>' + r[0] + '</td>' + ''.join(f'<td class=num>{x}</td>' for x in r[2:7]) + '</tr>' for r in sorted(tfe_rows, key=lambda r: -r[6])[:12])}</table>
 {quote('relation', 2826, "They are the guardians of this landscape, maintaining the delicate balance of nature and protecting it from outside threats.")}
 {quote('relation', 15839, "A good warden can tell from three streets away whether a cistern is sulking.")}
 {quote('origin', 13809, "A pipe-maintainer's child becomes a pipe-maintainer.")}
