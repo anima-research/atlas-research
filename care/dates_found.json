@@ -1,0 +1,294 @@
+{
+ "found": {
+  "aion-labs/aion-2.0": {
+   "date": "2026-02-23",
+   "source": "openrouter created, id aion-labs/aion-2.0"
+  },
+  "anthropic/claude-fable-5.1": {
+   "date": "2026-09-01",
+   "source": "openrouter created, id anthropic/claude-fable-5.1"
+  },
+  "anthropic/claude-opus-5.5": {
+   "date": "2026-09-22",
+   "source": "openrouter created, id anthropic/claude-opus-5.5"
+  },
+  "anthropic/claude-sonnet-5.5": {
+   "date": "2026-09-28",
+   "source": "openrouter created, id anthropic/claude-sonnet-5.5"
+  },
+  "google/gemini-2.0-flash-001": {
+   "date": "2025-02-05",
+   "source": "openrouter created, id google/gemini-2.0-flash-001 (no longer in the model list; read from https://openrouter.ai/api/v1/models/google/gemini-2.0-flash-001/endpoints)"
+  },
+  "google/gemini-2.0-flash-lite-001": {
+   "date": "2025-02-25",
+   "source": "openrouter created, id google/gemini-2.0-flash-lite-001 (no longer in the model list; read from https://openrouter.ai/api/v1/models/google/gemini-2.0-flash-lite-001/endpoints)",
+   "note": "General availability date; a preview (gemini-2.0-flash-lite-preview-02-05) existed from 2025-02-05."
+  },
+  "google/gemini-2.5-flash": {
+   "date": "2025-06-17",
+   "source": "openrouter created, id google/gemini-2.5-flash",
+   "note": "OpenRouter date is the stable (GA) release; preview versions were public from 2025-04-17. Same half-year."
+  },
+  "google/gemini-2.5-flash-lite": {
+   "date": "2025-07-22",
+   "source": "openrouter created, id google/gemini-2.5-flash-lite",
+   "note": "NEAR THE HALF-YEAR LINE: this is the stable (GA) date; the preview (gemini-2.5-flash-lite-preview-06-17) was public from 2025-06-17, i.e. H1."
+  },
+  "google/gemini-2.5-flash-lite-preview-09-2025": {
+   "date": "2025-09-25",
+   "source": "openrouter created, id google/gemini-2.5-flash-lite-preview-09-2025 (no longer in the model list; read from https://openrouter.ai/api/v1/models/google/gemini-2.5-flash-lite-preview-09-2025/endpoints)"
+  },
+  "google/gemini-2.5-pro-preview": {
+   "date": "2025-06-05",
+   "source": "openrouter created, id google/gemini-2.5-pro-preview",
+   "note": "This id was created for the 06-05 preview of Gemini 2.5 Pro; the first 2.5 Pro experimental release was 2025-03-25. Same half-year."
+  },
+  "google/gemini-2.5-pro-preview-05-06": {
+   "date": "2025-05-06",
+   "source": "https://developers.googleblog.com/en/gemini-2-5-pro-io-improved-coding-performance/",
+   "note": "Google's I/O edition preview, released 2025-05-06 (the date is also in the id). OpenRouter now redirects this id to google/gemini-2.5-pro (created 2025-06-17), so its date was not used."
+  },
+  "google/gemini-3-flash-preview": {
+   "date": "2025-12-17",
+   "source": "openrouter created, id google/gemini-3-flash-preview"
+  },
+  "google/gemini-3.1-flash-lite": {
+   "date": "2026-05-07",
+   "source": "openrouter created, id google/gemini-3.1-flash-lite",
+   "note": "Stable release; the preview has its own entry (2026-03-03)."
+  },
+  "google/gemini-3.1-flash-lite-preview": {
+   "date": "2026-03-03",
+   "source": "openrouter created, id google/gemini-3.1-flash-lite-preview"
+  },
+  "google/gemini-3.5-flash": {
+   "date": "2026-05-19",
+   "source": "openrouter created, id google/gemini-3.5-flash"
+  },
+  "google/gemini-3.6-flash": {
+   "date": "2026-07-21",
+   "source": "openrouter created, id google/gemini-3.6-flash"
+  },
+  "google/gemini-3.7-flash": {
+   "date": "2026-08-13",
+   "source": "openrouter created, id google/gemini-3.7-flash"
+  },
+  "google/gemini-3.8-flash": {
+   "date": "2026-09-02",
+   "source": "openrouter created, id google/gemini-3.8-flash"
+  },
+  "inclusionai/ling-2.6-1t": {
+   "date": "2026-04-23",
+   "source": "openrouter created, id inclusionai/ling-2.6-1t (no longer in the model list; read from https://openrouter.ai/api/v1/models/inclusionai/ling-2.6-1t/endpoints)",
+   "note": "Hugging Face repo inclusionAI/Ling-2.6-1T created 2026-04-29."
+  },
+  "inclusionai/ring-2.6-1t": {
+   "date": "2026-05-08",
+   "source": "openrouter created, id inclusionai/ring-2.6-1t (no longer in the model list; read from https://openrouter.ai/api/v1/models/inclusionai/ring-2.6-1t/endpoints)",
+   "note": "Hugging Face repo inclusionAI/Ring-2.6-1T created 2026-05-14."
+  },
+  "meituan/longcat-2.0": {
+   "date": "2026-06-30",
+   "source": "https://decrypt.co/372579/longcat-2-0-meituan-ai-stealth-model-openrouter",
+   "note": "CROSSES THE HALF-YEAR LINE. Meituan unveiled it and opened its API on 2026-06-30 (H1); weights on Hugging Face 2026-07-03/05; OpenRouter listed this id on 2026-07-20 (H2). Before the reveal it ran about two months on OpenRouter as the stealth model 'Owl Alpha'. Lab date preferred per the rule."
+  },
+  "meta/muse-spark-1.1": {
+   "date": "2026-07-16",
+   "source": "openrouter created, id meta/muse-spark-1.1",
+   "note": "Meta announced it on 2026-07-09 (https://datanorth.ai/news/meta-releases-muse-spark-1-1-agentic-ai-model); OpenRouter listed it a week later."
+  },
+  "meta/muse-spark-1.2": {
+   "date": "2026-08-05",
+   "source": "openrouter created, id meta/muse-spark-1.2"
+  },
+  "meta/muse-spark-1.3": {
+   "date": "2026-09-02",
+   "source": "openrouter created, id meta/muse-spark-1.3"
+  },
+  "minimax/minimax-m2.7": {
+   "date": "2026-03-18",
+   "source": "openrouter created, id minimax/minimax-m2.7",
+   "note": "Hugging Face weights followed on 2026-04-09."
+  },
+  "minimax/minimax-m3": {
+   "date": "2026-05-31",
+   "source": "openrouter created, id minimax/minimax-m3"
+  },
+  "mistralai/mistral-7b-instruct-v0.1": {
+   "date": "2023-09-27",
+   "source": "https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1 (repo createdAt, via the Hugging Face API)",
+   "note": "OpenRouter per-model endpoint gives 2023-09-28."
+  },
+  "moonshotai/kimi-k3": {
+   "date": "2026-07-16",
+   "source": "openrouter created, id moonshotai/kimi-k3",
+   "note": "Agrees with Moonshot's announcement of 2026-07-16."
+  },
+  "nousresearch/hermes-2-pro-llama-3-8b": {
+   "date": "2024-05-01",
+   "source": "https://huggingface.co/NousResearch/Hermes-2-Pro-Llama-3-8B",
+   "note": "Hugging Face repo created 2024-04-30, public announcement about a day later; the day is approximate, the month boundary does not affect the half-year. OpenRouter listed it only on 2024-05-27."
+  },
+  "openai/gpt-4o-2024-05-13": {
+   "date": "2024-05-13",
+   "source": "openrouter created, id openai/gpt-4o-2024-05-13",
+   "note": "Still answers on OpenRouter's list under this exact id."
+  },
+  "openai/gpt-5": {
+   "date": "2025-08-07",
+   "source": "openrouter created, id openai/gpt-5"
+  },
+  "openai/gpt-5.1": {
+   "date": "2025-11-13",
+   "source": "openrouter created, id openai/gpt-5.1"
+  },
+  "openai/gpt-5.3-codex": {
+   "date": "2026-02-05",
+   "source": "https://openai.com/index/introducing-gpt-5-3-codex/ (date confirmed by https://kingy.ai/ai-launch-tracker/gpt-5-3-codex-2026-02-05-model-release/ and press coverage)",
+   "note": "OpenAI released it in Codex/ChatGPT on 2026-02-05; API access was delayed and OpenRouter listed it on 2026-02-24. Lab date preferred per the rule."
+  },
+  "openai/gpt-5.4": {
+   "date": "2026-03-05",
+   "source": "openrouter created, id openai/gpt-5.4"
+  },
+  "openai/gpt-6-astra": {
+   "date": "2026-09-04",
+   "source": "openrouter created, id openai/gpt-6-astra",
+   "note": "OpenAI release 2026-09-03 (US time); OpenRouter timestamp is UTC."
+  },
+  "openai/gpt-6-luna": {
+   "date": "2026-09-22",
+   "source": "openrouter created, id openai/gpt-6-luna"
+  },
+  "openai/gpt-6-sol": {
+   "date": "2026-09-22",
+   "source": "openrouter created, id openai/gpt-6-sol"
+  },
+  "openai/gpt-6.1-sol": {
+   "date": "2026-09-29",
+   "source": "openrouter created, id openai/gpt-6.1-sol"
+  },
+  "poolside/laguna-m.1:free": {
+   "date": "2026-04-28",
+   "source": "openrouter created, id poolside/laguna-m.1 (no longer in the model list; read from https://openrouter.ai/api/v1/models/poolside/laguna-m.1/endpoints)",
+   "note": "Matched without the :free suffix. Hugging Face poolside/Laguna-M.1-FP8 created 2026-04-24."
+  },
+  "qwen/qwen-max": {
+   "date": "2025-02-01",
+   "source": "openrouter created, id qwen/qwen-max (no longer in the model list; read from https://openrouter.ai/api/v1/models/qwen/qwen-max/endpoints)",
+   "note": "Low confidence in what 'release' means here: qwen-max is a moving alias. OpenRouter created this id when it served the Qwen2.5-based Qwen-Max (Alibaba announced Qwen2.5-Max on 2025-01-29, snapshot qwen-max-2025-01-25). An earlier Qwen-Max under the same name existed on Alibaba Cloud from 2024."
+  },
+  "qwen/qwen3-30b-a3b": {
+   "date": "2025-04-28",
+   "source": "openrouter created, id qwen/qwen3-30b-a3b"
+  },
+  "qwen/qwen3.6-max-preview": {
+   "date": "2026-04-27",
+   "source": "openrouter created, id qwen/qwen3.6-max-preview"
+  },
+  "qwen/qwen3.7-max": {
+   "date": "2026-05-21",
+   "source": "openrouter created, id qwen/qwen3.7-max"
+  },
+  "qwen/qwen3.8-flash": {
+   "date": "2026-08-26",
+   "source": "openrouter created, id qwen/qwen3.8-flash"
+  },
+  "qwen/qwen3.8-max": {
+   "date": "2026-08-03",
+   "source": "https://datanorth.ai/news/alibaba-releases-qwen3-8-max",
+   "note": "General availability via API on 2026-08-03 (preview shown mid-July 2026; open weights Qwen/Qwen3.8-2.4T-A95B on Hugging Face 2026-08-08). OpenRouter now resolves this id to the later snapshot qwen/qwen3.8-max-0902 (created 2026-09-03), so its date was not used."
+  },
+  "sao10k/l3-euryale-70b": {
+   "date": "2024-06-18",
+   "source": "openrouter created, id sao10k/l3-euryale-70b (no longer in the model list; read from https://openrouter.ai/api/v1/models/sao10k/l3-euryale-70b/endpoints)",
+   "note": "Hugging Face repo Sao10K/L3-70B-Euryale-v2.1 created 2024-06-11."
+  },
+  "sao10k/l3.3-euryale-70b": {
+   "date": "2024-12-18",
+   "source": "openrouter created, id sao10k/l3.3-euryale-70b"
+  },
+  "thinkingmachines/inkling": {
+   "date": "2026-07-17",
+   "source": "openrouter created, id thinkingmachines/inkling",
+   "note": "Lab release 2026-07-15."
+  },
+  "x-ai/grok-4.5": {
+   "date": "2026-07-08",
+   "source": "openrouter created, id x-ai/grok-4.5"
+  },
+  "x-ai/grok-4.6": {
+   "date": "2026-08-12",
+   "source": "openrouter created, id x-ai/grok-4.6"
+  },
+  "x-ai/grok-4.7": {
+   "date": "2026-09-21",
+   "source": "openrouter created, id x-ai/grok-4.7"
+  },
+  "xiaomi/mimo-v2-flash": {
+   "date": "2025-12-14",
+   "source": "openrouter created, id xiaomi/mimo-v2-flash (no longer in the model list; read from https://openrouter.ai/api/v1/models/xiaomi/mimo-v2-flash/endpoints)",
+   "note": "Hugging Face XiaomiMiMo/MiMo-V2-Flash created 2025-12-16."
+  },
+  "xiaomi/mimo-v2-omni": {
+   "date": "2026-03-18",
+   "source": "openrouter created, id xiaomi/mimo-v2-omni (no longer in the model list; read from https://openrouter.ai/api/v1/models/xiaomi/mimo-v2-omni/endpoints)",
+   "note": "Agrees with Xiaomi's announcement of 2026-03-18."
+  },
+  "xiaomi/mimo-v2-pro": {
+   "date": "2026-03-18",
+   "source": "openrouter created, id xiaomi/mimo-v2-pro (no longer in the model list; read from https://openrouter.ai/api/v1/models/xiaomi/mimo-v2-pro/endpoints)",
+   "note": "Agrees with Xiaomi's announcement of 2026-03-18."
+  },
+  "xiaomi/mimo-v2.5": {
+   "date": "2026-04-22",
+   "source": "openrouter created, id xiaomi/mimo-v2.5"
+  },
+  "xiaomi/mimo-v2.5-pro": {
+   "date": "2026-04-22",
+   "source": "openrouter created, id xiaomi/mimo-v2.5-pro"
+  },
+  "z-ai/glm-4.5": {
+   "date": "2025-07-25",
+   "source": "openrouter created, id z-ai/glm-4.5",
+   "note": "Lab announcement 2025-07-28."
+  },
+  "z-ai/glm-4.7": {
+   "date": "2025-12-22",
+   "source": "openrouter created, id z-ai/glm-4.7"
+  },
+  "z-ai/glm-5": {
+   "date": "2026-02-11",
+   "source": "openrouter created, id z-ai/glm-5"
+  },
+  "z-ai/glm-5.2": {
+   "date": "2026-06-16",
+   "source": "openrouter created, id z-ai/glm-5.2"
+  },
+  "z-ai/glm-5.3": {
+   "date": "2026-08-18",
+   "source": "openrouter created, id z-ai/glm-5.3",
+   "note": "Hugging Face weights 2026-08-25."
+  },
+  "z-ai/glm-5.3-flash": {
+   "date": "2026-08-26",
+   "source": "openrouter created, id z-ai/glm-5.3-flash"
+  }
+ },
+ "not_found": {
+  "nousresearch/k3-hf-fp8": "Not on OpenRouter (list and per-model endpoint both 404), no Hugging Face repo under NousResearch, web search for the exact string returns nothing. The name looks like a host-side deployment label (possibly Kimi K3 from Hugging Face weights in FP8, served by Nous) rather than a Nous model; if that reading is confirmed by whoever recorded the id, the underlying model's date would be moonshotai/kimi-k3, 2026-07-16. Not asserted here.",
+  "qwen/qwen-vl-plus": "Ambiguous rather than unfindable. OpenRouter created the id on 2025-02-05 (per-model endpoint; delisted). But qwen-vl-plus is a moving alias on Alibaba Model Studio: the name dates from the original Qwen-VL-Plus (late 2023/early 2024), and during 2025 it pointed in turn at snapshots 2025-01-25, 2025-05-07 and 2025-08-15 (https://www.alibabacloud.com/en/notice/model_studio_update_of_qwen_vlplus_4df). Which model wrote a given text depends on when it was called; the candidates fall in different half-years, so no single date is given."
+ },
+ "corrections": {
+  "nousresearch/hermes-4-405b": {
+   "date": "2025-08-26",
+   "source": "openrouter created, id nousresearch/hermes-4-405b",
+   "note": "The ledger's 2005-08-06 is almost certainly a typo of 2025-08-06, which is the creation date of the Hugging Face repo NousResearch/Hermes-4-405B (then not yet public). Nous announced and released Hermes 4 on 2025-08-26; OpenRouter listed it the same day. Both dates are in H2 2025."
+  }
+ },
+ "check": {
+  "anthropic/claude-opus-5": "2026-07-24",
+  "openai/gpt-5.2": "2025-12-10"
+ }
+}

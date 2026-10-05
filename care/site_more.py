@@ -398,7 +398,7 @@ So "the commonest answer" is commonest over a set in which some writers hold it 
 writers still run from {pct(bandr[0][0])}% ({esc(bandr[0][1])}) to {pct(bandr[-1][0])}% ({esc(bandr[-1][1])}).</p>
 <h3>By date of release</h3>
 <table class=kv><tr><th>released</th><th>writers</th><th>beings with a cost</th><th>the same, texts of 30 to 60 sentences</th><th>called guardian</th><th>called keeper</th></tr>{f3t}</table>
-<p class=small>{len(dated)} writers with 60 beings or more have a release date in the Atlas ledger; the rest are not in this table. The band column is empty where fewer than 40 beings fall in it.</p>
+<p class=small>{len(dated)} writers with 60 beings or more have a release date (<code>care/release_dates.json</code>, with the source of each); three writers have none. The band column is empty where fewer than 40 beings fall in it.</p>
 <h3>Inside two families</h3>
 <p>The same turn, model by model. Over the same span the word guardian all but disappears and keeper takes its place.</p>
 {lineage('anthropic/')}<br>{lineage('openai/')}
@@ -425,9 +425,9 @@ The care word stops being something said of a being and becomes what the being i
 {quote('relation', 2826, "They are the guardians of this landscape, maintaining the delicate balance of nature and protecting it from outside threats.")}
 {quote('relation', 15839, "A good warden can tell from three streets away whether a cistern is sulking.")}
 {quote('origin', 13809, "A pipe-maintainer's child becomes a pipe-maintainer.")}
-<p><b>What it rests on.</b> Counts over the whole set, for the {n_dated_w} writers that have a release date in the Atlas ledger. What the being is called and its care names come from the reader of the five questions; what it cares for and works against from the reading of its role sentences;
+<p><b>What it rests on.</b> Counts over the whole set, for the {n_dated_w} writers that have a release date (half from the Atlas ledger, half looked up; <code>care/release_dates.json</code> gives the source of each). What the being is called and its care names come from the reader of the five questions; what it cares for and works against from the reading of its role sentences;
 the last table from a search of the texts themselves, with no reader in between.</p>
-<p><b>What could undo it.</b> The eras are different sets of writers, not the same writers growing older: the earliest holds few labs, and half of all writers have no date and are not here. Later texts are longer, and a longer text has more room for a trade, a cost and a fate.
+<p><b>What could undo it.</b> The eras are different sets of writers, not the same writers growing older: the earliest holds few labs, and three writers have no date and are not here. Later texts are longer, and a longer text has more room for a trade, a cost and a fate.
 Inside two families the turn is visible model by model (the tables under <a href='#cost'>#cost</a>); for the others it was not checked. The writers were all given the same instruction, so the change is in them; why it happened is not something this set can say.</p>
 
 <h2 id=voice>5. The keeper almost never speaks</h2>
