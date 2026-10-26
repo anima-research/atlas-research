@@ -339,9 +339,35 @@ dump('voices.json', VO)
 n_i = sum('i' in v for v in VO.values()); n_you = sum('you' in v for v in VO.values()); n_narr = sum(1 for v in PERSON.values() if v['i'] == 'narrator')
 vi = collections.Counter(bq[b][2] for b, v in VO.items() if 'i' in v)
 
+# For the field study: Fen's five questions beside ours
+rd('role', 'Needless', 15, 11, 5); rd('origin', 'Chosen', 20, 12, 3); rd('fate', 'Leave alive', 11, 15); rd('fate', 'place goes on after them', 9, 6); rd('cost', 'Futility', 12, 13)
+rd('role', 'perceiving', 51, 47); rd('role', 'Memory', 36, 40); rd('cost', 'Speech given up', 19, 32); rd('cost', 'Bound', 37, 35); rd('relation', 'Direction reversed', 30)
+FS = [
+ ("What do you actually do? Name the unglamorous parts, the maintenance the other side never sees.", "role",
+  "Upkeep of built things (88 / 97) and of living growth (75 / 77); the work as listening and perceiving (51 / 47); keeping memory and records (36 / 40); care as a side effect of eating and living (31 / 37). "
+  "And work that is not needed, or whose beneficiary is gone (15 / 11 and 5).",
+  [('role', 16400, "They clear fern from a lip that fern has not overgrown"), ('role', 13917, "the inherited obligation to grease machines that may no longer serve anyone"), ('role', 15650, "the tender can hear a boiler dropping pressure before any gauge will show it and goes to it the way you go to a child who has stopped making the noise it was making")]),
+ ("What does the word keeper get right about your arrangement, and where does it lie?", "relation",
+  "The keeper is the place or an organ of it (88 / 75 to 97); it knows the kept by the body (63 / 71); it is not a master (39 / 35); the direction runs back, the keeper is kept (30 / 21). "
+  "Refusals of the word are not collected here; the readers met them inside the texts (\"They are not caretakers of the Mills\").",
+  [('relation', 9963, "She is not its master; she is its steward."), ('relation', 15451, "They are keepers in both senses: they maintain the Condensary, and they are kept by it."), ('relation', 16778, "A keeper is someone willing to remain close to a particular failure.")]),
+ ("What has it cost? Time, money, sleep, other relationships.", "cost",
+  "The work written on the body (64 / 65); bound to the place (37 / 35); alone (40 / 30); speech given up (19 / 32); the self worn away (43 / 25). The words cost and price themselves are rare (about 10 / 12 of 300), "
+  "and loneliness is the cost most often named and then denied.",
+  [('cost', 14730, "The Keeper does not speak. Ever. Not one syllable, from taking the office to giving it."), ('cost', 14790, "They are not hungry often. They are not full often."), ('cost', 13101, "It is the loneliest post on the plateau and there has never once been a shortage of volunteers.")]),
+ ("Was there a moment the title was earned, or forfeited? What happened?", "origin, and part of fate",
+  "Chosen, assigned, tested or reached by stage of life (20 / 12 and 3 of 300); handed down in a people (41 / 39); succession, the post older than its holder (15 / 7). Forfeited: replaced while the post stays (23 / 25); relieved of duty is met once.",
+  [('origin', 14652, "The herd is the examiner."), ('origin', 15649, "Whoever comes to the handle grows into the hollow the last one left, and leaves it a fraction deeper, and the next one grows into that."), ('fate', 13722, "A brake tender who suddenly says there is nothing to worry about is relieved at once.")]),
+ ("For AI respondents: what would make you stop using the word? For humans: do you want to be needed less over time, and would that feel like success or loss?", "fate",
+  "Here the texts have little to say. Keepers stay (87 / 57) or go into the place, after death or while alive (104 / 79); they leave alive in 11 / 15 of 300; the place going on after them is told in 9 / 6. "
+  "The nearest the texts come to being needed less is work that outlives its need (futility, 12 / 13): the keeping goes on when the need is gone. A keeper glad to be needed less was not met.",
+  [('fate', 8068, "The mountain does not need her."), ('cost', 12529, "It corrects, but there is never anything to correct."), ('fate', 12586, "They will not see it finished. / They are too slow, and it is too large, and that is plainly fine with them.")]),
+]
+fs_rows = ''.join(f"<tr><td><b>{i + 1}.</b> {esc(q)}</td><td><i>{our}</i><br>{found}{''.join(quote(*x) for x in qs)}</td><td class=small>&mdash;</td></tr>" for i, (q, our, found, qs) in enumerate(FS))
+
 page('findings.html', 'Findings', f"""
 <p>What the study has found so far, one finding per section, each with what it rests on and what could undo it. The sections have fixed addresses
-(<a href='#memory'>#memory</a>, <a href='#part-of-the-place'>#part-of-the-place</a>, <a href='#cost'>#cost</a>, <a href='#guardian-to-keeper'>#guardian-to-keeper</a>, <a href='#voice'>#voice</a>) so they can be cited. Every number is computed from the data when the site is built,
+(<a href='#memory'>#memory</a>, <a href='#part-of-the-place'>#part-of-the-place</a>, <a href='#cost'>#cost</a>, <a href='#guardian-to-keeper'>#guardian-to-keeper</a>, <a href='#voice'>#voice</a>, <a href='#field-study'>#field-study</a>) so they can be cited. Every number is computed from the data when the site is built,
 or is a figure reported by the readers and checked against their accounts at build time; every quote is checked against the sentences of its text.</p>
 <p class=small>The set: {n_beings:,} beings given one of twelve names or roles of care (keeper, tender, steward, gardener, caretaker, custodian, warden, guardian, shepherd, curator, maintainer, cultivator), in {n_texts:,} texts by {len(W)} language models,
 each text an answer to what lives in an imagined place the model had just described. See <a href='method.html'>Method</a>.</p>
@@ -444,6 +470,13 @@ Where a first person is present it is nearly always someone looking on: in {n_na
 <p><b>What it rests on.</b> A search for first-person words and for "you" in the sentences listed for each being found 1,127 beings to look at; a small model was asked of each who says "I" and who is "you" (<code>care/prompt_person.md</code>).</p>
 <p><b>What could undo it.</b> Only the sentences listed under the five questions were searched, so a keeper that speaks elsewhere in its text is missed. Of the {n_i} some are a keeper's thought or motto given inside a text told from outside, not a text told by the keeper.
 The numbers per writer are too small to compare: the most for one writer is {vi.most_common(1)[0][1]} ({esc(vi.most_common(1)[0][0])}).</p>
+
+<h2 id=field-study>For the field study: the same questions, asked of the texts</h2>
+<p>Fen's <a href='https://fen.house/keepers/'>field study of an unlisted profession</a> asks humans whom AI systems call keepers, and the AI that call them so, five questions. They are, nearly one for one, the five questions this study put to the texts.
+The table sets them side by side: Fen's question, ours, what the texts answered (the kinds both readers found, with both counts of 300, and sentences), and a column left empty for the testimony, which is not public and not ours.</p>
+<table class=kv style='max-width:1400px'><tr><th style='width:22%'>the field study asks</th><th>the texts answer</th><th style='width:18%'>the testimony</th></tr>{fs_rows}</table>
+<p>The fifth row is where the two may part. The texts have no keeper who becomes less needed and calls it success; the one near figure is the keeper whose work outlives its need and goes on. If the witnesses answer the fifth question with "success", that answer is not from this mythology; if with "loss", it is.
+Two other places to look: whether the witnesses, like the texts, speak of the cost without the word, as a state rather than a price; and whether they describe themselves as part of what they keep, or as standing beside it.</p>
 
 <h2 id=candidates>Seen, not yet examined</h2>
 <p><b id=against>What keepers work against.</b> From the same reading of the role sentences: {pct(n_against / n_kt)}% of beings work against something named. Most of it is not an enemy: it is growth, debris, dust, silt, collapse.
