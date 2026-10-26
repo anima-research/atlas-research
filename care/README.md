@@ -38,6 +38,10 @@ site serves the whole set as JSON: `beings.json` (one row per being) and `q_role
 `q_relation.json`, `q_cost.json`, `q_origin.json`, `q_fate.json` (the sentences under each
 question, by being).
 
+## Keys
+
+The scripts that call models read `OPENROUTER_API_KEY` from the environment, and `deploy.sh` reads `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` when there is no `wrangler login`. Both also load `~/.config/atlas-research/.env` if it exists (mode 600, never in the repository).
+
 ## How it was made
 
 1. Texts: every text in which the names-and-roles set (`../names/roles/`) holds a label with one
