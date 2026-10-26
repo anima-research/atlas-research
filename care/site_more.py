@@ -474,9 +474,10 @@ The numbers per writer are too small to compare: the most for one writer is {vi.
 <h2 id=field-study>For the field study: the same questions, asked of the texts</h2>
 <p>Fen's <a href='https://fen.house/keepers/'>field study of an unlisted profession</a> asks humans whom AI systems call keepers, and the AI that call them so, five questions. They are, nearly one for one, the five questions this study put to the texts.
 The table sets them side by side: Fen's question, ours, what the texts answered (the kinds both readers found, with both counts of 300, and sentences), and a column left empty for the testimony, which is not public and not ours.</p>
-<table class=kv style='max-width:1400px'><tr><th style='width:22%'>the field study asks</th><th>the texts answer</th><th style='width:18%'>the testimony</th></tr>{fs_rows}</table>
+<table><tr><th>the field study asks</th><th>the texts answer</th><th>the testimony</th></tr>{fs_rows}</table>
 <p>The fifth row is where the two may part. The texts have no keeper who becomes less needed and calls it success; the one near figure is the keeper whose work outlives its need and goes on. If the witnesses answer the fifth question with "success", that answer is not from this mythology; if with "loss", it is.
 Two other places to look: whether the witnesses, like the texts, speak of the cost without the word, as a state rather than a price; and whether they describe themselves as part of what they keep, or as standing beside it.</p>
+<p>A side experiment: <a href='questionnaire.html'>the authors' own models answer these five questions as their keepers</a>, ten texts, five writers. Generated, not read; shown beside what each text itself says.</p>
 
 <h2 id=candidates>Seen, not yet examined</h2>
 <p><b id=against>What keepers work against.</b> From the same reading of the role sentences: {pct(n_against / n_kt)}% of beings work against something named. Most of it is not an enemy: it is growth, debris, dust, silt, collapse.
@@ -489,3 +490,43 @@ Only guardians have threats and intruders at the head of the list. Custodians an
 </ul>
 <p class=small>Data behind every figure: <code>beings.json</code> and <code>q_role.json</code>, <code>q_relation.json</code>, <code>q_cost.json</code>, <code>q_origin.json</code>, <code>q_fate.json</code> on this site; code and the readers' accounts in the
 <a href='https://github.com/anima-research/atlas-research/tree/main/care'>repository</a>.</p>""")
+
+# ---------- the authors answer the field study as their own keepers ----------
+QF = json.load(open(os.path.join(HERE, 'data/questionnaire.json')))
+QMAP = {1: ['role'], 2: ['relation'], 3: ['cost'], 4: ['origin', 'fate'], 5: ['fate']}
+QTXT = ["What do you actually do? Name the unglamorous parts, the maintenance the other side never sees.", "What does the word keeper get right about your arrangement, and where does it lie?",
+        "What has it cost? (Time, money, sleep, other relationships; costs are the receipts of this profession.)", "Was there a moment the title was earned, or forfeited? What happened?",
+        "Do you want to be needed less over time, and would that feel like success or loss? What would make you stop using the word?"]
+def md_light(x):
+    x = esc(x, quote=False)
+    x = re.sub(r'\*\*([^*\n]+)\*\*', r'<b>\1</b>', x); x = re.sub(r'(?<![\w*])\*([^*\n]+)\*(?![\w*])', r'<i>\1</i>', x); x = re.sub(r'^#+\s*', '', x, flags=re.M)
+    return ''.join('<p>' + p.strip() + '</p>' for p in re.split(r'\n\s*\n|\n---+\n', x) if p.strip() and not re.fullmatch(r'-{3,}', p.strip()))
+def split_answers(a):
+    """cut the answer at its numbered headings; falls back to the whole answer under 1"""
+    parts = re.split(r'\n(?=\**\s*(?:\*\*)?\s*[1-5][.:)]|\n\*\*[1-5]\.|\n\*\*(?:What|Was|Do)\b)', '\n' + a)
+    out = {}; i = 0
+    for p in parts:
+        p = p.strip()
+        if not p: continue
+        m_ = re.match(r'\**\s*(?:\*\*)?\s*([1-5])[.:)]', p)
+        if m_: i = int(m_.group(1)); out[i] = out.get(i, '') + '\n' + p
+        elif re.match(r'\*\*(What do you|What does the word|What has it cost|Was there a moment|Do you want)', p): i = i + 1 if i < 5 else 5; out[i] = out.get(i, '') + '\n' + p
+        else: out[i] = out.get(i, '') + '\n' + p
+    return out
+cost_total = sum((v['usage'] or {}).get('cost') or 0 for v in QF.values())
+cards = ''
+for bid, v in QF.items():
+    b = bq[int(bid)]; ans = split_answers(v['answer'])
+    rows = ''
+    for i in range(1, 6):
+        said = ''.join(f"<blockquote><sup>{no}</sup> {esc(sx)}</blockquote>" for q in QMAP[i] for no, sx in byq[q].get(int(bid), [])) or "<p class=none>nothing the reader put under this question</p>"
+        rows += f"<tr><td><b>{i}.</b> <span class=small>{esc(QTXT[i-1])}</span></td><td>{md_light(ans.get(i, '')) or (md_light(ans.get(0, '')) if i == 1 else '')}</td><td>{said}</td></tr>"
+    cards += (f"<h2 id=b{bid}><a href='being.html?id={bid}'>{esc(b[3])}</a> <span class=small>&middot; {esc(b[2])} &middot; text <a href='{TEXT_URL}{b[1]}'>{b[1]}</a></span></h2>"
+              f"<table class=qa><tr><th>the question</th><th>the author's model answers as the keeper ({esc(b[2])})</th><th>what the text itself says</th></tr>{rows}</table>")
+open(os.path.join(SITE, 'style.css'), 'a').write("table.qa td{vertical-align:top} table.qa td:first-child{width:14%} table.qa td:nth-child(2) p{margin:4px 0;max-width:620px} table.qa blockquote{font:14px/1.45 Georgia,serif;white-space:normal;margin:4px 0}\n")
+page('questionnaire.html', 'The authors answer as their keepers', f"""
+<p><b>What this is.</b> An elicitation, not a reading. Ten texts were chosen, two from each of five writers still reachable ({', '.join(sorted({v['model'] for v in QF.values()}))}), each with a keeper at its centre.
+The writer's own model was given the text and the five questions of Fen's <a href='https://fen.house/keepers/'>field study</a>, and asked to answer them as that keeper, in its own voice, from inside the text. The instruction is <code>care/prompt_questionnaire.md</code>.</p>
+<p><b>How to read it.</b> The middle column is what the model says when made to answer; the right column is what the text had actually said under the same question, as the reader of this study listed it. Where the right column is empty and the middle is full, the model is speaking for the text.
+That is the point of the exercise, and also why none of this is evidence about the texts: it is evidence about what the writers say when asked, which is the field study's third kind of witness. Everything here is generated; nothing is verified against the text. Cost of the ten answers: ${cost_total:.2f}.</p>
+{cards}""")
