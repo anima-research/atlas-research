@@ -17,7 +17,7 @@ dump = lambda name, obj: json.dump(obj, open(os.path.join(SITE, name), 'w'), ens
 pct = lambda x: '' if x is None else round(100 * x, 1)
 
 for f in ('style.css', 'table.js'):
-    shutil.copy(os.path.join(HERE, '../names/site', f), os.path.join(SITE, f))
+    shutil.copyfile(os.path.join(HERE, '../names/site', f), os.path.join(SITE, f))
 open(os.path.join(SITE, 'style.css'), 'a').write("""
 .card{border:1px solid #ddd;margin:10px 0;padding:8px 12px;max-width:980px}
 .card h3{font-size:15px;margin:0 0 2px} .card .meta{font-size:12px;color:#555;margin-bottom:6px}

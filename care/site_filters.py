@@ -1,6 +1,6 @@
 # Run inside build_site.py after site_more.py: the pages whose tables are recounted in the browser
 # for a chosen writer (a model, or all models of a lab) and period of release.
-for f in ('common.js', 'kept.js', 'words.js', 'weave.js'): shutil.copy(os.path.join(HERE, 'js', f), os.path.join(SITE, f))
+for f in ('common.js', 'kept.js', 'words.js', 'weave.js'): shutil.copyfile(os.path.join(HERE, 'js', f), os.path.join(SITE, f))
 open(os.path.join(SITE, 'config.js'), 'w').write('var CFG=' + json.dumps({'words': STEMS, 'eras': ERA_KEYS, 'q': QTEXT, 'textUrl': TEXT_URL}) + ';')
 # what the names say is kept, per text: [[nouns], [care words in that name]] for every name with a noun
 KN = collections.defaultdict(list)
