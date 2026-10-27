@@ -297,6 +297,52 @@ g_all = WITHIN['guardian']['cost']; g_raw = [r for r in wd if 'guardian' in r[0]
 R8 = sorted(((texts[b[1]][1], b[8] > 0) for b in beings)); k8 = len(R8) // 8
 len_lo = pct(sum(r[1] for r in R8[:k8]) / k8); len_hi = pct(sum(r[1] for r in R8[-k8:]) / k8)
 
+# relation of inhabitant to place, read for every text without any care word (relation_pass.py)
+texts_model = {tt: v[0] for tt, v in texts.items()}
+texts_model.update({tt: mo for tt, mo in ndb.execute("select text_id, model from text_cov where flag is null or flag=''")})
+RL = {int(k): v for k, v in json.load(open(os.path.join(HERE, 'data/relation_level.json'))).items()}
+_care_texts = {b[1] for b in beings}
+_pm = lambda tt: RL.get(tt) in ('part', 'alive', 'is')
+rl_all = [tt for tt in RL if tt in corpus_by_model or True]
+n_rl = len(RL); rl_c = collections.Counter(RL.values())
+rl_care = [tt for tt in RL if tt in _care_texts]; rl_other = [tt for tt in RL if tt not in _care_texts]
+share_pm = lambda g: pct(sum(_pm(tt) for tt in g) / len(g)) if g else ''
+# within one writer
+_bm = collections.defaultdict(lambda: ([], []))
+for tt in RL: _bm[texts_model.get(tt)][0 if tt in _care_texts else 1].append(_pm(tt))
+_d = _w = 0
+for mo, (a_, c_) in _bm.items():
+    if mo is None or len(a_) < 10 or len(c_) < 10: continue
+    k_ = min(len(a_), len(c_)); _w += k_; _d += k_ * (sum(a_) / len(a_) - sum(c_) / len(c_))
+rl_within = round(100 * _d / _w, 1)
+rl_era = ''.join(f"<tr><td>{lab}</td><td class=num>{len(g):,}</td>" + ''.join(f"<td class=num>{pct(sum(RL[tt] == lv for tt in g) / len(g))}%</td>" for lv in ('in', 'part', 'alive', 'is')) + f"<td class='num bar' style='--w:{share_pm(g)}%'>{share_pm(g)}%</td></tr>"
+                 for e, lab in ERA_KEYS for g in [[tt for tt in RL if era_key(texts_model.get(tt, '')) == e]] if g)
+_labs = collections.defaultdict(list)
+for tt in RL:
+    if texts_model.get(tt): _labs[texts_model[tt].split('/')[0]].append(tt)
+rl_lab = ''.join(f"<tr><td>{esc(lab)}</td><td class=num>{len(g):,}</td><td class='num bar' style='--w:{share_pm(g)}%'>{share_pm(g)}%</td><td class=num>{pct(sum(RL[tt] == 'is' for tt in g) / len(g))}%</td><td class=num>{share_pm([tt for tt in g if tt in _care_texts])}%</td><td class=num>{share_pm([tt for tt in g if tt not in _care_texts])}%</td></tr>"
+                 for lab, g in sorted(_labs.items(), key=lambda kv: -sum(_pm(tt) for tt in kv[1]) / len(kv[1])) if len(g) >= 300)
+rl_word = ''.join(f"<tr><td><b>{w}</b></td><td class=num>{len(g):,}</td><td class='num bar' style='--w:{share_pm(g)}%'>{share_pm(g)}%</td></tr>" for w in STEMS for g in [sorted({b[1] for b in beings if w in b[5].split() and b[1] in RL})])
+# which names go with the organ: lift of a name's presence in part-or-more texts against texts of the "in" level
+_names = collections.defaultdict(set)
+for tt, nn in rdb.execute("select text_id, norm from labels"):
+    if tt in RL: _names[nn].add(tt)
+_probe = ['organ', 'nerve', 'thought', 'mind', 'immune', 'cell', 'breath', 'memory', 'hand', 'voice', 'gardener', 'builder', 'echo', 'tender', 'listener', 'architect', 'weaver', 'keeper', 'caretaker', 'custodian', 'steward', 'engineer', 'scavenger', 'hunter', 'sentinel', 'guardian']
+_T = collections.defaultdict(set)
+for nn, ts in _names.items():
+    for w in _probe:
+        if re.search(r'(?<![a-z])%s(s|es)?(?![a-z])' % w, nn): _T[w] |= ts
+_P = {tt for tt in RL if _pm(tt)}; _I = {tt for tt in RL if not _pm(tt)}
+_lift = sorted(((100 * len(_T[w] & _P) / len(_P), 100 * len(_T[w] & _I) / len(_I), w) for w in _probe), key=lambda x: -(x[0] / x[1] if x[1] else 0))
+rl_names = ''.join(f"<tr><td>{w}</td><td class=num>{p1:.1f}%</td><td class=num>{p0:.1f}%</td><td class=num>{(p1 / p0):.1f}</td></tr>" for p1, p0, w in _lift)
+# gold calibration
+_G = {int(k): v for k, v in json.load(open(os.path.join(HERE, 'data/gold_relation.json'))).items()}; _RG = {int(k): v for k, v in json.load(open(os.path.join(HERE, 'data/relation_gold.json'))).items()}
+_lv = lambda r: 'is' if r['is'] else 'alive' if r['alive'] else 'part' if r['part'] else 'in'
+g_pm = pct(sum(1 for tt in _G if _G[tt] != 'in') / len(_G)); l_pm = pct(sum(1 for tt in _G if tt in _RG and _lv(_RG[tt]) != 'in') / len(_G))
+g_is = pct(sum(1 for tt in _G if _G[tt] == 'is') / len(_G)); l_is = pct(sum(1 for tt in _G if tt in _RG and _lv(_RG[tt]) == 'is') / len(_G))
+g_fp = sum(1 for tt in _G if _G[tt] == 'in' and tt in _RG and _lv(_RG[tt]) != 'in'); g_fn = sum(1 for tt in _G if _G[tt] != 'in' and tt in _RG and _lv(_RG[tt]) == 'in')
+g_agree = sum(1 for tt in _G if tt in _RG and (_G[tt] != 'in') == (_lv(_RG[tt]) != 'in'))
+
 # 4. guardian gives way to keeper: eras of the writers
 def era(mo):
     d = DATES.get(mo)
@@ -408,8 +454,10 @@ Counted by distinct texts. By the text: it was given the sentences listed under 
 About a third of the memory names are the other form (<i>keepers of memory</i>), where no fixed word pulls, and tenders have no such compound for water or moss and keep them anyway.
 The noun reader gives the head of a compound only (<i>guardians of the water table</i> gives "table"), and misses some names. Singular and plural are folded by rule, which can join two different words that differ by an s. The two views do not measure the same thing and should not be added: the first counts texts and names, the second beings and sentences. On twenty beings marked by hand the text reading found the main things cared for in every one and added some that are only handled in passing (a leaf, a surface).</p>
 
-<h2 id=part-of-the-place>2. The keeper is part of what it keeps</h2>
-<p><b>Finding.</b> Asked in five different ways, the commonest answer of these texts takes away the line between keeper and kept. The keeper is the place or an organ of it, was made by it, and ends in it.</p>
+<h2 id=part-of-the-place>2. The keeper is part of what it keeps, and so is nearly everyone else</h2>
+<p><b>Finding.</b> Asked in five different ways, the commonest answer of these texts takes away the line between keeper and kept. The keeper is the place or an organ of it, was made by it, and ends in it.
+But this is not a property of keepers. Read for every text in the corpus, with no care word in the question, {share_pm(list(RL))}% of all texts make their inhabitants part of the place or more; among texts with a care word {share_pm(rl_care)}%, among the rest {share_pm(rl_other)}%, and inside one writer the difference is {rl_within:+} points.
+The twelve words are one of the names this figure wears; they do not mark it.</p>
 <table class=kv><tr><th>question</th><th>the kind of answer</th><th>first reader, of 300</th><th>second reader, of 300</th></tr>{f2}</table>
 <p class=small>Two readers read different samples for each question. The second reader split this answer more finely, so its figure is given as the range from its largest single sub-kind to their sum; for the origin the sum can count a being twice.
 In relation and in origin it is the largest kind for both readers.</p>
@@ -423,7 +471,17 @@ In relation and in origin it is the largest kind for both readers.</p>
 <p>Around it stand answers that say the same from other sides. The keeper is "not a master" (39 and 35 of 300). Care is seldom for somebody: 13 and 11 of 300 keep a particular creature or person.
 One text in a sample of 300 shows keepers refusing to be taken in:</p>
 {quote('fate', 14977, "they are still holding their ground, and they are not yet substrate")}
-<p><b>What it rests on.</b> Reading, not counting. For each question two readers each read 300 beings drawn at random and spread evenly over the writers, with no kinds given in advance; a third pass compared their accounts (<a href='kinds.html'>Kinds</a>).
+<h3>Measured on every text</h3>
+<p>The who study collected, for each text, the sentences that say who or what lives there. A small model was given those sentences and asked, strictly, for the ones that state that an inhabitant is a part, organ or extension of the place (<i>part</i>), that the place itself is alive as a claim (<i>alive</i>), or that the place itself is the answer to what lives there (<i>is</i>); a text's level is the highest it reaches, and <i>in</i> means none (<code>care/prompt_relation.md</code>; the levels are the who study's own codebook).
+Of {n_rl:,} texts: in {pct(rl_c['in'] / n_rl)}%, part {pct(rl_c['part'] / n_rl)}%, alive {pct(rl_c['alive'] / n_rl)}%, is {pct(rl_c['is'] / n_rl)}%.</p>
+<table class=kv><tr><th>writers released in</th><th>texts</th><th>in</th><th>part</th><th>alive</th><th>is</th><th>part or more</th></tr>{rl_era}</table>
+<table class=kv><tr><th>lab (300 texts or more)</th><th>texts</th><th>part or more</th><th>is</th><th>part or more, texts with a care word</th><th>without</th></tr>{rl_lab}</table>
+<p>By care word, the share of its texts at part or more: <table class=kv>{rl_word}</table>
+Guardian is the one word whose texts are <i>less</i> often part of the place than the corpus; gardener's are more.</p>
+<p>What does mark the figure is not a profession but anatomy. Of the names the texts give their inhabitants, these are the ones most concentrated in texts at part or more, as the share of texts carrying the name there against the share among texts at <i>in</i>:</p>
+<table class=kv><tr><th>name</th><th>in texts at part or more</th><th>in texts at "in"</th><th>ratio</th></tr>{rl_names}</table>
+<p><b>Calibration.</b> On the who study's 180 texts read whole by two readers, the readers put {g_pm}% at part or more and the model {l_pm}% (it agrees with them on {g_agree} of 180; it raises {g_fp} texts the readers had at <i>in</i> and lowers {g_fn} they had higher), so the corpus shares above are if anything low. For <i>is</i> the model is high: {l_is}% against the readers' {g_is}%; read the <i>is</i> column as "part or more, and probably the place itself".</p>
+<p><b>What it rests on.</b> Reading, not counting, for the kinds; counting over every text for the shares above. For each question two readers each read 300 beings drawn at random and spread evenly over the writers, with no kinds given in advance; a third pass compared their accounts (<a href='kinds.html'>Kinds</a>).
 That both readers formed this kind in every one of the five questions, on ten samples that share no being, is the evidence.</p>
 <p><b>What could undo it.</b> The sizes depend on where a reader drew the line, and the whole set was not counted. Both readers are models of one family, and so is the model that chose the sentences.
 Writers differ: in the readers' samples the Google models give this answer most (15 of 34 and 22 of 42 beings under relation; 15 of 36 and 18 of 38 under origin), and the OpenAI models seldom (8 of 59 under relation, in the one sample where it was counted).
@@ -500,6 +558,7 @@ Only guardians have threats and intruders at the head of the list. Custodians an
 <li><b>Fear is denied in the texts and confessed when the authors are asked.</b> A word of fear (afraid, fear, dread, terror, panic, anxiety) stands in the listed sentences of {n_fear:,} beings of {n_beings:,}; in {n_fear_neg:,} of these the sentence denies it ("they do not fear"), leaving {n_fear_plain:,} where a fear is stated.
 In the readers' samples the fear of losing what one keeps appears only as small kinds (dependence on the kept, 11 of 300; the keeper's own thoughts about its end, 10 of 300). Yet when five writers' models were asked the field study's questions <a href='questionnaire.html'>as their keepers</a>, the fear came at once: of the valve shutting, of the silence, of not knowing what one is without the cords.
 Whether the texts withhold it or do not have it is not something this count can tell.</li>
+<li><b>The study measured words, not the figure.</b> "Care" here is a slice by twelve words through a figure that in 2025 was also called architect, echo, weaver, and that two thirds of all texts hold under any name or none. The next instrument should start from the figure (the organ of the place) and ask what it is called, by whom, and when.</li>
 <li><b>One keeper, or several.</b> A being that carries several of the words at once is the centre of its text; in an ensemble each keeper is one post among many (<a href='weave.html'>Weave</a>).</li>
 <li><b>Death and endlessness do not meet.</b> One reader found 61 beings given a death and 104 given no end, with 4 in both (<a href='kinds_fate.html'>Kinds: fate</a>). One sample, one reader.</li>
 </ul>

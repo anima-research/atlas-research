@@ -29,6 +29,7 @@ https://atlas.lari-island.ai/research/care/
 | `pilot_kept_ids.json` | twenty random beings whose role sentences were marked by hand before that reading |
 | `person.py`, `prompt_person.md` | who says "I" and who is "you" in the sentences about a being; asked only where a search finds such words (`data/person.json`) |
 | `questionnaire.py`, `prompt_questionnaire.md`, `pilot_q_ids.json` | an elicitation, kept apart from the readings: the writer's own model answers the field study's five questions as its keeper, for ten texts (`data/questionnaire.json`, page `questionnaire.html`) |
+| `relation_pass.py`, `prompt_relation.md` | for every text, from the who-quotes: does it make its inhabitants part of the place, say the place is alive, or give the place as what lives there (the who study's levels in / part / alive / is); calibrated on the who gold set (`data/relation.json`, `data/relation_level.json`). `prompt_relation_v1.md` was the first, looser instruction |
 | `what_is_kept.py` | what stands next to a care word in the names, counted without a reader |
 | `pilot_ids.json`, `pilot_hand.json` | ten random care texts and their marking by hand, made before any request |
 | `pilot2_ids.json` | thirty more random texts, read through the chosen reader's cost and origin sentences |
