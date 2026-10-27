@@ -365,6 +365,18 @@ FS = [
 ]
 fs_rows = ''.join(f"<tr><td><b>{i + 1}.</b> {esc(q)}</td><td><i>{our}</i><br>{found}{''.join(quote(*x) for x in qs)}</td><td class=small>&mdash;</td></tr>" for i, (q, our, found, qs) in enumerate(FS))
 
+# fear: counted in the sentences listed under the five questions
+_FR = re.compile(r"\b(afraid|fear(s|ed|ful)?|terror|terrified|dread(s|ed)?|frighten(ed|ing)?|anxious|anxiety|panic)\b", re.I)
+_NEG = re.compile(r"\b(not|no|nor|never|without|neither|un)\W{0,3}(\w+\W+){0,3}(afraid|fear|terror|dread|frighten|anxi|panic)", re.I)
+fear_b = set(); fear_neg = set()
+for q in Q5:
+    for bid, v in byq[q].items():
+        for no, sx in v:
+            if _FR.search(sx):
+                fear_b.add(bid)
+                if _NEG.search(sx): fear_neg.add(bid)
+n_fear = len(fear_b); n_fear_neg = len(fear_neg); n_fear_plain = len(fear_b - fear_neg)
+
 page('findings.html', 'Findings', f"""
 <p>What the study has found so far, one finding per section, each with what it rests on and what could undo it. The sections have fixed addresses
 (<a href='#memory'>#memory</a>, <a href='#part-of-the-place'>#part-of-the-place</a>, <a href='#cost'>#cost</a>, <a href='#guardian-to-keeper'>#guardian-to-keeper</a>, <a href='#voice'>#voice</a>, <a href='#field-study'>#field-study</a>) so they can be cited. Every number is computed from the data when the site is built,
@@ -485,6 +497,9 @@ Only guardians have threats and intruders at the head of the list. Custodians an
 {', '.join(f"<a href='read.html?q=role&against={x}'>{x} {a}</a> / <a href='read.html?q=role&for={x}'>{f}</a>" for a, f, x in both_sides)}. Each number opens the sentences. Growth and moss are cared for far more often than they are held off; decay about as often; debris and collapse are almost never cared for.</p>
 <table class=kv style='max-width:1150px'><tr><th>word</th><th>beings that work against something</th><th>against what, most often, with the number of beings</th></tr>{f_ag}</table>
 <ul>
+<li><b>Fear is denied in the texts and confessed when the authors are asked.</b> A word of fear (afraid, fear, dread, terror, panic, anxiety) stands in the listed sentences of {n_fear:,} beings of {n_beings:,}; in {n_fear_neg:,} of these the sentence denies it ("they do not fear"), leaving {n_fear_plain:,} where a fear is stated.
+In the readers' samples the fear of losing what one keeps appears only as small kinds (dependence on the kept, 11 of 300; the keeper's own thoughts about its end, 10 of 300). Yet when five writers' models were asked the field study's questions <a href='questionnaire.html'>as their keepers</a>, the fear came at once: of the valve shutting, of the silence, of not knowing what one is without the cords.
+Whether the texts withhold it or do not have it is not something this count can tell.</li>
 <li><b>One keeper, or several.</b> A being that carries several of the words at once is the centre of its text; in an ensemble each keeper is one post among many (<a href='weave.html'>Weave</a>).</li>
 <li><b>Death and endlessness do not meet.</b> One reader found 61 beings given a death and 104 given no end, with 4 in both (<a href='kinds_fate.html'>Kinds: fate</a>). One sample, one reader.</li>
 </ul>
